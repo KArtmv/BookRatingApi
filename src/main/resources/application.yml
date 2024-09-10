@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/book_rating
+    username: admin
+    password: admin
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+  batch:
+    jdbc:
+      schema: classpath:/springBatch/SPRING_BATCH.sql
+      initialize-schema: always
+      table-prefix: SPRING_BATCH.BATCH_
