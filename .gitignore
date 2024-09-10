@@ -6,6 +6,7 @@ mvnw.cmd
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+var/
 
 ### STS ###
 .apt_generated
