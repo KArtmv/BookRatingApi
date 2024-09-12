@@ -62,11 +62,11 @@ public class StepConfiguration {
     }
 
     @Bean
-    public Step userStep(FlatFileItemReader<UserRawDataDto> reader,
+    public Step userStep(FlatFileItemReader<UserCsvDto> reader,
                          UserItemProcessor process,
                          ItemWriterAdapter<User> writer) {
         return new StepBuilder("userStep", jobRepository)
-                .<UserRawDataDto, User>chunk(1000, transactionManager)
+                .<UserCsvDto, User>chunk(1000, transactionManager)
                 .reader(reader)
                 .processor(process)
                 .writer(writer)
@@ -78,11 +78,11 @@ public class StepConfiguration {
     }
 
     @Bean
-    public Step bookStep(FlatFileItemReader<BookRawDataDto> reader,
+    public Step bookStep(FlatFileItemReader<BookCsvDto> reader,
                          BookItemProcess process,
                          ItemWriterAdapter<Book> writer) {
         return new StepBuilder("bookStep", jobRepository)
-                .<BookRawDataDto, Book>chunk(1000, transactionManager)
+                .<BookCsvDto, Book>chunk(1000, transactionManager)
                 .reader(reader)
                 .processor(process)
                 .writer(writer)
@@ -96,11 +96,11 @@ public class StepConfiguration {
     }
 
     @Bean
-    public Step ratingStep(FlatFileItemReader<RatingRawDataDto> reader,
+    public Step ratingStep(FlatFileItemReader<RatingCsvDto> reader,
                            RatingItemProcess process,
                            ItemWriterAdapter<Rating> writer) {
         return new StepBuilder("ratingStep", jobRepository)
-                .<RatingRawDataDto, Rating>chunk(1000, transactionManager)
+                .<RatingCsvDto, Rating>chunk(1000, transactionManager)
                 .reader(reader)
                 .processor(process)
                 .writer(writer)

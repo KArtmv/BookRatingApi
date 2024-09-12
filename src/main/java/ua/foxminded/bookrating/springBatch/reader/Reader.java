@@ -46,21 +46,21 @@ public class Reader {
     }
 
     @Bean
-    public FlatFileItemReader<UserRawDataDto> userItemReader() {
-        return new FlatFileItemReaderBuilder<UserRawDataDto>()
+    public FlatFileItemReader<UserCsvDto> userItemReader() {
+        return new FlatFileItemReaderBuilder<UserCsvDto>()
                 .name("userItemReader")
                 .resource(new ClassPathResource(DATASET_USERS_CSV))
                 .encoding(FILE_ENCODING)
                 .linesToSkip(1)
                 .delimited().delimiter(";")
                 .names("userId", "location", "age")
-                .targetType(UserRawDataDto.class)
+                .targetType(UserCsvDto.class)
                 .build();
     }
 
     @Bean
-    public FlatFileItemReader<BookRawDataDto> bookItemReader() {
-        return new FlatFileItemReaderBuilder<BookRawDataDto>()
+    public FlatFileItemReader<BookCsvDto> bookItemReader() {
+        return new FlatFileItemReaderBuilder<BookCsvDto>()
                 .name("bookItemReader")
                 .resource(new ClassPathResource(DATASET_BOOKS_CSV))
                 .linesToSkip(1)
@@ -68,19 +68,19 @@ public class Reader {
                 .delimited().delimiter(";")
                 .quoteCharacter('\"')
                 .names("isbn", "title", "author", "publicationYear", "publisher", "imageUrlS", "imageUrlM", "imageUrlL")
-                .targetType(BookRawDataDto.class)
+                .targetType(BookCsvDto.class)
                 .build();
     }
 
     @Bean
-    public FlatFileItemReader<RatingRawDataDto> ratingItemReader() {
-        return new FlatFileItemReaderBuilder<RatingRawDataDto>()
+    public FlatFileItemReader<RatingCsvDto> ratingItemReader() {
+        return new FlatFileItemReaderBuilder<RatingCsvDto>()
                 .name("ratingItemReader")
                 .resource(new ClassPathResource(DATASET_RATINGS_CSV))
                 .linesToSkip(1)
                 .delimited().delimiter(";")
                 .names("userId", "isbn", "bookRaring")
-                .targetType(RatingRawDataDto.class)
+                .targetType(RatingCsvDto.class)
                 .build();
     }
 }

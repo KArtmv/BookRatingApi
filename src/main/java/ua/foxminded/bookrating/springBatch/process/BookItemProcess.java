@@ -6,7 +6,7 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
-import ua.foxminded.bookrating.dto.BookRawDataDto;
+import ua.foxminded.bookrating.dto.BookCsvDto;
 import ua.foxminded.bookrating.persistance.entity.Author;
 import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.persistance.entity.Image;
@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class BookItemProcess implements ItemProcessor<BookRawDataDto, Book>, StepExecutionListener {
+public class BookItemProcess implements ItemProcessor<BookCsvDto, Book>, StepExecutionListener {
 
     private Map<String, Author> authorCache;
     private Map<String, Publisher> publisherCache;
@@ -31,7 +31,7 @@ public class BookItemProcess implements ItemProcessor<BookRawDataDto, Book>, Ste
     private final ImageRepository imageRepository;
 
     @Override
-    public Book process(BookRawDataDto item) {
+    public Book process(BookCsvDto item) {
         Publisher publisher = publisherCache.getOrDefault(replaceAmpersand(item.publisher().trim()), null);
         Author author = authorCache.getOrDefault(replaceAmpersand(item.author().trim()), null);
 

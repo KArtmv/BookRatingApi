@@ -6,7 +6,7 @@ import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
-import ua.foxminded.bookrating.dto.RatingRawDataDto;
+import ua.foxminded.bookrating.dto.RatingCsvDto;
 import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.persistance.entity.Rating;
 import ua.foxminded.bookrating.persistance.entity.User;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class RatingItemProcess implements ItemProcessor<RatingRawDataDto, Rating>, StepExecutionListener {
+public class RatingItemProcess implements ItemProcessor<RatingCsvDto, Rating>, StepExecutionListener {
 
     private Map<String, Book> bookCache;
     private Map<Long, User> userCache;
@@ -34,7 +34,7 @@ public class RatingItemProcess implements ItemProcessor<RatingRawDataDto, Rating
     }
 
     @Override
-    public Rating process(RatingRawDataDto item) {
+    public Rating process(RatingCsvDto item) {
         Book book = bookCache.getOrDefault(item.isbn(), null);
         User user = userCache.getOrDefault(item.userId(), null);
 
