@@ -18,8 +18,8 @@ public class BaseEntity implements Serializable {
     private static final long serialVersionUID = 1905122041950251207L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "default_gen")
+    @Column(nullable = false)
     private Long id;
 
     public BaseEntity(Long id) {

@@ -2,6 +2,7 @@ package ua.foxminded.bookrating.persistance.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -16,6 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "publisher")
+@SequenceGenerator(name = "default_gen", sequenceName = "publisher_is_seq", allocationSize = 1)
 public class Publisher extends BaseEntity {
 
     @NotBlank(message = "The publisher name is required and cannot be empty.")

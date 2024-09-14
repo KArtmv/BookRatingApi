@@ -1,6 +1,7 @@
 package ua.foxminded.bookrating.persistance.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Entity
 @Table(name = "image")
+@SequenceGenerator(name = "default_gen", sequenceName = "image_id_seq", allocationSize = 1)
 public class Image extends BaseEntity {
 
     private String imageUrlSmall;

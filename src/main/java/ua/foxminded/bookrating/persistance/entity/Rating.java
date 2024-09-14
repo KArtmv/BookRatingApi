@@ -1,9 +1,6 @@
 package ua.foxminded.bookrating.persistance.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +13,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @Entity
 @Table(name = "rating")
+@SequenceGenerator(name = "default_gen", sequenceName = "rating_id_seq", allocationSize = 1)
 public class Rating extends BaseEntity {
 
     @ManyToOne

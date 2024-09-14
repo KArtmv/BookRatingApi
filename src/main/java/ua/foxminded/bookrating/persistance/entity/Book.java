@@ -17,6 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "book")
+@SequenceGenerator(name = "default_gen", sequenceName = "book_id_seq", allocationSize = 1)
 public class Book extends BaseEntity {
 
     @NotBlank(message = "The ISBN of book is required")
