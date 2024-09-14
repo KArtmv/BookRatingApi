@@ -7,6 +7,13 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          batch_versioned_data: true
+          batch_size: 1000
+        order_updates: true
+        order_inserts: true
   flyway:
     enabled: true
   batch:
