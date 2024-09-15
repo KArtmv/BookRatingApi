@@ -1,57 +1,42 @@
 package ua.foxminded.bookrating.springBatch.writer;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.adapter.ItemWriterAdapter;
-import org.springframework.batch.item.support.SynchronizedItemStreamWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ua.foxminded.bookrating.persistance.entity.*;
-import ua.foxminded.bookrating.service.BookService;
-import ua.foxminded.bookrating.service.RatingService;
-import ua.foxminded.bookrating.service.UserService;
+import ua.foxminded.bookrating.service.*;
 
 @Configuration
-@RequiredArgsConstructor
 public class Writer {
 
-    private final UserService userService;
-    private final BookService bookService;
-    private final RatingService ratingService;
-
     @Bean
-    public SynchronizedItemStreamWriter<Author> authorWriter(AuthorItemStreamWriter authorItemWriter) {
-        SynchronizedItemStreamWriter<Author> writer = new SynchronizedItemStreamWriter<>();
-        writer.setDelegate(authorItemWriter);
-        return writer;
+    public ItemWriterAdapter<User> userWriter(UserService userService) {
+        return createWriterAdapter(userService);
     }
 
     @Bean
-    public SynchronizedItemStreamWriter<Publisher> publisherWriter(PublisherItemStreamWriter publisherItemWriter) {
-        SynchronizedItemStreamWriter<Publisher> writer = new SynchronizedItemStreamWriter<>();
-        writer.setDelegate(publisherItemWriter);
-        return writer;
+    public ItemWriterAdapter<Book> bookWriter(BookService bookService) {
+        return createWriterAdapter(bookService);
     }
 
     @Bean
-    public ItemWriterAdapter<User> userWriter() {
-        ItemWriterAdapter<User> writer = new ItemWriterAdapter<>();
-        writer.setTargetObject(userService);
-        writer.setTargetMethod("save");
-        return writer;
+    public ItemWriterAdapter<Rating> ratingWriter(RatingService ratingService) {
+        return createWriterAdapter(ratingService);
     }
 
     @Bean
-    public ItemWriterAdapter<Book> bookWriter() {
-        ItemWriterAdapter<Book> writer = new ItemWriterAdapter<>();
-        writer.setTargetObject(bookService);
-        writer.setTargetMethod("save");
-        return writer;
+    public ItemWriterAdapter<Author> authorWriter(AuthorService authorService) {
+        return createWriterAdapter(authorService);
     }
 
     @Bean
-    public ItemWriterAdapter<Rating> ratingWriter() {
-        ItemWriterAdapter<Rating> writer = new ItemWriterAdapter<>();
-        writer.setTargetObject(ratingService);
+    public ItemWriterAdapter<Publisher> publisherWriter(PublisherService publisherService) {
+        return createWriterAdapter(publisherService);
+    }
+
+    private <T, S> ItemWriterAdapter<T> createWriterAdapter(S service) {
+        ItemWriterAdapter<T> writer = new ItemWriterAdapter<>();
+        writer.setTargetObject(service);
         writer.setTargetMethod("save");
         return writer;
     }
