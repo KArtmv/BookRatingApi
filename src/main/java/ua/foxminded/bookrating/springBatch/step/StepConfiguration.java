@@ -7,7 +7,6 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.adapter.ItemWriterAdapter;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.FlatFileParseException;
-import org.springframework.batch.item.support.SynchronizedItemStreamWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
@@ -17,6 +16,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import ua.foxminded.bookrating.dto.*;
 import ua.foxminded.bookrating.persistance.entity.*;
 import ua.foxminded.bookrating.springBatch.process.*;
+
+import java.sql.BatchUpdateException;
 
 @Configuration
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ public class StepConfiguration {
     @Bean
     public Step authorStep(FlatFileItemReader<AuthorCsvDto> reader,
                            AuthorItemProcess process,
-                           SynchronizedItemStreamWriter<Author> writer) {
+                           ItemWriterAdapter<Author> writer) {
         return new StepBuilder("authorStep", jobRepository)
                 .<AuthorCsvDto, Author>chunk(1000, transactionManager)
                 .reader(reader)
@@ -36,6 +37,7 @@ public class StepConfiguration {
                 .writer(writer)
                 .faultTolerant()
                 .skip(FlatFileParseException.class)
+                .skip(BatchUpdateException.class)
                 .skip(DataIntegrityViolationException.class)
                 .skipLimit(Integer.MAX_VALUE)
                 .taskExecutor(taskExecutor())
@@ -46,7 +48,7 @@ public class StepConfiguration {
     @Bean
     public Step publisherStep(FlatFileItemReader<PublisherCsvDto> reader,
                               PublisherItemProcess process,
-                              SynchronizedItemStreamWriter<Publisher> writer) {
+                              ItemWriterAdapter<Publisher> writer) {
         return new StepBuilder("publisherStep", jobRepository)
                 .<PublisherCsvDto, Publisher>chunk(1000, transactionManager)
                 .reader(reader)
@@ -54,6 +56,7 @@ public class StepConfiguration {
                 .writer(writer)
                 .faultTolerant()
                 .skip(FlatFileParseException.class)
+                .skip(BatchUpdateException.class)
                 .skip(DataIntegrityViolationException.class)
                 .skipLimit(Integer.MAX_VALUE)
                 .taskExecutor(taskExecutor())
