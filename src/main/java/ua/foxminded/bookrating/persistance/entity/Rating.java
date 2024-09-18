@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLInsert;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
@@ -14,6 +15,9 @@ import java.util.Objects;
 @Entity
 @Table(name = "rating")
 @SequenceGenerator(name = "default_gen", sequenceName = "rating_id_seq", allocationSize = 1)
+@SQLInsert(sql = "INSERT INTO rating (book_id, book_rating, user_id, id) " +
+        "VALUES (?, ?, ?, ?) " +
+        "ON CONFLICT (book_id, user_id) DO NOTHING")
 public class Rating extends BaseEntity {
 
     @ManyToOne

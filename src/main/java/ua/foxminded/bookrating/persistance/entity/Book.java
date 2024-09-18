@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SQLInsert;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -18,6 +19,9 @@ import java.util.Set;
 @Entity
 @Table(name = "book")
 @SequenceGenerator(name = "default_gen", sequenceName = "book_id_seq", allocationSize = 1)
+@SQLInsert(sql = "INSERT INTO book (image_id, isbn, publication_year, publisher_id, title, id) " +
+        "VALUES (?, ?, ?, ?, ?, ?) " +
+        "ON CONFLICT (isbn) DO NOTHING")
 public class Book extends BaseEntity {
 
     @NotBlank(message = "The ISBN of book is required")
@@ -39,15 +43,19 @@ public class Book extends BaseEntity {
 
     @ManyToMany
     @JoinTable(name = "book_authors",
-            joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "authors_id"))
-    private Set<Author> author = new LinkedHashSet<>();
+            joinColumns = @JoinColumn(name = "book_isbn", referencedColumnName = "isbn"),
+            inverseJoinColumns = @JoinColumn(name = "author_id"))
+    @SQLInsert(sql = "INSERT INTO book_authors (book_isbn, author_id) " +
+            "VALUES (?, ?) " +
+            "ON CONFLICT (book_isbn, author_id) DO NOTHING")
+    private Set<Author> authors = new LinkedHashSet<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "image_id")
     private Image image;
 
-    @OneToMany(mappedBy = "book", orphanRemoval = true)
+    @OneToMany(mappedBy = "book",cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Rating> ratings = new LinkedHashSet<>();
 
     public Book(Long id) {
@@ -55,7 +63,7 @@ public class Book extends BaseEntity {
     }
 
     public void addAuthor(Author author) {
-        this.author.add(author);
+        this.authors.add(author);
     }
 
     public void addRating(Rating rating) {
