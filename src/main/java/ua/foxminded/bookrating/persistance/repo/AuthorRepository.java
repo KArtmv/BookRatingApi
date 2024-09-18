@@ -9,9 +9,4 @@ import java.util.Optional;
 @Repository
 public interface AuthorRepository extends JpaRepository<Author, Long> {
     Optional<Author> findByName(String name);
-
-//    @Modifying
-//    @Transactional
-//    @Query(value = "INSERT INTO author (name) VALUES (:name) ON CONFLICT (name) DO NOTHING", nativeQuery = true)
-//    Long saveIfNotExists(String name);
 }
