@@ -2,85 +2,61 @@ package ua.foxminded.bookrating.springBatch.reader;
 
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
+import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import ua.foxminded.bookrating.dto.*;
+import ua.foxminded.bookrating.springBatch.fieldMapper.*;
 
 import java.nio.charset.StandardCharsets;
 
 @Configuration
 public class Reader {
 
-    public static final String DATASET_USERS_CSV = "dataset/users.csv";
-    public static final String DATASET_BOOKS_CSV = "dataset/books.csv";
-    public static final String DATASET_RATINGS_CSV = "dataset/ratings.csv";
-    private static final String FILE_ENCODING = StandardCharsets.ISO_8859_1.name();
+    public static final String USERS_DATASET_CSV = "dataset/users.csv";
+    public static final String BOOKS_DATASET_CSV = "dataset/books.csv";
+    public static final String RATINGS_DATASET_CSV = "dataset/ratings.csv";
+
+    private static final String[] BOOK_COLUMN_NAMES = {"isbn","title","author","publicationYear","publisher","imageUrlS","imageUrlM","imageUrlL"};
+    private static final String[] RATING_COLUMN_NAMES = {"userId", "isbn", "bookRaring"};
+    private static final String[] USER_COLUMN_NAMES = {"userId", "location", "age"};
 
     @Bean
     public FlatFileItemReader<AuthorCsvDto> authorItemReader() {
-        return new FlatFileItemReaderBuilder<AuthorCsvDto>()
-                .name("authorItemReader")
-                .resource(new ClassPathResource(DATASET_BOOKS_CSV))
-                .linesToSkip(1)
-                .encoding(FILE_ENCODING)
-                .delimited().delimiter(";")
-                .quoteCharacter('\"')
-                .names("isbn", "title", "author", "publicationYear", "publisher", "imageUrlS", "imageUrlM", "imageUrlL")
-                .fieldSetMapper(fieldSet -> new AuthorCsvDto(fieldSet.readString("author")))
-                .build();
+        return createCsvReader(BOOKS_DATASET_CSV, BOOK_COLUMN_NAMES, new AuthorFieldSetMapper(), "authorItemReader");
     }
 
     @Bean
     public FlatFileItemReader<PublisherCsvDto> publisherItemReader() {
-        return new FlatFileItemReaderBuilder<PublisherCsvDto>()
-                .name("publisherItemReader")
-                .resource(new ClassPathResource(DATASET_BOOKS_CSV))
-                .linesToSkip(1)
-                .encoding(FILE_ENCODING)
-                .delimited().delimiter(";")
-                .quoteCharacter('\"')
-                .names("isbn", "title", "author", "publicationYear", "publisher", "imageUrlS", "imageUrlM", "imageUrlL")
-                .fieldSetMapper(fieldSet -> new PublisherCsvDto(fieldSet.readString("publisher")))
-                .build();
+        return createCsvReader(BOOKS_DATASET_CSV, BOOK_COLUMN_NAMES, new PublisherFieldSetMapper(), "publisherItemReader");
     }
 
     @Bean
     public FlatFileItemReader<UserCsvDto> userItemReader() {
-        return new FlatFileItemReaderBuilder<UserCsvDto>()
-                .name("userItemReader")
-                .resource(new ClassPathResource(DATASET_USERS_CSV))
-                .encoding(FILE_ENCODING)
-                .linesToSkip(1)
-                .delimited().delimiter(";")
-                .names("userId", "location", "age")
-                .targetType(UserCsvDto.class)
-                .build();
+        return createCsvReader(USERS_DATASET_CSV, USER_COLUMN_NAMES, new UserFieldSetMapper(), "userItemReader");
     }
 
     @Bean
     public FlatFileItemReader<BookCsvDto> bookItemReader() {
-        return new FlatFileItemReaderBuilder<BookCsvDto>()
-                .name("bookItemReader")
-                .resource(new ClassPathResource(DATASET_BOOKS_CSV))
-                .linesToSkip(1)
-                .encoding(FILE_ENCODING)
-                .delimited().delimiter(";")
-                .quoteCharacter('\"')
-                .names("isbn", "title", "author", "publicationYear", "publisher", "imageUrlS", "imageUrlM", "imageUrlL")
-                .targetType(BookCsvDto.class)
-                .build();
+        return createCsvReader(BOOKS_DATASET_CSV, BOOK_COLUMN_NAMES, new BookFieldSetMapper(), "bookItemReader");
     }
 
     @Bean
     public FlatFileItemReader<RatingCsvDto> ratingItemReader() {
-        return new FlatFileItemReaderBuilder<RatingCsvDto>()
-                .name("ratingItemReader")
-                .resource(new ClassPathResource(DATASET_RATINGS_CSV))
+        return createCsvReader(RATINGS_DATASET_CSV, RATING_COLUMN_NAMES, new RatingFieldSetMapper(), "ratingItemReader");
+    }
+
+    private <T> FlatFileItemReader<T> createCsvReader(String filename, String[] filedNames, FieldSetMapper<T> fieldSetMapper, String name) {
+        return new FlatFileItemReaderBuilder<T>()
+                .name(name)
+                .resource(new ClassPathResource(filename))
+                .encoding(StandardCharsets.ISO_8859_1.name())
                 .linesToSkip(1)
                 .delimited().delimiter(";")
-                .names("userId", "isbn", "bookRaring")
-                .targetType(RatingCsvDto.class)
+                .quoteCharacter('\"')
+                .names(filedNames)
+                .fieldSetMapper(fieldSetMapper)
                 .build();
     }
 }
