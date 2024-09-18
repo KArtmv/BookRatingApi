@@ -27,10 +27,18 @@ public class SpringBatchJobRunner {
     }
 
     @Bean
-    public Flow startFlow(Step bookStep, Flow authorFlow, Flow publisherUserFlow) {
+    public Flow startFlow(Flow authorPublisherBookFlow, Flow userFlow) {
         return new FlowBuilder<Flow>("authorPublisherParallelFlow")
-                .split(new SimpleAsyncTaskExecutor())
-                .add(authorFlow, publisherUserFlow)
+                .split(taskExecutor())
+                .add(authorPublisherBookFlow, userFlow)
+                .build();
+    }
+
+    @Bean
+    public Flow authorPublisherBookFlow(Flow authorFlow, Flow publisherFlow, Step bookStep) {
+        return new FlowBuilder<Flow>("authorPublisherBookFlow")
+                .split(taskExecutor())
+                .add(authorFlow, publisherFlow)
                 .next(bookStep)
                 .build();
     }
@@ -43,10 +51,20 @@ public class SpringBatchJobRunner {
     }
 
     @Bean
-    public Flow publisherUserFlow(Step publisherStep, Step userStep) {
-        return new FlowBuilder<Flow>("publisherUserFlow")
+    public Flow publisherFlow(Step publisherStep) {
+        return new FlowBuilder<Flow>("publisherFlow")
                 .start(publisherStep)
-                .next(userStep)
                 .build();
+    }
+
+    @Bean
+    public Flow userFlow(Step userStep) {
+        return new FlowBuilder<Flow>("userFlow")
+                .start(userStep)
+                .build();
+    }
+
+    private SimpleAsyncTaskExecutor taskExecutor() {
+        return new SimpleAsyncTaskExecutor();
     }
 }
