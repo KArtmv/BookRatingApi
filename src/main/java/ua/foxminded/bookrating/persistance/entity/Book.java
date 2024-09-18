@@ -55,7 +55,7 @@ public class Book extends BaseEntity {
     @JoinColumn(name = "image_id")
     private Image image;
 
-    @OneToMany(mappedBy = "book",cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "book", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Rating> ratings = new LinkedHashSet<>();
 
     public Book(Long id) {

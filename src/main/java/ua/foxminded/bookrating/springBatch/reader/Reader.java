@@ -18,7 +18,7 @@ public class Reader {
     public static final String BOOKS_DATASET_CSV = "dataset/books.csv";
     public static final String RATINGS_DATASET_CSV = "dataset/ratings.csv";
 
-    private static final String[] BOOK_COLUMN_NAMES = {"isbn","title","author","publicationYear","publisher","imageUrlS","imageUrlM","imageUrlL"};
+    private static final String[] BOOK_COLUMN_NAMES = {"isbn", "title", "author", "publicationYear", "publisher", "imageUrlS", "imageUrlM", "imageUrlL"};
     private static final String[] RATING_COLUMN_NAMES = {"userId", "isbn", "bookRaring"};
     private static final String[] USER_COLUMN_NAMES = {"userId", "location", "age"};
 

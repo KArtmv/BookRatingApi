@@ -30,7 +30,7 @@ CREATE TABLE book
 
 CREATE TABLE book_authors
 (
-    author_id BIGINT NOT NULL,
+    author_id BIGINT  NOT NULL,
     book_isbn VARCHAR NOT NULL,
     CONSTRAINT pk_book_authors PRIMARY KEY (author_id, book_isbn)
 );
