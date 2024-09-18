@@ -5,6 +5,4 @@ import ua.foxminded.bookrating.persistance.entity.Publisher;
 import java.util.Set;
 
 public interface PublisherService extends AbstractService<Publisher, Long> {
-
-    void saveAll(Set<Publisher> publishers);
 }

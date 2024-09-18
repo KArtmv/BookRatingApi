@@ -13,9 +13,4 @@ public class PublisherServiceImpl extends AbstractServiceImpl<Publisher> impleme
     public PublisherServiceImpl(JpaRepository<Publisher, Long> repository) {
         super(repository);
     }
-
-    @Override
-    public void saveAll(Set<Publisher> publishers) {
-        repository.saveAll(publishers);
-    }
 }
