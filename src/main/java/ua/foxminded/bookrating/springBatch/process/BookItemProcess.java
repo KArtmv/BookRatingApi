@@ -15,6 +15,8 @@ import ua.foxminded.bookrating.persistance.repo.ImageRepository;
 import ua.foxminded.bookrating.service.AuthorService;
 import ua.foxminded.bookrating.service.PublisherService;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -35,18 +37,22 @@ public class BookItemProcess implements ItemProcessor<BookCsvDto, Book>, StepExe
         Publisher publisher = publisherCache.getOrDefault(replaceAmpersand(item.publisher().trim()), null);
         Author author = authorCache.getOrDefault(replaceAmpersand(item.author().trim()), null);
 
-        if (author != null && publisher != null) {
-            Book book = new Book();
-            book.setIsbn(item.isbn());
-            book.setTitle(replaceAmpersand(item.title()));
-            book.setPublisher(publisher);
-            book.setPublicationYear(item.publicationYear());
-            book.addAuthor(author);
-            book.setImage(getImage(item.imageUrlS(), item.imageUrlM(), item.imageUrlL()));
-            return book;
+        if (author != null && publisher != null && item.title().length() < 255) {
+            return toBook(item, publisher, author);
         } else {
             return null;
         }
+    }
+
+    private Book toBook(BookCsvDto item, Publisher publisher, Author author) {
+        Book book = new Book();
+        book.setIsbn(item.isbn().trim());
+        book.setTitle(replaceAmpersand(item.title()));
+        book.setPublisher(publisher);
+        book.setPublicationYear(item.publicationYear());
+        book.addAuthor(author);
+        book.setImage(getImage(item.imageUrlS(), item.imageUrlM(), item.imageUrlL()));
+        return book;
     }
 
     private Image getImage(String imageUrlS, String imageUrlM, String imageUrlL) {
