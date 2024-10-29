@@ -28,7 +28,7 @@ public class AuthorController {
     private final PagedResourcesAssembler<BookRatingProjection> bookRatingPagedResourcesAssembler;
 
     @GetMapping("/authors")
-    public PagedModel<AuthorModel> getAuthors(@PageableDefault(sort = "name") Pageable pageable) {
+    public PagedModel<AuthorModel> getAll(@PageableDefault(sort = "name") Pageable pageable) {
         return authorPagedResourcesAssembler.toModel(authorService.findAllPaginated(pageable), authorModelAssembler);
     }
 
