@@ -19,9 +19,10 @@ import java.util.Set;
 @Entity
 @Table(name = "book")
 @SequenceGenerator(name = "default_gen", sequenceName = "book_id_seq", allocationSize = 1)
-@SQLInsert(sql = "INSERT INTO book (image_id, isbn, publication_year, publisher_id, title, id) " +
-        "VALUES (?, ?, ?, ?, ?, ?) " +
-        "ON CONFLICT (isbn) DO NOTHING")
+@SQLInsert(sql = """
+        INSERT INTO book (image_id, isbn, publication_year, publisher_id, title, id)
+                VALUES (?, ?, ?, ?, ?, ?)
+                ON CONFLICT (isbn) DO NOTHING""")
 public class Book extends BaseEntity {
 
     @NotBlank(message = "The ISBN of book is required")
@@ -36,7 +37,7 @@ public class Book extends BaseEntity {
     @Size(max = 4, message = "The length of year is 4 characters")
     private String publicationYear;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "publisher_id")
     @NotNull(message = "A publisher is required.")
     private Publisher publisher;
@@ -45,13 +46,14 @@ public class Book extends BaseEntity {
     @JoinTable(name = "book_authors",
             joinColumns = @JoinColumn(name = "book_isbn", referencedColumnName = "isbn"),
             inverseJoinColumns = @JoinColumn(name = "author_id"))
-    @SQLInsert(sql = "INSERT INTO book_authors (book_isbn, author_id) " +
-            "VALUES (?, ?) " +
-            "ON CONFLICT (book_isbn, author_id) DO NOTHING")
+    @SQLInsert(sql = """
+            INSERT INTO book_authors (book_isbn, author_id)
+                        VALUES (?, ?)
+                        ON CONFLICT (book_isbn, author_id) DO NOTHING""")
     private Set<Author> authors = new LinkedHashSet<>();
 
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
     @JoinColumn(name = "image_id")
     private Image image;
 
@@ -66,7 +68,8 @@ public class Book extends BaseEntity {
         this.authors.add(author);
     }
 
-    public void addRating(Rating rating) {
-        this.ratings.add(rating);
+    public Double getAverageRating() {
+        return ratings.stream().mapToDouble(Rating::getBookRating)
+                .average().orElse(0.0);
     }
 }
