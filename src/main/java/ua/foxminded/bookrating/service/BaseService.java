@@ -12,11 +12,5 @@ public interface BaseService<T extends BaseEntity> extends AbstractService<T> {
 
     Page<BookRatingProjection> getAllBooksById(Long id, Integer desiredAverageRating, Pageable pageRequest);
 
-    T update(Long id, T entity);
-
-    T save(T entity);
-
     Page<T> getByNameContaining(String name, Pageable pageable);
-
-    void delete(Long id);
 }
