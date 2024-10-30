@@ -12,7 +12,7 @@ import ua.foxminded.bookrating.service.PublisherService;
 
 @Service
 @Transactional(readOnly = true)
-public class PublisherServiceImpl extends BaseServiceImpl<Publisher> implements PublisherService {
+public class PublisherServiceImpl extends ExtendedCrudServiceImpl<Publisher> implements PublisherService {
 
     private final PublisherRepository publisherRepository;
 

@@ -12,7 +12,7 @@ import ua.foxminded.bookrating.service.AuthorService;
 
 @Service
 @Transactional(readOnly = true)
-public class AuthorServiceImpl extends BaseServiceImpl<Author> implements AuthorService {
+public class AuthorServiceImpl extends ExtendedCrudServiceImpl<Author> implements AuthorService {
 
     private final AuthorRepository authorRepository;
 
