@@ -8,7 +8,7 @@ import ua.foxminded.bookrating.projection.BookRatingProjection;
 
 import java.util.List;
 
-public interface BookService extends AbstractService<Book> {
+public interface BookService extends CrudService<Book> {
     Page<BookRatingProjection> findAllPaginated(Integer desiredAverageRating, Pageable pageable);
 
     Book save(BookDto entity);
