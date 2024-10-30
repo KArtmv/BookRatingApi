@@ -41,8 +41,8 @@ public class BookController {
         return ResponseEntity.ok(fullBookModelAssembler.toModel(bookService.findById(id)));
     }
 
-    @GetMapping("/books/isbn/{isbn}")
-    public ResponseEntity<BookModel> getBookByIsbn(@PathVariable String isbn) {
+    @GetMapping("/books/isbn")
+    public ResponseEntity<BookModel> getBookByIsbn(@RequestParam("isbn") String isbn) {
         return ResponseEntity.ok(fullBookModelAssembler.toModel(bookService.getByIsbn(isbn)));
     }
 
@@ -57,12 +57,12 @@ public class BookController {
     }
 
     @PutMapping("/books/{id}")
-    public ResponseEntity<BookModel> updateAuthor(@PathVariable Long id, @RequestBody BookDto book) {
+    public ResponseEntity<BookModel> update(@PathVariable Long id, @RequestBody BookDto book) {
         return ResponseEntity.ok(fullBookModelAssembler.toModel(bookService.update(id, book)));
     }
 
     @DeleteMapping("/books/{id}")
-    public ResponseEntity<HttpStatus> deleteAuthor(@PathVariable Long id) {
+    public ResponseEntity<HttpStatus> delete(@PathVariable Long id) {
         bookService.delete(id);
         return ResponseEntity.ok(HttpStatus.NO_CONTENT);
     }
