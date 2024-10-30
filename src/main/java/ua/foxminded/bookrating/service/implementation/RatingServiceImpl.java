@@ -13,7 +13,7 @@ import ua.foxminded.bookrating.service.UserService;
 
 @Service
 @Transactional(readOnly = true)
-public class RatingServiceImpl extends AbstractServiceImpl<Rating> implements RatingService {
+public class RatingServiceImpl extends CrudServiceImpl<Rating> implements RatingService {
 
     private final RatingRepository ratingRepository;
     private final BookService bookService;

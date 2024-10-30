@@ -8,7 +8,7 @@ import ua.foxminded.bookrating.persistance.entity.BaseEntity;
 import ua.foxminded.bookrating.persistance.repo.BaseRepository;
 
 @Transactional(readOnly = true)
-public class BaseServiceImpl<T extends BaseEntity> extends AbstractServiceImpl<T> {
+public class BaseServiceImpl<T extends BaseEntity> extends CrudServiceImpl<T> {
 
     private final BaseRepository<T, Long> baseRepository;
 

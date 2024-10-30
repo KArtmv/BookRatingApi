@@ -9,7 +9,7 @@ import ua.foxminded.bookrating.persistance.repo.UserRepository;
 import ua.foxminded.bookrating.service.UserService;
 
 @Service
-public class UserServiceImpl extends AbstractServiceImpl<User> implements UserService {
+public class UserServiceImpl extends CrudServiceImpl<User> implements UserService {
 
     private final UserRepository userRepository;
 

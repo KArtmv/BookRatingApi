@@ -8,11 +8,11 @@ import ua.foxminded.bookrating.persistance.entity.BaseEntity;
 import java.util.List;
 
 @Transactional(readOnly = true)
-public class AbstractServiceImpl<T extends BaseEntity> {
+public class CrudServiceImpl<T extends BaseEntity> {
 
     protected final JpaRepository<T, Long> repository;
 
-    protected AbstractServiceImpl(JpaRepository<T, Long> repository) {
+    protected CrudServiceImpl(JpaRepository<T, Long> repository) {
         this.repository = repository;
     }
 

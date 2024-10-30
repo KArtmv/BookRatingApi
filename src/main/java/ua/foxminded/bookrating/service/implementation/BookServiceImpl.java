@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
-public class BookServiceImpl extends AbstractServiceImpl<Book> implements BookService {
+public class BookServiceImpl extends CrudServiceImpl<Book> implements BookService {
 
     private final BookRepository bookRepository;
     private final PublisherService publisherService;
