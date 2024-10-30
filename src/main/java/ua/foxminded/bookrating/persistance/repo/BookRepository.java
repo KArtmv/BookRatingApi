@@ -41,16 +41,16 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     Page<BookRatingProjection> findByTitleContainingIgnoreCase(@Param("title") String title, Pageable pageable);
 
     @Query("""
-       select b as book, AVG(r.bookRating) AS averageRating
-       from Book b
-       join b.authors a
-       join b.ratings r
-       where ((:authors is null or a in :authors)
-            or (:publishers is null or b.publisher in :publishers))
-       and (:title is null or lower(b.title) like lower(concat('%', :title, '%')))
-       group by b.id
-       having AVG(r.bookRating) >= :desiredAverageRating
-       """)
+            select b as book, AVG(r.bookRating) AS averageRating
+            from Book b
+            join b.authors a
+            join b.ratings r
+            where ((:authors is null or a in :authors)
+                 or (:publishers is null or b.publisher in :publishers))
+            and (:title is null or lower(b.title) like lower(concat('%', :title, '%')))
+            group by b.id
+            having AVG(r.bookRating) >= :desiredAverageRating
+            """)
     Page<BookRatingProjection> findByAuthorsOrPublisherIn(@Param("authors") List<Author> authors,
                                                           @Param("publishers") List<Publisher> publishers,
                                                           @Param("desiredAverageRating") Integer desiredAverageRating,

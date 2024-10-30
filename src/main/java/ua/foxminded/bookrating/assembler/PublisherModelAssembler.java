@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 import ua.foxminded.bookrating.controller.PublisherController;
 import ua.foxminded.bookrating.model.PublisherModel;
 import ua.foxminded.bookrating.persistance.entity.Publisher;
-import ua.foxminded.bookrating.service.PublisherService;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class PublisherModelAssembler implements RepresentationModelAssembler<Publisher, PublisherModel> {

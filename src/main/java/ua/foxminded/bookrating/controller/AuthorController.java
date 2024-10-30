@@ -8,13 +8,13 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ua.foxminded.bookrating.assembler.AuthorModelAssembler;
 import ua.foxminded.bookrating.assembler.BookModelAssembler;
 import ua.foxminded.bookrating.model.AuthorModel;
 import ua.foxminded.bookrating.model.SimpleBookModel;
 import ua.foxminded.bookrating.persistance.entity.Author;
 import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.service.AuthorService;
-import ua.foxminded.bookrating.assembler.AuthorModelAssembler;
 
 @RestController
 @RequestMapping(value = "/api/v1")

@@ -10,11 +10,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.foxminded.bookrating.assembler.BookModelAssembler;
 import ua.foxminded.bookrating.assembler.FullBookModelAssembler;
-import ua.foxminded.bookrating.assembler.SimpleBookModelAssembler;
 import ua.foxminded.bookrating.dto.BookDto;
 import ua.foxminded.bookrating.model.BookModel;
 import ua.foxminded.bookrating.model.SimpleBookModel;
-import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.service.BookService;
 

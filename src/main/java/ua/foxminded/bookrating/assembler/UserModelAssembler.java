@@ -8,7 +8,8 @@ import ua.foxminded.bookrating.controller.UserController;
 import ua.foxminded.bookrating.model.UserModel;
 import ua.foxminded.bookrating.persistance.entity.User;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
 public class UserModelAssembler implements RepresentationModelAssembler<User, UserModel> {
