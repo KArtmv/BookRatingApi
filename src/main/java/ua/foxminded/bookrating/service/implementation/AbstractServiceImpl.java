@@ -1,6 +1,8 @@
 package ua.foxminded.bookrating.service.implementation;
 
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.bookrating.persistance.entity.BaseEntity;
@@ -12,7 +14,7 @@ public class AbstractServiceImpl<T extends BaseEntity> {
 
     protected final JpaRepository<T, Long> repository;
 
-    public AbstractServiceImpl(JpaRepository<T, Long> repository) {
+    protected AbstractServiceImpl(JpaRepository<T, Long> repository) {
         this.repository = repository;
     }
 
@@ -25,12 +27,17 @@ public class AbstractServiceImpl<T extends BaseEntity> {
     }
 
     @Transactional
-    public void save(T entity) {
-        repository.save(entity);
+    public T save(T entity) {
+        return repository.save(entity);
     }
 
     @Transactional
-    public void delete(T entity) {
-        repository.delete(entity);
+    public T update(Long id, T entity) {
+        return repository.save(entity);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        repository.delete(findById(id));
     }
 }
