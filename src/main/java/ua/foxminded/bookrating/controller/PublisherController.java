@@ -6,7 +6,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.foxminded.bookrating.assembler.BookModelAssembler;
 import ua.foxminded.bookrating.assembler.PublisherModelAssembler;
@@ -32,11 +31,6 @@ public class PublisherController {
         return publisherPagedResourcesAssembler.toModel(publisherService.findAllPaginated(pageable), publisherModelAssembler);
     }
 
-    @GetMapping("/publishers/{id}")
-    public ResponseEntity<PublisherModel> getPublisher(@PathVariable Long id) {
-        return ResponseEntity.ok(publisherModelAssembler.toModel(publisherService.findById(id)));
-    }
-
     @GetMapping(value = "/publishers/{id}/books")
     public PagedModel<SimpleBookModel> getPublisherBooks(@PathVariable Long id,
                                                          @PageableDefault(sort = "title") Pageable pageable,
@@ -49,19 +43,25 @@ public class PublisherController {
         return publisherPagedResourcesAssembler.toModel(publisherService.getByNameContaining(name, pageable), publisherModelAssembler);
     }
 
+    @GetMapping("/publishers/{id}")
+    public PublisherModel getPublisher(@PathVariable Long id) {
+        return publisherModelAssembler.toModel(publisherService.findById(id));
+    }
+
     @PostMapping("/publishers")
-    public ResponseEntity<PublisherModel> add(@RequestBody Publisher publisher) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(publisherModelAssembler.toModel(publisherService.save(publisher)));
+    @ResponseStatus(HttpStatus.CREATED)
+    public PublisherModel add(@RequestBody Publisher publisher) {
+        return publisherModelAssembler.toModel(publisherService.save(publisher));
     }
 
     @PutMapping("/publishers/{id}")
-    public ResponseEntity<PublisherModel> update(@PathVariable Long id, @RequestBody Publisher publisher) {
-        return ResponseEntity.ok(publisherModelAssembler.toModel(publisherService.update(id, publisher)));
+    public PublisherModel update(@PathVariable Long id, @RequestBody Publisher publisher) {
+        return publisherModelAssembler.toModel(publisherService.update(id, publisher));
     }
 
     @DeleteMapping("/publishers/{id}")
-    public ResponseEntity<HttpStatus> delete(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
         publisherService.delete(id);
-        return ResponseEntity.noContent().build();
     }
 }

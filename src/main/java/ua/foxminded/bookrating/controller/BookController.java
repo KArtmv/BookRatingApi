@@ -35,13 +35,13 @@ public class BookController {
     }
 
     @GetMapping("/books/{id}")
-    public ResponseEntity<BookModel> getBook(@PathVariable Long id) {
-        return ResponseEntity.ok(fullBookModelAssembler.toModel(bookService.findById(id)));
+    public BookModel getBook(@PathVariable Long id) {
+        return fullBookModelAssembler.toModel(bookService.findById(id));
     }
 
     @GetMapping("/books/isbn")
-    public ResponseEntity<BookModel> getBookByIsbn(@RequestParam("isbn") String isbn) {
-        return ResponseEntity.ok(fullBookModelAssembler.toModel(bookService.getByIsbn(isbn)));
+    public BookModel getBookByIsbn(@RequestParam("isbn") String isbn) {
+        return fullBookModelAssembler.toModel(bookService.getByIsbn(isbn));
     }
 
     @GetMapping("/books/title")
@@ -50,19 +50,20 @@ public class BookController {
     }
 
     @PostMapping("/books")
-    public ResponseEntity<BookModel> add(@RequestBody BookDto bookDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(fullBookModelAssembler.toModel(bookService.save(bookDto)));
+    @ResponseStatus(HttpStatus.CREATED)
+    public BookModel add(@RequestBody BookDto bookDto) {
+        return fullBookModelAssembler.toModel(bookService.save(bookDto));
     }
 
     @PutMapping("/books/{id}")
-    public ResponseEntity<BookModel> update(@PathVariable Long id, @RequestBody BookDto book) {
-        return ResponseEntity.ok(fullBookModelAssembler.toModel(bookService.update(id, book)));
+    public BookModel update(@PathVariable Long id, @RequestBody BookDto book) {
+        return fullBookModelAssembler.toModel(bookService.update(id, book));
     }
 
     @DeleteMapping("/books/{id}")
-    public ResponseEntity<HttpStatus> delete(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
         bookService.delete(id);
-        return ResponseEntity.ok(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/books/filter-by")

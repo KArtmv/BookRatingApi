@@ -6,7 +6,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.foxminded.bookrating.assembler.RatingOfBookModelAssembler;
 import ua.foxminded.bookrating.assembler.UserModelAssembler;
@@ -32,23 +31,24 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public ResponseEntity<UserModel> getUser(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(userModelAssembler.toModel(userService.findById(id)));
+    public UserModel getUser(@PathVariable("id") Long id) {
+        return userModelAssembler.toModel(userService.findById(id));
     }
 
     @PostMapping("/users")
-    public ResponseEntity<UserModel> add(@RequestBody User user) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(userModelAssembler.toModel(userService.save(user)));
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserModel add(@RequestBody User user) {
+        return userModelAssembler.toModel(userService.save(user));
     }
 
     @PutMapping("/users/{id}")
-    public ResponseEntity<UserModel> update(@PathVariable("id") Long id, @RequestBody User user) {
-        return ResponseEntity.ok(userModelAssembler.toModel(userService.update(id, user)));
+    public UserModel update(@PathVariable("id") Long id, @RequestBody User user) {
+        return userModelAssembler.toModel(userService.update(id, user));
     }
 
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("id") Long id) {
         userService.delete(id);
-        return ResponseEntity.noContent().build();
     }
 }

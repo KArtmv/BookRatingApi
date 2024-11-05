@@ -32,24 +32,25 @@ public class RatingController {
     }
 
     @GetMapping("/ratings/{id}")
-    public ResponseEntity<RatingModel> get(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(fullRatingModelAssembler.toModel(ratingService.findById(id)));
+    public RatingModel get(@PathVariable("id") Long id) {
+        return fullRatingModelAssembler.toModel(ratingService.findById(id));
     }
 
     @PostMapping("/ratings")
-    public ResponseEntity<RatingModel> add(@RequestBody RatingDto ratingDto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(ratingModelAssembler.toModel(ratingService.save(ratingDto)));
+    @ResponseStatus(HttpStatus.CREATED)
+    public RatingModel add(@RequestBody RatingDto ratingDto) {
+        return ratingModelAssembler.toModel(ratingService.save(ratingDto));
     }
 
     @PutMapping("/ratings/{id}")
-    public ResponseEntity<RatingModel> update(@PathVariable("id") Long id,
+    public RatingModel update(@PathVariable("id") Long id,
                                               @RequestParam("newRating") Integer newRating) {
-        return ResponseEntity.ok(fullRatingModelAssembler.toModel(ratingService.update(id, newRating)));
+        return fullRatingModelAssembler.toModel(ratingService.update(id, newRating));
     }
 
     @DeleteMapping("/ratings/{id}")
-    public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable("id") Long id) {
         ratingService.delete(id);
-        return ResponseEntity.ok(HttpStatus.NO_CONTENT);
     }
 }

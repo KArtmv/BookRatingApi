@@ -45,23 +45,24 @@ public class AuthorController {
     }
 
     @GetMapping("/authors/{id}")
-    public ResponseEntity<AuthorModel> get(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(authorModelAssembler.toModel(authorService.findById(id)));
+    public AuthorModel get(@PathVariable("id") Long id) {
+        return authorModelAssembler.toModel(authorService.findById(id));
     }
 
     @PostMapping("/authors")
-    public ResponseEntity<AuthorModel> add(@RequestBody Author author) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(authorModelAssembler.toModel(authorService.save(author)));
+    @ResponseStatus(HttpStatus.CREATED)
+    public AuthorModel add(@RequestBody Author author) {
+        return authorModelAssembler.toModel(authorService.save(author));
     }
 
     @PutMapping("/authors/{id}")
-    public ResponseEntity<AuthorModel> update(@PathVariable Long id, @RequestBody Author author) {
-        return ResponseEntity.ok(authorModelAssembler.toModel(authorService.update(id, author)));
+    public AuthorModel update(@PathVariable Long id, @RequestBody Author author) {
+        return authorModelAssembler.toModel(authorService.update(id, author));
     }
 
     @DeleteMapping("/authors/{id}")
-    public ResponseEntity<HttpStatus> delete(@PathVariable Long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
         authorService.delete(id);
-        return ResponseEntity.noContent().build();
     }
 }
