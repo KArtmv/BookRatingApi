@@ -30,6 +30,6 @@ public class UserModelAssembler implements RepresentationModelAssembler<User, Us
     }
 
     private Link getSelfLink(User user) {
-        return linkTo(methodOn(UserController.class).getUser(user.getId())).withSelfRel();
+        return linkTo(methodOn(UserController.class).get(user.getId())).withSelfRel();
     }
 }

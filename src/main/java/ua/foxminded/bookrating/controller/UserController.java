@@ -31,7 +31,7 @@ public class UserController {
     }
 
     @GetMapping("/users/{id}")
-    public UserModel getUser(@PathVariable("id") Long id) {
+    public UserModel get(@PathVariable("id") Long id) {
         return userModelAssembler.toModel(userService.findById(id));
     }
 

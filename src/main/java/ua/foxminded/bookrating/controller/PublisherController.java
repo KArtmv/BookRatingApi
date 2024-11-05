@@ -44,7 +44,7 @@ public class PublisherController {
     }
 
     @GetMapping("/publishers/{id}")
-    public PublisherModel getPublisher(@PathVariable Long id) {
+    public PublisherModel get(@PathVariable Long id) {
         return publisherModelAssembler.toModel(publisherService.findById(id));
     }
 

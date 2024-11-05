@@ -29,6 +29,6 @@ public class PublisherModelAssembler implements RepresentationModelAssembler<Pub
     }
 
     private Link getSelfLink(Publisher entity) {
-        return linkTo(methodOn(PublisherController.class).getPublisher(entity.getId())).withSelfRel();
+        return linkTo(methodOn(PublisherController.class).get(entity.getId())).withSelfRel();
     }
 }
