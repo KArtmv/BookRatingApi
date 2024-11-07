@@ -19,7 +19,5 @@ public interface BaseRepository<T extends NamedItem, ID extends Serializable> ex
     @Query("select e from #{#entityName} e")
     Page<T> findAllPaginated(Pageable pageable);
 
-    boolean existsByName(String name);
-
     Page<T> findByNameContainingIgnoreCase(String name, Pageable pageable);
 }

@@ -28,10 +28,6 @@ public class ExtendedCrudServiceImpl<T extends NamedItem> extends CrudServiceImp
         return baseRepository.findByName(name).orElseThrow(() -> new ItemNotFoundException("Item not found by name: " + name));
     }
 
-    public boolean existsByName(String name) {
-        return baseRepository.existsByName(name);
-    }
-
     @Override
     @Transactional
     public T save(T entity) {
