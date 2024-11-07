@@ -22,16 +22,13 @@ import java.util.Set;
 @Table(name = "publisher")
 @SequenceGenerator(name = "default_gen", sequenceName = "publisher_is_seq", allocationSize = 1)
 @SQLInsert(sql = "INSERT INTO publisher (name, id) VALUES (?, ?) ON CONFLICT (name) DO NOTHING")
-public class Publisher extends BaseEntity {
-
-    @NotBlank(message = "The publisher name is required and cannot be empty.")
-    private String name;
+public class Publisher extends NamedItem {
 
     @OneToMany(mappedBy = "publisher", orphanRemoval = true)
     private Set<Book> books = new LinkedHashSet<>();
 
     public Publisher(String name) {
-        this.name = name;
+        super(name);
     }
 
     public Publisher(Long id) {
