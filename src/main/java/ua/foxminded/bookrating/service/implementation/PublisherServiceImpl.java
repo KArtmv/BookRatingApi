@@ -25,22 +25,4 @@ public class PublisherServiceImpl extends ExtendedCrudServiceImpl<Publisher> imp
     public Page<BookRatingProjection> getAllBooksById(Long id, Integer desiredAverageRating, Pageable pageable) {
         return publisherRepository.getBooksByPublisher(findById(id), desiredAverageRating, pageable);
     }
-
-
-    @Override
-    @Transactional
-    public Publisher save(Publisher publisher) {
-        if (!super.existsByName(publisher.getName())) {
-            return publisherRepository.save(publisher);
-        }
-        throw new EntityExistsException("Publisher with name " + publisher.getName() + " already exists");
-    }
-
-    @Override
-    @Transactional
-    public Publisher update(Long id, Publisher newPublisher) {
-        Publisher publisher = findById(id);
-        publisher.setName(newPublisher.getName());
-        return publisherRepository.save(publisher);
-    }
 }

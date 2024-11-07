@@ -1,9 +1,11 @@
 package ua.foxminded.bookrating.service.implementation;
 
+import jakarta.persistence.EntityExistsException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.bookrating.exception.ItemNotFoundException;
+import ua.foxminded.bookrating.persistance.entity.Author;
 import ua.foxminded.bookrating.persistance.entity.BaseEntity;
 import ua.foxminded.bookrating.persistance.entity.NamedItem;
 import ua.foxminded.bookrating.persistance.repo.BaseRepository;
@@ -28,6 +30,23 @@ public class ExtendedCrudServiceImpl<T extends NamedItem> extends CrudServiceImp
 
     public boolean existsByName(String name) {
         return baseRepository.existsByName(name);
+    }
+
+    @Override
+    @Transactional
+    public T save(T entity) {
+        if (baseRepository.findByName(entity.getName()).isPresent()) {
+            throw new EntityExistsException(entity.getName() + "{} already exists");
+        }
+        return  baseRepository.save(entity);
+    }
+
+    @Override
+    @Transactional
+    public T update(Long id, T entity) {
+        T t = findById(id);
+        t.setName(entity.getName());
+        return baseRepository.save(t);
     }
 
     public Page<T> getByNameContaining(String name, Pageable pageable) {

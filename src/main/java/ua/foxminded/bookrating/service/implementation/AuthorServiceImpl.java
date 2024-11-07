@@ -25,21 +25,4 @@ public class AuthorServiceImpl extends ExtendedCrudServiceImpl<Author> implement
     public Page<BookRatingProjection> getAllBooksById(Long authorId, Integer desiredAverageRating, Pageable pageRequest) {
         return authorRepository.getBooksByAuthor(findById(authorId), desiredAverageRating, pageRequest);
     }
-
-    @Override
-    @Transactional
-    public Author save(Author author) {
-        if (!super.existsByName(author.getName())) {
-            return authorRepository.save(author);
-        }
-        throw new EntityExistsException("Author with name " + author.getName() + " already exists");
-    }
-
-    @Override
-    @Transactional
-    public Author update(Long id, Author newAuthor) {
-        Author author = findById(id);
-        author.setName(newAuthor.getName());
-        return authorRepository.save(author);
-    }
 }
