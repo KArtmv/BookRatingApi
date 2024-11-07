@@ -35,6 +35,10 @@ public class Publisher extends NamedItem {
         super(id);
     }
 
+    public Publisher(Long id, String name) {
+        super(id, name);
+    }
+
     @Override
     public final boolean equals(Object object) {
         if (this == object) return true;
