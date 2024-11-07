@@ -5,10 +5,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.bookrating.exception.ItemNotFoundException;
 import ua.foxminded.bookrating.persistance.entity.BaseEntity;
+import ua.foxminded.bookrating.persistance.entity.NamedItem;
 import ua.foxminded.bookrating.persistance.repo.BaseRepository;
 
 @Transactional(readOnly = true)
-public class ExtendedCrudServiceImpl<T extends BaseEntity> extends CrudServiceImpl<T> {
+public class ExtendedCrudServiceImpl<T extends NamedItem> extends CrudServiceImpl<T> {
 
     private final BaseRepository<T, Long> baseRepository;
 
