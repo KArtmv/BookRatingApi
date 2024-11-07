@@ -1,9 +1,9 @@
 package ua.foxminded.bookrating.service.implementation;
 
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
+import ua.foxminded.bookrating.exception.ItemNotFoundException;
 import ua.foxminded.bookrating.persistance.entity.BaseEntity;
 import ua.foxminded.bookrating.persistance.repo.BaseRepository;
 
@@ -22,7 +22,7 @@ public class ExtendedCrudServiceImpl<T extends BaseEntity> extends CrudServiceIm
     }
 
     public T findByName(String name) {
-        return baseRepository.findByName(name).orElseThrow(EntityNotFoundException::new);
+        return baseRepository.findByName(name).orElseThrow(() -> new ItemNotFoundException("Item not found by name: " + name));
     }
 
     public boolean existsByName(String name) {
