@@ -27,7 +27,7 @@ class PublisherRepositoryTest {
 
     @Test
     void getBooksByPublisher() {
-        assertThat(publisherRepository.getBooksByPublisher(PUBLISHER_DATA.getPublisher(), 0, Pageable.ofSize(30)).getContent()).hasSize(10);
+        assertThat(publisherRepository.getBooksByEntity(PUBLISHER_DATA.getPublisher(), 0, Pageable.ofSize(30)).getContent()).hasSize(10);
     }
 
     @Test

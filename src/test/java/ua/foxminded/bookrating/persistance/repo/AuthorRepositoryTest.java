@@ -25,7 +25,7 @@ class AuthorRepositoryTest {
 
     @Test
     void getBooksByAuthor() {
-        assertThat(authorRepository.getBooksByAuthor(AUTHORS_DATA.getAuthor(), 0, Pageable.ofSize(30)).getContent()).hasSize(24);
+        assertThat(authorRepository.getBooksByEntity(AUTHORS_DATA.getAuthor(), 0, Pageable.ofSize(30)).getContent()).hasSize(24);
     }
 
     @Test
@@ -35,7 +35,7 @@ class AuthorRepositoryTest {
 
     @Test
     void findAllPaginated() {
-        assertThat(authorRepository.findAllPaginated(Pageable.ofSize(10)).getContent()).hasSize(1);
+        assertThat(authorRepository.findAllPaginated(Pageable.ofSize(10)).getContent()).hasSize(10);
     }
 
     @Test
@@ -50,13 +50,13 @@ class AuthorRepositoryTest {
 
     @Test
     void findAll() {
-        assertThat(authorRepository.findAll()).hasSize(1);
+        assertThat(authorRepository.findAll()).hasSize(10);
     }
 
     @Test
     void save() {
         int countOfAuthors = authorRepository.findAll().size();
-        authorRepository.save(new Author(AUTHORS_DATA.getName()));
+        authorRepository.save(new Author(AUTHORS_DATA.getAuthorTestName()));
         assertThat(authorRepository.findAll()).hasSize(countOfAuthors + 1);
     }
 
