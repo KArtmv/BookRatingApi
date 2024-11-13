@@ -10,14 +10,4 @@ import ua.foxminded.bookrating.projection.BookRatingProjection;
 
 @Repository
 public interface PublisherRepository extends BaseRepository<Publisher, Long> {
-
-    @Query("select b AS book, AVG(r.bookRating) AS averageRating " +
-            "from Book b " +
-            "JOIN Rating r ON b.id = r.book.id " +
-            "where b.publisher = :publisher " +
-            "group by b.id " +
-            "having AVG(r.bookRating) > :desiredAverageRating")
-    Page<BookRatingProjection> getBooksByPublisher(@Param("publisher") Publisher publisher,
-                                                   @Param("desiredAverageRating") Integer desiredAverageRating,
-                                                   Pageable pageable);
 }

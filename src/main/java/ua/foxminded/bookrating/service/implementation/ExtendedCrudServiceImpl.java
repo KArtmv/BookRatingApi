@@ -5,10 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.bookrating.exception.ItemNotFoundException;
-import ua.foxminded.bookrating.persistance.entity.Author;
-import ua.foxminded.bookrating.persistance.entity.BaseEntity;
 import ua.foxminded.bookrating.persistance.entity.NamedItem;
 import ua.foxminded.bookrating.persistance.repo.BaseRepository;
+import ua.foxminded.bookrating.projection.BookRatingProjection;
 
 @Transactional(readOnly = true)
 public class ExtendedCrudServiceImpl<T extends NamedItem> extends CrudServiceImpl<T> {
@@ -34,7 +33,7 @@ public class ExtendedCrudServiceImpl<T extends NamedItem> extends CrudServiceImp
         if (baseRepository.findByName(entity.getName()).isPresent()) {
             throw new EntityExistsException(entity.getName() + "{} already exists");
         }
-        return  baseRepository.save(entity);
+        return baseRepository.save(entity);
     }
 
     @Override
@@ -47,5 +46,9 @@ public class ExtendedCrudServiceImpl<T extends NamedItem> extends CrudServiceImp
 
     public Page<T> getByNameContaining(String name, Pageable pageable) {
         return baseRepository.findByNameContainingIgnoreCase(name, pageable);
+    }
+
+    public Page<BookRatingProjection> getAllBooksById(Long id, Integer desiredAverageRating, Pageable pageRequest) {
+        return baseRepository.getBooksByEntity(findById(id), desiredAverageRating, pageRequest);
     }
 }
