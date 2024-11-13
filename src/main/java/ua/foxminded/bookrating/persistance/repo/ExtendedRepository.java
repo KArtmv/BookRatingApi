@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.util.Optional;
 
 @NoRepositoryBean
-public interface BaseRepository<T extends NamedItem, ID extends Serializable> extends JpaRepository<T, ID> {
+public interface ExtendedRepository<T extends NamedItem, ID extends Serializable> extends JpaRepository<T, ID> {
 
     @Query("""
             SELECT b as book, AVG(r.bookRating) AS averageRating
