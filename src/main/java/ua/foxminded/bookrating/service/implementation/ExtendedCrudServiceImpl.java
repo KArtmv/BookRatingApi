@@ -4,7 +4,6 @@ import jakarta.persistence.EntityExistsException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-import ua.foxminded.bookrating.exception.ItemNotFoundException;
 import ua.foxminded.bookrating.persistance.entity.NamedItem;
 import ua.foxminded.bookrating.persistance.repo.BaseRepository;
 import ua.foxminded.bookrating.projection.BookRatingProjection;
@@ -21,10 +20,6 @@ public class ExtendedCrudServiceImpl<T extends NamedItem> extends CrudServiceImp
 
     public Page<T> findAllPaginated(Pageable pageable) {
         return baseRepository.findAllPaginated(pageable);
-    }
-
-    public T findByName(String name) {
-        return baseRepository.findByName(name).orElseThrow(() -> new ItemNotFoundException("Item not found by name: " + name));
     }
 
     @Override
