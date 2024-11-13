@@ -17,8 +17,6 @@ public interface BookService extends CrudService<Book> {
 
     Book getByIsbn(String isbn);
 
-    boolean existByIsbn(String isbn);
-
     Page<BookRatingProjection> getByTitleContaining(String title, Pageable pageable);
 
     Page<BookRatingProjection> getBooksByAuthorAndPublisher(List<Long> authorsId, List<Long> publishersId, Integer desiredAverageRating, String title, Pageable pageable);

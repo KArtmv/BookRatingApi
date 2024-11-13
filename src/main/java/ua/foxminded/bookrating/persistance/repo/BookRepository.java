@@ -19,8 +19,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     Optional<Book> findByIsbn(String isbn);
 
-    boolean existsByIsbn(String isbn);
-
     @Query("""
             select b as book, AVG(r.bookRating) AS averageRating
                 from Book b

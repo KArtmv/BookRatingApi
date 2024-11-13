@@ -41,10 +41,10 @@ public class BookServiceImpl extends CrudServiceImpl<Book> implements BookServic
     @Transactional
     @Override
     public Book save(BookDto entity) {
-        if (existByIsbn(entity.getIsbn())) {
+        if (bookRepository.findByIsbn(entity.getIsbn()).isEmpty()) {
             return bookRepository.save(toEntity(entity, new Book()));
         }
-        throw new EntityExistsException("Book with isbn " + entity.getIsbn() + " already exists");
+        throw new EntityExistsException("A book with the given ISBN: " + entity.getIsbn() + " already exists.");
     }
 
     @Transactional
@@ -55,12 +55,7 @@ public class BookServiceImpl extends CrudServiceImpl<Book> implements BookServic
 
     @Override
     public Book getByIsbn(String isbn) {
-        return bookRepository.findByIsbn(isbn).orElseThrow(EntityNotFoundException::new);
-    }
-
-    @Override
-    public boolean existByIsbn(String isbn) {
-        return bookRepository.existsByIsbn(isbn);
+        return bookRepository.findByIsbn(isbn).orElseThrow(() -> new EntityNotFoundException("A book with the given ISBN: " + isbn + " is not found"));
     }
 
     @Override
