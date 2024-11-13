@@ -34,7 +34,7 @@ public class AuthorController {
 
     @GetMapping("/authors/{id}/books")
     public PagedModel<SimpleBookModel> getAuthorBooks(@PathVariable Long id,
-                                                      @PageableDefault(sort = "title") Pageable pageable,
+                                                      @PageableDefault(sort = "book.title") Pageable pageable,
                                                       @RequestParam(value = "desiredAverageRating", required = false, defaultValue = "0") Integer desiredAverageRating) {
         return bookRatingPagedResourcesAssembler.toModel(authorService.getAllBooksById(id, desiredAverageRating, pageable), bookModelAssembler);
     }
