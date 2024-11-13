@@ -18,7 +18,8 @@ import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -77,7 +78,7 @@ class BookRepositoryTest {
     void findByAuthorsOrPublisherIn_whenPublisher() {
         assertAll(() -> {
             Page<BookRatingProjection> byAuthorsOrPublisherIn = bookRepository.findByAuthorsOrPublisherIn(Collections.emptyList(),
-                    Collections.singletonList(PUBLISHER_DATA.getPublisher()),0, "", Pageable.unpaged());
+                    Collections.singletonList(PUBLISHER_DATA.getPublisher()), 0, "", Pageable.unpaged());
             assertTrue(byAuthorsOrPublisherIn.hasContent());
             assertThat(byAuthorsOrPublisherIn.getTotalElements()).isEqualTo(10);
             assertThat(byAuthorsOrPublisherIn.getTotalPages()).isEqualTo(1);

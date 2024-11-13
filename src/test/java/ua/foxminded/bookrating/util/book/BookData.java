@@ -18,7 +18,7 @@ public class BookData extends AuthorsData {
     private final String publicationYear = "2003";
     private final Book book = getFullBook();
     private final Book simpleBook = getWithoutId();
-    
+
     private Book getWithoutId() {
         Book b = new Book();
         b.setTitle(title);
