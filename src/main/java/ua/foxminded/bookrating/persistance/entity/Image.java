@@ -26,4 +26,11 @@ public class Image extends BaseEntity {
         this.imageUrlMedium = imageUrlMedium;
         this.imageUrlLarge = imageUrlLarge;
     }
+
+    public Image(Long id, String imageUrlSmall, String imageUrlMedium, String imageUrlLarge) {
+        super(id);
+        this.imageUrlSmall = imageUrlSmall;
+        this.imageUrlMedium = imageUrlMedium;
+        this.imageUrlLarge = imageUrlLarge;
+    }
 }

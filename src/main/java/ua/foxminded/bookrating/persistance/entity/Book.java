@@ -62,8 +62,23 @@ public class Book extends BaseEntity {
     @OneToMany(mappedBy = "book", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private Set<Rating> ratings = new LinkedHashSet<>();
 
-    public Book(Long id) {
+    public Book(String isbn, String title, String publicationYear, Publisher publisher, Set<Author> authors, Image image) {
+        this.isbn = isbn;
+        this.title = title;
+        this.publicationYear = publicationYear;
+        this.publisher = publisher;
+        this.authors = authors;
+        this.image = image;
+    }
+
+    public Book(Long id, String isbn, String title, String publicationYear, Publisher publisher, Set<Author> authors, Image image) {
         super(id);
+        this.isbn = isbn;
+        this.title = title;
+        this.publicationYear = publicationYear;
+        this.publisher = publisher;
+        this.authors = authors;
+        this.image = image;
     }
 
     public void addAuthor(Author author) {

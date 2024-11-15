@@ -31,24 +31,14 @@ public class Rating extends BaseEntity {
 
     private Integer bookRating;
 
-    public Rating(Book book) {
-        this.book = book;
-    }
-
-    public Rating(User user) {
-        this.user = user;
-    }
-
-    public Rating(Integer bookRating) {
-        this.bookRating = bookRating;
-    }
-
-    public Rating(User user, Integer bookRating) {
-        this.user = user;
-        this.bookRating = bookRating;
-    }
-
     public Rating(Book book, User user, Integer bookRating) {
+        this.book = book;
+        this.user = user;
+        this.bookRating = bookRating;
+    }
+
+    public Rating(Long id, Book book, User user, Integer bookRating) {
+        super(id);
         this.book = book;
         this.user = user;
         this.bookRating = bookRating;

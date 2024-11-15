@@ -30,10 +30,6 @@ public class Author extends NamedItem {
         super(name);
     }
 
-    public Author(Long id) {
-        super(id);
-    }
-
     public Author(Long id, String name) {
         super(id, name);
     }

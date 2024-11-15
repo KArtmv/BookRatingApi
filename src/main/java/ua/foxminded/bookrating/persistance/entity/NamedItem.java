@@ -15,10 +15,6 @@ public abstract class NamedItem extends BaseEntity {
     @NotBlank(message = "The name is required and cannot be empty.")
     private String name;
 
-    protected NamedItem(Long id) {
-        super(id);
-    }
-
     protected NamedItem(String name) {
         this.name = name;
     }

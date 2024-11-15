@@ -30,10 +30,6 @@ public class Publisher extends NamedItem {
         super(name);
     }
 
-    public Publisher(Long id) {
-        super(id);
-    }
-
     public Publisher(Long id, String name) {
         super(id, name);
     }
