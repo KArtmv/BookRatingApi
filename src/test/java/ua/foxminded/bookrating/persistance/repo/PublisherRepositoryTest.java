@@ -8,7 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlMergeMode;
 import ua.foxminded.bookrating.persistance.entity.Publisher;
 import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.util.publisher.PublisherData;
