@@ -4,13 +4,19 @@ import org.flywaydb.test.annotation.FlywayTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import ua.foxminded.bookrating.persistance.entity.Author;
+import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.util.author.AuthorsData;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -25,27 +31,50 @@ class AuthorRepositoryTest {
 
     @Test
     void getBooksByAuthor() {
-        assertThat(authorRepository.getBooksByEntity(AUTHORS_DATA.getAuthor(), 0, Pageable.ofSize(30)).getContent()).hasSize(24);
+        assertAll(() -> {
+            Page<BookRatingProjection> result = authorRepository.getBooksByEntity(AUTHORS_DATA.getAuthor(), 0, Pageable.unpaged());
+            assertTrue(result.hasContent());
+            assertThat(result.getTotalElements()).isEqualTo(24);
+            assertThat(result.getTotalPages()).isEqualTo(1);
+        });
     }
 
     @Test
     void findByName() {
-        assertThat(authorRepository.findByName(AUTHORS_DATA.getName())).isPresent();
+        assertAll(() -> {
+            Optional<Author> result = authorRepository.findByName(AUTHORS_DATA.getName());
+            assertTrue(result.isPresent());
+            assertThat(result).contains(AUTHORS_DATA.getAuthor());
+        });
     }
 
     @Test
     void findAllPaginated() {
-        assertThat(authorRepository.findAllPaginated(Pageable.ofSize(10)).getContent()).hasSize(10);
+        assertAll(() -> {
+            Page<Author> result = authorRepository.findAllPaginated(Pageable.unpaged());
+            assertTrue(result.hasContent());
+            assertThat(result.getTotalElements()).isEqualTo(10);
+            assertThat(result.getTotalPages()).isEqualTo(1);
+        });
     }
 
     @Test
     void findByNameContainingIgnoreCase() {
-        assertThat(authorRepository.findByNameContainingIgnoreCase(AUTHORS_DATA.getName(), Pageable.ofSize(10)).getContent()).hasSize(1);
+        assertAll(() -> {
+            Page<Author> result = authorRepository.findByNameContainingIgnoreCase(AUTHORS_DATA.getName(), Pageable.ofSize(10));
+            assertTrue(result.hasContent());
+            assertThat(result.getTotalPages()).isEqualTo(1);
+            assertThat(result.getContent()).hasSize(1);
+        });
     }
 
     @Test
     void findById() {
-        assertThat(authorRepository.findById(AUTHORS_DATA.getId())).isPresent();
+        assertAll(() -> {
+            Optional<Author> result = authorRepository.findById(AUTHORS_DATA.getId());
+            assertTrue(result.isPresent());
+            assertThat(result).contains(AUTHORS_DATA.getAuthor());
+        });
     }
 
     @Test
@@ -54,24 +83,21 @@ class AuthorRepositoryTest {
     }
 
     @Test
+    @Sql(scripts = {"/sql/publishers.sql"})
     void save() {
-        int countOfAuthors = authorRepository.findAll().size();
-        authorRepository.save(new Author(AUTHORS_DATA.getAuthorTestName()));
-        assertThat(authorRepository.findAll()).hasSize(countOfAuthors + 1);
-    }
-
-    @Test
-    void update() {
-        Author author = authorRepository.findById(AUTHORS_DATA.getId()).get();
-        author.setName(AUTHORS_DATA.getAuthorTestName());
-        authorRepository.save(author);
-        assertThat(authorRepository.findById(AUTHORS_DATA.getId()).get().getName()).isEqualTo(AUTHORS_DATA.getAuthorTestName());
+        assertAll(() -> {
+            assertThat(authorRepository.findAll()).isEmpty();
+            authorRepository.save(AUTHORS_DATA.getNewAuthor());
+            assertThat(authorRepository.findAll()).hasSize(1);
+        });
     }
 
     @Test
     void delete() {
-        int size = authorRepository.findAll().size();
-        authorRepository.delete(AUTHORS_DATA.getAuthor());
-        assertThat(authorRepository.findAll()).hasSize(size - 1);
+        assertAll(() -> {
+            assertThat(authorRepository.findAll()).hasSize(10);
+            authorRepository.delete(AUTHORS_DATA.getAuthor());
+            assertThat(authorRepository.findAll()).hasSize(9);
+        });
     }
 }

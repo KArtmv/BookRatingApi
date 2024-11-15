@@ -39,7 +39,7 @@ class BookRepositoryTest {
         assertAll(() -> {
             Optional<Book> result = bookRepository.findByIsbn(BOOK_DATA.getIsbn());
             assertTrue(result.isPresent());
-            assertThat(result.get()).isEqualTo(BOOK_DATA.getBook());
+            assertThat(result).contains(BOOK_DATA.getBook());
         });
     }
 
@@ -114,25 +114,32 @@ class BookRepositoryTest {
     @Sql(scripts = {"/sql/authors.sql", "/sql/publishers.sql", "/sql/images.sql"})
     void save() {
         assertAll(() -> {
-            int countOfEntries = bookRepository.findAll().size();
-            assertThat(countOfEntries).isZero();
-            assertThat(bookRepository.save(BOOK_DATA.getSimpleBook())).isNotNull();
-            assertThat(bookRepository.findAll()).hasSize(countOfEntries + 1);
+            assertThat(bookRepository.findAll()).isEmpty();
+            assertThat(bookRepository.save(BOOK_DATA.getNewBook())).isNotNull();
+            assertThat(bookRepository.findAll()).hasSize(1);
         });
     }
 
     @Test
     void delete() {
         assertAll(() -> {
-            int countOfEntries = bookRepository.findAll().size();
-            assertThat(countOfEntries).isEqualTo(33);
+            assertThat(bookRepository.findAll()).hasSize(33);
             bookRepository.delete(BOOK_DATA.getBook());
-            assertThat(bookRepository.findAll()).hasSize(countOfEntries - 1);
+            assertThat(bookRepository.findAll()).hasSize(32);
         });
     }
 
     @Test
     void findAll() {
         assertThat(bookRepository.findAll()).hasSize(33);
+    }
+
+    @Test
+    void findById() {
+        assertAll(() -> {
+            Optional<Book> result = bookRepository.findById(BOOK_DATA.getId());
+            assertTrue(result.isPresent());
+            assertThat(result).contains(BOOK_DATA.getBook());
+        });
     }
 }
