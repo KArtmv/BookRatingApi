@@ -9,5 +9,6 @@ public class PublisherData {
     private final String name = "Books on Tape";
     private final String publisherTestName = "test name";
     private final Publisher publisher = new Publisher(id, name);
+    private final Publisher newPublisher = new Publisher(name);
 
 }

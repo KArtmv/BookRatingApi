@@ -10,4 +10,5 @@ public class AuthorsData {
     private final String name = "Scott Turow";
     private final String authorTestName = "Test Name";
     private final Author author = new Author(id, name);
+    private final Author newAuthor = new Author(name);
 }
