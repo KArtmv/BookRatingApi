@@ -1,6 +1,7 @@
 package ua.foxminded.bookrating.util.book;
 
 import lombok.Getter;
+import ua.foxminded.bookrating.dto.BookDto;
 import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.util.author.AuthorsData;
 import ua.foxminded.bookrating.util.image.ImageData;
@@ -20,6 +21,33 @@ public class BookData {
     private final String title = "Reversible Errors";
     private final String publicationYear = "2003";
 
+    private final String updatedIsbn = "0736688399";
+    private final String updatedTitle = "Updated book title";
+    private final String updatedPublicationYear = "2000";
+
+
     private final Book book = new Book(id, isbn, title, publicationYear, PUBLISHER_DATA.getPublisher(), Collections.singleton(AUTHORS_DATA.getAuthor()), IMAGE_DATA.getImage());
     private final Book newBook = new Book(isbn, title, publicationYear, PUBLISHER_DATA.getPublisher(), Collections.singleton(AUTHORS_DATA.getAuthor()), IMAGE_DATA.getImage());
+
+    public BookDto bookDto() {
+        BookDto bookDto = new BookDto();
+        bookDto.setIsbn(isbn);
+        bookDto.setTitle(title);
+        bookDto.setPublicationYear(publicationYear);
+        bookDto.setPublisherId(PUBLISHER_DATA.getId());
+        bookDto.setAuthorsId(Collections.singletonList(AUTHORS_DATA.getId()));
+        bookDto.setImage(IMAGE_DATA.getImage());
+        return bookDto;
+    }
+
+    public BookDto bookDtoUpdate() {
+        BookDto bookDto = new BookDto();
+        bookDto.setIsbn(updatedIsbn);
+        bookDto.setTitle(updatedTitle);
+        bookDto.setPublicationYear(updatedPublicationYear);
+        bookDto.setPublisherId(PUBLISHER_DATA.getId());
+        bookDto.setAuthorsId(Collections.singletonList(AUTHORS_DATA.getId()));
+        bookDto.setImage(IMAGE_DATA.getImage());
+        return bookDto;
+    }
 }
