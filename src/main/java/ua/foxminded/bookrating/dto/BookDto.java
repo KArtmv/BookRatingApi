@@ -2,6 +2,7 @@ package ua.foxminded.bookrating.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import ua.foxminded.bookrating.persistance.entity.Image;
 
 import java.util.List;
 
@@ -13,7 +14,5 @@ public class BookDto {
     private String publicationYear;
     private List<Long> authorsId;
     private Long publisherId;
-    private String imageUrlS;
-    private String imageUrlM;
-    private String imageUrlL;
+    private Image image;
 }
