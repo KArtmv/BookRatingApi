@@ -22,21 +22,24 @@ import java.util.Set;
 @Table(name = "book")
 @SequenceGenerator(name = "default_gen", sequenceName = "book_id_seq", allocationSize = 1)
 @SQLInsert(sql = """
-        INSERT INTO book (image_id, isbn, publication_year, publisher_id, title, id)
-                VALUES (?, ?, ?, ?, ?, ?)
-                ON CONFLICT (isbn) DO NOTHING""")
+    INSERT INTO book (image_url_small, image_url_medium, image_url_large, isbn, publication_year, publisher_id, title, id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ON CONFLICT (isbn) DO NOTHING""")
 public class Book extends BaseEntity {
 
     @NotBlank(message = "The ISBN of book is required")
     @Size(min = 10, max = 13, message = "The ISBN must be between 10 and 13 characters long")
+    @Column(name = "isbn")
     private String isbn;
 
     @NotBlank(message = "The title of the book is required and cannot be empty")
+    @Column(name = "title")
     private String title;
 
     @NotBlank(message = "The year of publication is required")
     @Pattern(regexp = "^[0-9]+", message = "The year can contains just digits")
     @Size(max = 4, message = "The length of year is 4 characters")
+    @Column(name = "publication_year")
     private String publicationYear;
 
     @ManyToOne
@@ -54,9 +57,7 @@ public class Book extends BaseEntity {
                         ON CONFLICT (book_isbn, author_id) DO NOTHING""")
     private Set<Author> authors = new LinkedHashSet<>();
 
-
-    @OneToOne(cascade = CascadeType.REMOVE, orphanRemoval = true)
-    @JoinColumn(name = "image_id")
+    @Embedded
     private Image image;
 
     @OneToMany(mappedBy = "book", cascade = CascadeType.REMOVE, orphanRemoval = true)

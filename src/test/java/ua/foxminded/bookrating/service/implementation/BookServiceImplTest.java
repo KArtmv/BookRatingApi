@@ -12,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.persistance.entity.Image;
 import ua.foxminded.bookrating.persistance.repo.BookRepository;
-import ua.foxminded.bookrating.persistance.repo.ImageRepository;
 import ua.foxminded.bookrating.service.AuthorService;
 import ua.foxminded.bookrating.service.BookService;
 import ua.foxminded.bookrating.service.PublisherService;
@@ -46,8 +45,6 @@ class BookServiceImplTest {
     private PublisherService publisherService;
     @MockBean
     private AuthorService authorService;
-    @MockBean
-    private ImageRepository imageRepository;
     @Autowired
     private BookService bookService;
 
@@ -76,7 +73,6 @@ class BookServiceImplTest {
         when(bookRepository.findByIsbn(anyString())).thenReturn(Optional.empty());
         when(publisherService.findById(anyLong())).thenReturn(PUBLISHER_DATA.getPublisher());
         when(authorService.findById(anyLong())).thenReturn(AUTHOR_DATA.getAuthor());
-        when(imageRepository.save(any(Image.class))).thenReturn(IMAGE_DATA.getImage());
 
         bookService.save(BOOK_DATA.bookDto());
 
@@ -112,7 +108,6 @@ class BookServiceImplTest {
         when(bookRepository.findById(anyLong())).thenReturn(Optional.of(BOOK_DATA.getBook()));
         when(publisherService.findById(anyLong())).thenReturn(PUBLISHER_DATA.getPublisher());
         when(authorService.findById(anyLong())).thenReturn(AUTHOR_DATA.getAuthor());
-        when(imageRepository.save(any(Image.class))).thenReturn(IMAGE_DATA.getImage());
 
         bookService.update(BOOK_DATA.getId(), BOOK_DATA.bookDtoUpdate());
 
