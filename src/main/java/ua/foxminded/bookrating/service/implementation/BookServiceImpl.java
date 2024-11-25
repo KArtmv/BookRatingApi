@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.bookrating.dto.BookDto;
 import ua.foxminded.bookrating.persistance.entity.Book;
+import ua.foxminded.bookrating.persistance.entity.Image;
 import ua.foxminded.bookrating.persistance.repo.BookRepository;
+import ua.foxminded.bookrating.persistance.repo.ImageRepository;
 import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.service.AuthorService;
 import ua.foxminded.bookrating.service.BookService;
@@ -25,12 +27,14 @@ public class BookServiceImpl extends CrudServiceImpl<Book> implements BookServic
     private final BookRepository bookRepository;
     private final PublisherService publisherService;
     private final AuthorService authorService;
+    private final ImageRepository imageRepository;
 
-    public BookServiceImpl(BookRepository repository, PublisherService publisherService, AuthorService authorService) {
+    public BookServiceImpl(BookRepository repository, PublisherService publisherService, AuthorService authorService, ImageRepository imageRepository) {
         super(repository);
         this.bookRepository = repository;
         this.publisherService = publisherService;
         this.authorService = authorService;
+        this.imageRepository = imageRepository;
     }
 
     @Override
@@ -82,10 +86,19 @@ public class BookServiceImpl extends CrudServiceImpl<Book> implements BookServic
         book.setTitle(dto.getTitle());
         book.setPublicationYear(dto.getPublicationYear());
         book.setPublisher(publisherService.findById(dto.getPublisherId()));
-        book.setAuthors(book.getAuthors().stream().map(a -> authorService.findById(a.getId())).collect(Collectors.toSet()));
-        book.getImage().setImageUrlSmall(dto.getImageUrlS());
-        book.getImage().setImageUrlMedium(dto.getImageUrlM());
-        book.getImage().setImageUrlLarge(dto.getImageUrlL());
+        book.setAuthors(dto.getAuthorsId().stream().map(authorService::findById).collect(Collectors.toSet()));
+        Image newImage = dto.getImage();
+
+        if (book.getImage() != null && !newImage.equals(book.getImage())) {
+            Image image = book.getImage();
+
+            image.setImageUrlSmall(newImage.getImageUrlSmall());
+            image.setImageUrlMedium(newImage.getImageUrlMedium());
+            image.setImageUrlLarge(newImage.getImageUrlLarge());
+            book.setImage(imageRepository.save(image));
+        } else if (book.getImage() == null) {
+            book.setImage(imageRepository.save(newImage));
+        }
         return book;
     }
 }
