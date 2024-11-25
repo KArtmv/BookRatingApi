@@ -8,7 +8,8 @@ public class AuthorsData {
 
     private final Long id = 4L;
     private final String name = "Scott Turow";
-    private final String authorTestName = "Test Name";
+    private final String updatedName = "Test Name";
     private final Author author = new Author(id, name);
     private final Author newAuthor = new Author(name);
+    private final Author updatedAuthor = new Author(updatedName);
 }
