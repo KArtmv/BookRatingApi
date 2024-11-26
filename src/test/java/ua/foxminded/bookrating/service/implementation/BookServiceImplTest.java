@@ -10,14 +10,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ua.foxminded.bookrating.persistance.entity.Book;
-import ua.foxminded.bookrating.persistance.entity.Image;
 import ua.foxminded.bookrating.persistance.repo.BookRepository;
 import ua.foxminded.bookrating.service.AuthorService;
 import ua.foxminded.bookrating.service.BookService;
 import ua.foxminded.bookrating.service.PublisherService;
 import ua.foxminded.bookrating.util.author.AuthorsData;
 import ua.foxminded.bookrating.util.book.BookData;
-import ua.foxminded.bookrating.util.image.ImageData;
 import ua.foxminded.bookrating.util.publisher.PublisherData;
 
 import java.util.Collections;
@@ -37,7 +35,6 @@ class BookServiceImplTest {
     public static final BookData BOOK_DATA = new BookData();
     public static final PublisherData PUBLISHER_DATA = new PublisherData();
     public static final AuthorsData AUTHOR_DATA = new AuthorsData();
-    public static final ImageData IMAGE_DATA = new ImageData();
 
     @MockBean
     private BookRepository bookRepository;
@@ -88,7 +85,7 @@ class BookServiceImplTest {
             assertThat(value.getPublicationYear()).isEqualTo(BOOK_DATA.getPublicationYear());
             assertThat(value.getPublisher()).isEqualTo(PUBLISHER_DATA.getPublisher());
             assertThat(value.getAuthors()).contains(AUTHOR_DATA.getAuthor());
-            assertThat(value.getImage()).isEqualTo(IMAGE_DATA.getImage());
+            assertThat(value.getImage()).isEqualTo(BOOK_DATA.getImage());
         });
         verifyNoMoreInteractions(bookRepository);
     }
@@ -123,7 +120,7 @@ class BookServiceImplTest {
             assertThat(value.getPublicationYear()).isEqualTo(BOOK_DATA.getUpdatedPublicationYear());
             assertThat(value.getPublisher()).isEqualTo(PUBLISHER_DATA.getPublisher());
             assertThat(value.getAuthors()).contains(AUTHOR_DATA.getAuthor());
-            assertThat(value.getImage()).isEqualTo(IMAGE_DATA.getImage());
+            assertThat(value.getImage()).isEqualTo(BOOK_DATA.getImage());
         });
         verifyNoMoreInteractions(bookRepository);
     }
@@ -226,6 +223,18 @@ class BookServiceImplTest {
 
         verify(bookRepository).findById(anyLong());
         verify(bookRepository).delete(any(Book.class));
+        verifyNoMoreInteractions(bookRepository);
+    }
+
+    @Test
+    void getRatingsByBookId_shouldReturnPagedResult_whenInvoked() {
+        when(bookRepository.findById(anyLong())).thenReturn(Optional.of(BOOK_DATA.getBook()));
+        when(bookRepository.findBookRatings(any(Book.class), any(Pageable.class))).thenReturn(mock(Page.class));
+
+        bookService.getRatingsByBookId(BOOK_DATA.getId(), Pageable.unpaged());
+
+        verify(bookRepository).findById(anyLong());
+        verify(bookRepository).findBookRatings(any(Book.class), any(Pageable.class));
         verifyNoMoreInteractions(bookRepository);
     }
 }

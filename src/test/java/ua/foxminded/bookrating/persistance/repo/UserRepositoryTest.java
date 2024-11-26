@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DataJpaTest
 @ActiveProfiles("test")
 @FlywayTest
-@Sql(scripts = {"/sql/authors.sql", "/sql/publishers.sql", "/sql/images.sql", "/sql/books.sql", "/sql/book-authors.sql", "/sql/users.sql", "/sql/ratings.sql"})
+@Sql(scripts = {"/sql/authors.sql", "/sql/publishers.sql", "/sql/books.sql", "/sql/book-authors.sql", "/sql/users.sql", "/sql/ratings.sql"})
 class UserRepositoryTest {
 
     public static final UserData USER_DATA = new UserData();
@@ -49,7 +49,7 @@ class UserRepositoryTest {
     }
 
     @Test
-    @Sql(scripts = {"/sql/authors.sql", "/sql/publishers.sql", "/sql/images.sql", "/sql/books.sql", "/sql/book-authors.sql"})
+    @Sql(scripts = {"/sql/authors.sql", "/sql/publishers.sql", "/sql/books.sql", "/sql/book-authors.sql"})
     void save() {
         assertAll(() -> {
             assertThat(userRepository.findAll()).isEmpty();

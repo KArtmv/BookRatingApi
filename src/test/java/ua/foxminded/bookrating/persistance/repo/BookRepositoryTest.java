@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import ua.foxminded.bookrating.persistance.entity.Book;
+import ua.foxminded.bookrating.persistance.entity.Rating;
 import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.util.author.AuthorsData;
 import ua.foxminded.bookrating.util.book.BookData;
@@ -24,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DataJpaTest
 @ActiveProfiles("test")
 @FlywayTest
-@Sql(scripts = {"/sql/authors.sql", "/sql/publishers.sql", "/sql/images.sql", "/sql/books.sql", "/sql/book-authors.sql", "/sql/users.sql", "/sql/ratings.sql"})
+@Sql(scripts = {"/sql/authors.sql", "/sql/publishers.sql", "/sql/books.sql", "/sql/book-authors.sql", "/sql/users.sql", "/sql/ratings.sql"})
 class BookRepositoryTest {
 
     public static final BookData BOOK_DATA = new BookData();
@@ -111,7 +112,7 @@ class BookRepositoryTest {
     }
 
     @Test
-    @Sql(scripts = {"/sql/authors.sql", "/sql/publishers.sql", "/sql/images.sql"})
+    @Sql(scripts = {"/sql/authors.sql", "/sql/publishers.sql"})
     void save() {
         assertAll(() -> {
             assertThat(bookRepository.findAll()).isEmpty();
@@ -140,6 +141,16 @@ class BookRepositoryTest {
             Optional<Book> result = bookRepository.findById(BOOK_DATA.getId());
             assertTrue(result.isPresent());
             assertThat(result).contains(BOOK_DATA.getBook());
+        });
+    }
+
+    @Test
+    void findBookRatings() {
+        assertAll(() -> {
+            Page<Rating> bookRatings = bookRepository.findBookRatings(BOOK_DATA.getBook(), Pageable.unpaged());
+            assertTrue(bookRatings.hasContent());
+            assertThat(bookRatings.getTotalElements()).isEqualTo(1);
+            assertThat(bookRatings.getTotalPages()).isEqualTo(1);
         });
     }
 }

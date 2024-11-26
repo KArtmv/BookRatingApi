@@ -21,27 +21,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @DataJpaTest
 @ActiveProfiles("test")
 @FlywayTest
-@Sql(scripts = {"/sql/authors.sql", "/sql/publishers.sql", "/sql/images.sql", "/sql/books.sql", "/sql/book-authors.sql", "/sql/users.sql", "/sql/ratings.sql"})
+@Sql(scripts = {"/sql/authors.sql", "/sql/publishers.sql", "/sql/books.sql", "/sql/book-authors.sql", "/sql/users.sql", "/sql/ratings.sql"})
 class RatingRepositoryTest {
 
     public static final RatingData RATING_DATA = new RatingData();
-    public static final BookData BOOK_DATA = new BookData();
 
     @Autowired
     private RatingRepository ratingRepository;
 
     @Test
-    void getRatingsByBook() {
-        assertAll(() -> {
-            Page<Rating> result = ratingRepository.getRatingsByBook(BOOK_DATA.getBook(), Pageable.unpaged());
-            assertTrue(result.hasContent());
-            assertThat(result.getTotalElements()).isEqualTo(1);
-            assertThat(result.getTotalPages()).isEqualTo(1);
-        });
-    }
-
-    @Test
-    @Sql(scripts = {"/sql/authors.sql", "/sql/publishers.sql", "/sql/images.sql", "/sql/books.sql", "/sql/book-authors.sql", "/sql/users.sql"})
+    @Sql(scripts = {"/sql/authors.sql", "/sql/publishers.sql", "/sql/books.sql", "/sql/book-authors.sql", "/sql/users.sql"})
     void save() {
         assertAll(() -> {
             assertThat(ratingRepository.findAll()).isEmpty();
