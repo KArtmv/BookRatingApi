@@ -9,5 +9,4 @@ import ua.foxminded.bookrating.persistance.entity.Rating;
 
 @Repository
 public interface RatingRepository extends JpaRepository<Rating, Long> {
-    Page<Rating> getRatingsByBook(Book book, Pageable pageable);
 }

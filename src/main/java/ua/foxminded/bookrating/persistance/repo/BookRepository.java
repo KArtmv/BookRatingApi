@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import ua.foxminded.bookrating.persistance.entity.Author;
 import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.persistance.entity.Publisher;
+import ua.foxminded.bookrating.persistance.entity.Rating;
 import ua.foxminded.bookrating.projection.BookRatingProjection;
 
 import java.util.List;
@@ -54,4 +55,12 @@ public interface BookRepository extends JpaRepository<Book, Long> {
                                                           @Param("desiredAverageRating") Integer desiredAverageRating,
                                                           @Param("title") String title,
                                                           Pageable pageable);
+
+    @Query("""
+        select b.ratings
+        from Book b
+        join b.ratings r
+        where r.book = :book""")
+    Page<Rating> findBookRatings(@Param("book") Book book, Pageable pageable);
+
 }

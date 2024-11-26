@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.bookrating.dto.BookDto;
 import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.persistance.entity.Image;
+import ua.foxminded.bookrating.persistance.entity.Rating;
 import ua.foxminded.bookrating.persistance.repo.BookRepository;
 import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.service.AuthorService;
@@ -86,5 +87,10 @@ public class BookServiceImpl extends CrudServiceImpl<Book> implements BookServic
         book.setAuthors(dto.getAuthorsId().stream().map(authorService::findById).collect(Collectors.toSet()));
         book.setImage(dto.getImage());
         return book;
+    }
+
+    @Override
+    public Page<Rating> getRatingsByBookId(Long id, Pageable pageable) {
+        return bookRepository.findBookRatings(findById(id), pageable);
     }
 }

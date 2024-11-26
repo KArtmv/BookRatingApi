@@ -9,9 +9,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ua.foxminded.bookrating.assembler.BookModelAssembler;
 import ua.foxminded.bookrating.assembler.FullBookModelAssembler;
+import ua.foxminded.bookrating.assembler.RatingModelAssembler;
 import ua.foxminded.bookrating.dto.BookDto;
 import ua.foxminded.bookrating.model.BookModel;
+import ua.foxminded.bookrating.model.RatingModel;
 import ua.foxminded.bookrating.model.SimpleBookModel;
+import ua.foxminded.bookrating.persistance.entity.Rating;
 import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.service.BookService;
 
@@ -26,6 +29,14 @@ public class BookController {
     private final FullBookModelAssembler fullBookModelAssembler;
     private final BookModelAssembler bookModelAssembler;
     private final PagedResourcesAssembler<BookRatingProjection> pagedResourcesAssembler;
+    private final RatingModelAssembler ratingModelAssembler;
+    private final PagedResourcesAssembler<Rating> ratingPagedResourcesAssembler;
+
+    @GetMapping("/books/{id}/ratings")
+    public PagedModel<RatingModel> getBookRatings(@PathVariable("id") Long id,
+                                                  @PageableDefault Pageable pageable) {
+        return ratingPagedResourcesAssembler.toModel(bookService.getRatingsByBookId(id, pageable), ratingModelAssembler);
+    }
 
     @GetMapping("/books")
     public PagedModel<SimpleBookModel> getBooks(@PageableDefault Pageable pageable,

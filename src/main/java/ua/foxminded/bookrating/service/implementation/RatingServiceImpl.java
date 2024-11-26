@@ -26,11 +26,6 @@ public class RatingServiceImpl extends CrudServiceImpl<Rating> implements Rating
         this.userService = userService;
     }
 
-    @Override
-    public Page<Rating> getRatingsByBookId(Long bookId, Pageable pageable) {
-        return ratingRepository.getRatingsByBook(bookService.findById(bookId), pageable);
-    }
-
     @Transactional
     @Override
     public Rating save(RatingDto ratingDto) {

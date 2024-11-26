@@ -20,15 +20,8 @@ import ua.foxminded.bookrating.service.RatingService;
 public class RatingController {
 
     private final RatingService ratingService;
-    private final RatingModelAssembler ratingModelAssembler;
     private final FullRatingModelAssembler fullRatingModelAssembler;
-    private final PagedResourcesAssembler<Rating> pagedResourcesAssembler;
-
-    @GetMapping("/ratings/book/{id}")
-    public PagedModel<RatingModel> getBookRatings(@PathVariable("id") Long bookId,
-                                                  @PageableDefault Pageable pageable) {
-        return pagedResourcesAssembler.toModel(ratingService.getRatingsByBookId(bookId, pageable), ratingModelAssembler);
-    }
+    private final RatingModelAssembler ratingModelAssembler;
 
     @GetMapping("/ratings/{id}")
     public RatingModel get(@PathVariable("id") Long id) {

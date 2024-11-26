@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
+import ua.foxminded.bookrating.controller.BookController;
 import ua.foxminded.bookrating.controller.RatingController;
 import ua.foxminded.bookrating.model.AuthorModel;
 import ua.foxminded.bookrating.model.BookModel;
@@ -47,6 +48,6 @@ public class FullBookModelAssembler implements RepresentationModelAssembler<Book
     }
 
     private static Link getRatingsLink(Book entity) {
-        return linkTo(methodOn(RatingController.class).getBookRatings(entity.getId(), Pageable.unpaged())).withRel("bookRatings");
+        return linkTo(methodOn(BookController.class).getBookRatings(entity.getId(), Pageable.unpaged())).withRel("bookRatings");
     }
 }
