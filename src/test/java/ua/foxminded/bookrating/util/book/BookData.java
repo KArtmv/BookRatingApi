@@ -1,13 +1,18 @@
 package ua.foxminded.bookrating.util.book;
 
 import lombok.Getter;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import ua.foxminded.bookrating.dto.BookDto;
 import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.persistance.entity.Image;
+import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.util.author.AuthorsData;
 import ua.foxminded.bookrating.util.publisher.PublisherData;
 
 import java.util.Collections;
+import java.util.List;
 
 @Getter
 public class BookData {
@@ -51,4 +56,22 @@ public class BookData {
         bookDto.setImage(image);
         return bookDto;
     }
+
+    private final Page<BookRatingProjection> bookRatingProjections = new PageImpl<>(
+            List.of(
+                    new BookRatingProjection() {
+                        @Override
+                        public Book getBook() {
+                            return book;
+                        }
+
+                        @Override
+                        public Double getAverageRating() {
+                            return 0.0;
+                        }
+                    }
+            ),
+            PageRequest.of(0, 10), 1
+    );
+
 }
