@@ -2,9 +2,9 @@ ALTER TABLE book
     DROP CONSTRAINT fk_book_on_image;
 
 ALTER TABLE book
-    ADD image_url_large VARCHAR(255),
+    ADD image_url_large  VARCHAR(255),
     ADD image_url_medium VARCHAR(255),
-    ADD image_url_small VARCHAR(255);
+    ADD image_url_small  VARCHAR(255);
 
 DROP TABLE image CASCADE;
 

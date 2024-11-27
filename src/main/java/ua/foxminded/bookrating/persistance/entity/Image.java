@@ -1,12 +1,10 @@
 package ua.foxminded.bookrating.persistance.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.proxy.HibernateProxy;
-
-import java.util.Objects;
 
 @Getter
 @Setter

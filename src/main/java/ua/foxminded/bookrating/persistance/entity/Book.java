@@ -22,9 +22,9 @@ import java.util.Set;
 @Table(name = "book")
 @SequenceGenerator(name = "default_gen", sequenceName = "book_id_seq", allocationSize = 1)
 @SQLInsert(sql = """
-    INSERT INTO book (image_url_small, image_url_medium, image_url_large, isbn, publication_year, publisher_id, title, id)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    ON CONFLICT (isbn) DO NOTHING""")
+        INSERT INTO book (image_url_small, image_url_medium, image_url_large, isbn, publication_year, publisher_id, title, id)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT (isbn) DO NOTHING""")
 public class Book extends BaseEntity {
 
     @NotBlank(message = "The ISBN of book is required")

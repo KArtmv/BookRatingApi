@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.bookrating.dto.BookDto;
 import ua.foxminded.bookrating.persistance.entity.Book;
-import ua.foxminded.bookrating.persistance.entity.Image;
 import ua.foxminded.bookrating.persistance.entity.Rating;
 import ua.foxminded.bookrating.persistance.repo.BookRepository;
 import ua.foxminded.bookrating.projection.BookRatingProjection;

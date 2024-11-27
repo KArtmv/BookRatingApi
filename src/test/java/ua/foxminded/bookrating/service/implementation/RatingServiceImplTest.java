@@ -6,10 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import ua.foxminded.bookrating.persistance.entity.Rating;
-import ua.foxminded.bookrating.persistance.entity.User;
 import ua.foxminded.bookrating.persistance.repo.RatingRepository;
 import ua.foxminded.bookrating.service.BookService;
-import ua.foxminded.bookrating.service.PublisherService;
 import ua.foxminded.bookrating.service.RatingService;
 import ua.foxminded.bookrating.service.UserService;
 import ua.foxminded.bookrating.util.book.BookData;
@@ -19,7 +17,7 @@ import ua.foxminded.bookrating.util.user.UserData;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 

@@ -1,17 +1,12 @@
 package ua.foxminded.bookrating.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.data.web.PagedResourcesAssembler;
-import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ua.foxminded.bookrating.assembler.FullRatingModelAssembler;
 import ua.foxminded.bookrating.assembler.RatingModelAssembler;
 import ua.foxminded.bookrating.dto.RatingDto;
 import ua.foxminded.bookrating.model.RatingModel;
-import ua.foxminded.bookrating.persistance.entity.Rating;
 import ua.foxminded.bookrating.service.RatingService;
 
 @RestController

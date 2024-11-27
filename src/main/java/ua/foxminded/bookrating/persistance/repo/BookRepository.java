@@ -57,10 +57,10 @@ public interface BookRepository extends JpaRepository<Book, Long> {
                                                           Pageable pageable);
 
     @Query("""
-        select b.ratings
-        from Book b
-        join b.ratings r
-        where r.book = :book""")
+            select b.ratings
+            from Book b
+            join b.ratings r
+            where r.book = :book""")
     Page<Rating> findBookRatings(@Param("book") Book book, Pageable pageable);
 
 }

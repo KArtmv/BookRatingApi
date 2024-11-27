@@ -4,10 +4,7 @@ import lombok.Getter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.persistance.entity.Publisher;
-import ua.foxminded.bookrating.projection.BookRatingProjection;
-import ua.foxminded.bookrating.util.book.BookData;
 
 import java.util.List;
 

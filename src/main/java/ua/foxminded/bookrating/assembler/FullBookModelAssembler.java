@@ -6,7 +6,6 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 import ua.foxminded.bookrating.controller.BookController;
-import ua.foxminded.bookrating.controller.RatingController;
 import ua.foxminded.bookrating.model.AuthorModel;
 import ua.foxminded.bookrating.model.BookModel;
 import ua.foxminded.bookrating.model.PublisherModel;
