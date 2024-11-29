@@ -42,10 +42,7 @@ public class BookServiceImpl extends CrudServiceImpl<Book> implements BookServic
     @Transactional
     @Override
     public Book save(BookDto entity) {
-        if (bookRepository.findByIsbn(entity.getIsbn()).isEmpty()) {
-            return bookRepository.save(toEntity(entity, new Book()));
-        }
-        throw new EntityExistsException("A book with the given ISBN: " + entity.getIsbn() + " already exists.");
+        return bookRepository.save(toEntity(entity, new Book()));
     }
 
     @Transactional
