@@ -1,5 +1,6 @@
 package ua.foxminded.bookrating.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -61,12 +62,12 @@ public class BookController {
 
     @PostMapping("/books")
     @ResponseStatus(HttpStatus.CREATED)
-    public BookModel add(@RequestBody BookDto bookDto) {
+    public BookModel add(@Valid @RequestBody BookDto bookDto) {
         return fullBookModelAssembler.toModel(bookService.save(bookDto));
     }
 
     @PutMapping("/books/{id}")
-    public BookModel update(@PathVariable Long id, @RequestBody BookDto book) {
+    public BookModel update(@PathVariable Long id, @Valid @RequestBody BookDto book) {
         return fullBookModelAssembler.toModel(bookService.update(id, book));
     }
 
