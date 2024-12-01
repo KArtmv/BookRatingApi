@@ -1,6 +1,8 @@
 package ua.foxminded.bookrating.springBatch.writer;
 
 import org.springframework.batch.item.adapter.ItemWriterAdapter;
+import org.springframework.batch.item.support.SynchronizedItemStreamWriter;
+import org.springframework.batch.item.support.builder.SynchronizedItemStreamWriterBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ua.foxminded.bookrating.persistance.entity.*;
@@ -12,11 +14,6 @@ public class Writer {
     @Bean
     public ItemWriterAdapter<User> userWriter(UserService userService) {
         return createWriterAdapter(userService);
-    }
-
-    @Bean
-    public ItemWriterAdapter<Book> bookWriter(BookService bookService) {
-        return createWriterAdapter(bookService);
     }
 
     @Bean
@@ -32,6 +29,13 @@ public class Writer {
     @Bean
     public ItemWriterAdapter<Publisher> publisherWriter(PublisherService publisherService) {
         return createWriterAdapter(publisherService);
+    }
+
+    @Bean
+    public SynchronizedItemStreamWriter<Book> syncBookWriter(BookWriter bookWriter) {
+        SynchronizedItemStreamWriter<Book> writer = new SynchronizedItemStreamWriter<>();
+        writer.setDelegate(bookWriter);
+        return writer;
     }
 
     private <T, S> ItemWriterAdapter<T> createWriterAdapter(S service) {
