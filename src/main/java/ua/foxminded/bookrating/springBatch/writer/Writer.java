@@ -2,11 +2,13 @@ package ua.foxminded.bookrating.springBatch.writer;
 
 import org.springframework.batch.item.adapter.ItemWriterAdapter;
 import org.springframework.batch.item.support.SynchronizedItemStreamWriter;
-import org.springframework.batch.item.support.builder.SynchronizedItemStreamWriterBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ua.foxminded.bookrating.persistance.entity.*;
-import ua.foxminded.bookrating.service.*;
+import ua.foxminded.bookrating.service.AuthorService;
+import ua.foxminded.bookrating.service.PublisherService;
+import ua.foxminded.bookrating.service.RatingService;
+import ua.foxminded.bookrating.service.UserService;
 
 @Configuration
 public class Writer {

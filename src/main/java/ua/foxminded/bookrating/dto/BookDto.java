@@ -8,7 +8,6 @@ import jakarta.validation.constraints.PastOrPresent;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.ISBN;
-import org.hibernate.validator.constraints.URL;
 import ua.foxminded.bookrating.annotation.Isbn;
 import ua.foxminded.bookrating.persistance.entity.Image;
 

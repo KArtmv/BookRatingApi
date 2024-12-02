@@ -8,11 +8,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.SQLInsert;
-import org.hibernate.proxy.HibernateProxy;
 
 import java.util.LinkedHashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Getter

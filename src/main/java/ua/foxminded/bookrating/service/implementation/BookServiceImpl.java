@@ -1,6 +1,5 @@
 package ua.foxminded.bookrating.service.implementation;
 
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

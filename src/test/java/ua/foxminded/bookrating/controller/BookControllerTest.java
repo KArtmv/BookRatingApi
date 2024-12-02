@@ -24,10 +24,10 @@ import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @Import({AuthorModelAssembler.class, PublisherModelAssembler.class, IsbnValidator.class,
         BookModelAssembler.class, SimpleBookModelAssembler.class, FullBookModelAssembler.class, ValidatorConfig.class,
@@ -176,18 +176,18 @@ class BookControllerTest {
         when(bookRepository.findByIsbn(anyString())).thenReturn(Optional.empty());
 
         mockMvc.perform(post("/api/v1/books").contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                            {"isbn": "0195153448",
-                             "title": "Classical Mythology",
-                             "publicationYear": "2002",
-                             "authorsId": [4],
-                             "publisherId": 1577,
-                             "image": {
-                                 "imageUrlSmall": "http://images.amazon.com/images/P/0736688390.01.THUMBZZZ.jpg",
-                                 "imageUrlMedium": "http://images.amazon.com/images/P/0736688390.01.MZZZZZZZ.jpg",
-                                 "imageUrlLarge": "http://images.amazon.com/images/P/0736688390.01.LZZZZZZZ.jpg"
-                             }
-                            }""")).andDo(print())
+                        .content("""
+                                {"isbn": "0195153448",
+                                 "title": "Classical Mythology",
+                                 "publicationYear": "2002",
+                                 "authorsId": [4],
+                                 "publisherId": 1577,
+                                 "image": {
+                                     "imageUrlSmall": "http://images.amazon.com/images/P/0736688390.01.THUMBZZZ.jpg",
+                                     "imageUrlMedium": "http://images.amazon.com/images/P/0736688390.01.MZZZZZZZ.jpg",
+                                     "imageUrlLarge": "http://images.amazon.com/images/P/0736688390.01.LZZZZZZZ.jpg"
+                                 }
+                                }""")).andDo(print())
                 .andExpectAll(
                         status().isCreated(),
                         jsonPath("$.id").value(BOOK_DATA.getId()),
@@ -207,7 +207,7 @@ class BookControllerTest {
                         jsonPath("$.image.imageUrlMedium").value(BOOK_DATA.getImage().getImageUrlMedium()),
                         jsonPath("$.image.imageUrlLarge").value(BOOK_DATA.getImage().getImageUrlLarge()),
                         jsonPath("$._links.bookRatings.href").value(BOOK_DATA.getBookRatingHref())
-        );
+                );
     }
 
     @Test
@@ -216,18 +216,18 @@ class BookControllerTest {
         when(bookRepository.findByIsbn(anyString())).thenReturn(Optional.empty());
 
         mockMvc.perform(post("/api/v1/books").contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                            {"isbn": "1212121212",
-                             "title": " ",
-                             "publicationYear": "",
-                             "authorsId": [],
-                             "publisherId": "",
-                             "image": {
-                                 "imageUrlSmall": "",
-                                 "imageUrlMedium": " ",
-                                 "imageUrlLarge": "ftp://images.amazon.com/images/P/0736688390.01.LZZZZZZZ.jpg"
-                             }
-                            }""")).andDo(print())
+                        .content("""
+                                {"isbn": "1212121212",
+                                 "title": " ",
+                                 "publicationYear": "",
+                                 "authorsId": [],
+                                 "publisherId": "",
+                                 "image": {
+                                     "imageUrlSmall": "",
+                                     "imageUrlMedium": " ",
+                                     "imageUrlLarge": "ftp://images.amazon.com/images/P/0736688390.01.LZZZZZZZ.jpg"
+                                 }
+                                }""")).andDo(print())
                 .andExpectAll(
                         status().isBadRequest(),
                         jsonPath("$.isbn").value("The provided ISBN is not valid."),
@@ -238,7 +238,7 @@ class BookControllerTest {
                         jsonPath("$.['image.imageUrlSmall']").value("Image URL Small is required"),
                         jsonPath("$.['image.imageUrlMedium']").value("Image URL Medium is required"),
                         jsonPath("$.['image.imageUrlLarge']").value("Image URL Large must be a valid HTTP URL.")
-        );
+                );
     }
 
     @Test
@@ -247,22 +247,22 @@ class BookControllerTest {
         when(bookRepository.findByIsbn(anyString())).thenReturn(Optional.of(BOOK_DATA.getBook()));
 
         mockMvc.perform(post("/api/v1/books").contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                            {"isbn": "0736688390",
-                             "title": "Reversible Errors",
-                             "publicationYear": "2003",
-                             "authorsId": [4],
-                             "publisherId": 1577,
-                             "image": {
-                                 "imageUrlSmall": "http://images.amazon.com/images/P/0736688390.01.THUMBZZZ.jpg",
-                                 "imageUrlMedium": "http://images.amazon.com/images/P/0736688390.01.MZZZZZZZ.jpg",
-                                 "imageUrlLarge": "http://images.amazon.com/images/P/0736688390.01.LZZZZZZZ.jpg"
-                             }
-                            }""")).andDo(print())
+                        .content("""
+                                {"isbn": "0736688390",
+                                 "title": "Reversible Errors",
+                                 "publicationYear": "2003",
+                                 "authorsId": [4],
+                                 "publisherId": 1577,
+                                 "image": {
+                                     "imageUrlSmall": "http://images.amazon.com/images/P/0736688390.01.THUMBZZZ.jpg",
+                                     "imageUrlMedium": "http://images.amazon.com/images/P/0736688390.01.MZZZZZZZ.jpg",
+                                     "imageUrlLarge": "http://images.amazon.com/images/P/0736688390.01.LZZZZZZZ.jpg"
+                                 }
+                                }""")).andDo(print())
                 .andExpectAll(
                         status().isBadRequest(),
                         jsonPath("$.isbn").value("The provided ISBN already exists for another book.")
-        );
+                );
     }
 
     @Test
@@ -271,19 +271,19 @@ class BookControllerTest {
         when(bookRepository.findByIsbn(anyString())).thenReturn(Optional.empty());
 
         mockMvc.perform(put("/api/v1/books/{id}", BOOK_DATA.getId()).contentType(MediaType.APPLICATION_JSON)
-                .content("""
-                            {"id": "110464",
-                             "isbn": "0736688390",
-                             "title": "Reversible Errors",
-                             "publicationYear": "2003",
-                             "authorsId": [4],
-                             "publisherId": 1577,
-                             "image": {
-                                 "imageUrlSmall": "http://images.amazon.com/images/P/0736688390.01.THUMBZZZ.jpg",
-                                 "imageUrlMedium": "http://images.amazon.com/images/P/0736688390.01.MZZZZZZZ.jpg",
-                                 "imageUrlLarge": "http://images.amazon.com/images/P/0736688390.01.LZZZZZZZ.jpg"
-                             }
-                            }""")).andDo(print())
+                        .content("""
+                                {"id": "110464",
+                                 "isbn": "0736688390",
+                                 "title": "Reversible Errors",
+                                 "publicationYear": "2003",
+                                 "authorsId": [4],
+                                 "publisherId": 1577,
+                                 "image": {
+                                     "imageUrlSmall": "http://images.amazon.com/images/P/0736688390.01.THUMBZZZ.jpg",
+                                     "imageUrlMedium": "http://images.amazon.com/images/P/0736688390.01.MZZZZZZZ.jpg",
+                                     "imageUrlLarge": "http://images.amazon.com/images/P/0736688390.01.LZZZZZZZ.jpg"
+                                 }
+                                }""")).andDo(print())
                 .andExpectAll(
                         status().isOk(),
                         jsonPath("$.id").value(BOOK_DATA.getId()),
@@ -303,7 +303,7 @@ class BookControllerTest {
                         jsonPath("$.image.imageUrlMedium").value(BOOK_DATA.getImage().getImageUrlMedium()),
                         jsonPath("$.image.imageUrlLarge").value(BOOK_DATA.getImage().getImageUrlLarge()),
                         jsonPath("$._links.bookRatings.href").value(BOOK_DATA.getBookRatingHref())
-        );
+                );
     }
 
 
@@ -314,18 +314,18 @@ class BookControllerTest {
 
         mockMvc.perform(put("/api/v1/books/{id}", BOOK_DATA.getId()).contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                            {"id": "110464",
-                             "isbn": "0736688390",
-                             "title": " ",
-                             "publicationYear": " ",
-                             "authorsId": [],
-                             "publisherId": "",
-                             "image": {
-                                 "imageUrlSmall": "",
-                                 "imageUrlMedium": " ",
-                                 "imageUrlLarge": "ftp://images.amazon.com/images/P/0736688390.01.LZZZZZZZ.jpg"
-                             }
-                            }""")).andDo(print())
+                                {"id": "110464",
+                                 "isbn": "0736688390",
+                                 "title": " ",
+                                 "publicationYear": " ",
+                                 "authorsId": [],
+                                 "publisherId": "",
+                                 "image": {
+                                     "imageUrlSmall": "",
+                                     "imageUrlMedium": " ",
+                                     "imageUrlLarge": "ftp://images.amazon.com/images/P/0736688390.01.LZZZZZZZ.jpg"
+                                 }
+                                }""")).andDo(print())
                 .andExpectAll(
                         status().isBadRequest(),
                         jsonPath("$.title").value("The title of the book is required and cannot be empty."),
@@ -345,18 +345,18 @@ class BookControllerTest {
 
         mockMvc.perform(put("/api/v1/books/{id}", BOOK_DATA.getId()).contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                            {"id": "110",
-                             "isbn": "0736688390",
-                             "title": "Reversible Errors",
-                             "publicationYear": "2003",
-                             "authorsId": [4],
-                             "publisherId": 1577,
-                             "image": {
-                                 "imageUrlSmall": "http://images.amazon.com/images/P/0736688390.01.THUMBZZZ.jpg",
-                                 "imageUrlMedium": "http://images.amazon.com/images/P/0736688390.01.MZZZZZZZ.jpg",
-                                 "imageUrlLarge": "http://images.amazon.com/images/P/0736688390.01.LZZZZZZZ.jpg"
-                             }
-                            }""")).andDo(print())
+                                {"id": "110",
+                                 "isbn": "0736688390",
+                                 "title": "Reversible Errors",
+                                 "publicationYear": "2003",
+                                 "authorsId": [4],
+                                 "publisherId": 1577,
+                                 "image": {
+                                     "imageUrlSmall": "http://images.amazon.com/images/P/0736688390.01.THUMBZZZ.jpg",
+                                     "imageUrlMedium": "http://images.amazon.com/images/P/0736688390.01.MZZZZZZZ.jpg",
+                                     "imageUrlLarge": "http://images.amazon.com/images/P/0736688390.01.LZZZZZZZ.jpg"
+                                 }
+                                }""")).andDo(print())
                 .andExpectAll(
                         status().isBadRequest(),
                         jsonPath("$.isbn").value("The provided ISBN already exists for another book.")
