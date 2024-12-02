@@ -49,6 +49,7 @@ public class BookData {
 
     public BookDto bookDtoUpdate() {
         BookDto bookDto = new BookDto();
+        bookDto.setId(id);
         bookDto.setIsbn(updatedIsbn);
         bookDto.setTitle(updatedTitle);
         bookDto.setPublicationYear(Year.of(Integer.parseInt(updatedPublicationYear)));
