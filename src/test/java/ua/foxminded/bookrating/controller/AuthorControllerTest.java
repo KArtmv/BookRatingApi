@@ -17,6 +17,7 @@ import ua.foxminded.bookrating.persistance.entity.Author;
 import ua.foxminded.bookrating.service.AuthorService;
 import ua.foxminded.bookrating.util.author.AuthorsData;
 import ua.foxminded.bookrating.util.book.BookData;
+import ua.foxminded.bookrating.util.publisher.PublisherData;
 
 import java.util.List;
 
@@ -33,6 +34,7 @@ class AuthorControllerTest {
 
     public static final AuthorsData AUTHORS_DATA = new AuthorsData();
     public static final BookData BOOK_DATA = new BookData();
+    public static final PublisherData PUBLISHER_DATA = new PublisherData();
 
     @MockBean
     private AuthorService authorService;
@@ -48,8 +50,8 @@ class AuthorControllerTest {
                         status().isOk(),
                         jsonPath("$._embedded.authorModelList[0].id").value(AUTHORS_DATA.getId()),
                         jsonPath("$._embedded.authorModelList[0].name").value(AUTHORS_DATA.getName()),
-                        jsonPath("$._embedded.authorModelList[0]._links.self.href").value("http://localhost/api/v1/authors/4"),
-                        jsonPath("$._embedded.authorModelList[0]._links.authorBooks.href").value("http://localhost/api/v1/authors/4/books?desiredAverageRating=0"),
+                        jsonPath("$._embedded.authorModelList[0]._links.self.href").value(AUTHORS_DATA.getSelfHref()),
+                        jsonPath("$._embedded.authorModelList[0]._links.authorBooks.href").value(AUTHORS_DATA.getAuthorBooksHref()),
                         jsonPath("$._embedded.authorModelList[1].id").value(AUTHORS_DATA.getId2()),
                         jsonPath("$._embedded.authorModelList[1].name").value(AUTHORS_DATA.getName2()),
                         jsonPath("$._embedded.authorModelList[1]._links.self.href").value("http://localhost/api/v1/authors/2172"),
@@ -68,16 +70,16 @@ class AuthorControllerTest {
         mockMvc.perform(get("/api/v1/authors/{id}/books", AUTHORS_DATA.getId())).andDo(print())
                 .andExpectAll(
                         status().isOk(),
-                        jsonPath("$._embedded.simpleBookModelList[0].id").value(110464),
-                        jsonPath("$._embedded.simpleBookModelList[0].title").value("Reversible Errors"),
+                        jsonPath("$._embedded.simpleBookModelList[0].id").value(BOOK_DATA.getId()),
+                        jsonPath("$._embedded.simpleBookModelList[0].title").value(BOOK_DATA.getTitle()),
                         jsonPath("$._embedded.simpleBookModelList[0].author[0]").value(AUTHORS_DATA.getName()),
-                        jsonPath("$._embedded.simpleBookModelList[0].publisher").value("Books on Tape"),
-                        jsonPath("$._embedded.simpleBookModelList[0].publicationYear").value("2003"),
+                        jsonPath("$._embedded.simpleBookModelList[0].publisher").value(PUBLISHER_DATA.getName()),
+                        jsonPath("$._embedded.simpleBookModelList[0].publicationYear").value(BOOK_DATA.getPublicationYear()),
                         jsonPath("$._embedded.simpleBookModelList[0].averageRating").value("0.0"),
-                        jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlSmall").value("http://images.amazon.com/images/P/0736688390.01.THUMBZZZ.jpg"),
-                        jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlMedium").value("http://images.amazon.com/images/P/0736688390.01.MZZZZZZZ.jpg"),
-                        jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlLarge").value("http://images.amazon.com/images/P/0736688390.01.LZZZZZZZ.jpg"),
-                        jsonPath("$._embedded.simpleBookModelList[0]._links.self.href").value("http://localhost/api/v1/books/110464"),
+                        jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlSmall").value(BOOK_DATA.getImage().getImageUrlSmall()),
+                        jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlMedium").value(BOOK_DATA.getImage().getImageUrlMedium()),
+                        jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlLarge").value(BOOK_DATA.getImage().getImageUrlLarge()),
+                        jsonPath("$._embedded.simpleBookModelList[0]._links.self.href").value(BOOK_DATA.getSelfHref()),
                         jsonPath("$._links.self.href").value("http://localhost/api/v1/authors/4/books?page=0&size=10"),
                         jsonPath("$.page.size").value("10"),
                         jsonPath("$.page.totalElements").value("1"),
@@ -96,8 +98,8 @@ class AuthorControllerTest {
                         status().isOk(),
                         jsonPath("$._embedded.authorModelList[0].id").value(AUTHORS_DATA.getId()),
                         jsonPath("$._embedded.authorModelList[0].name").value(AUTHORS_DATA.getName()),
-                        jsonPath("$._embedded.authorModelList[0]._links.self.href").value("http://localhost/api/v1/authors/4"),
-                        jsonPath("$._embedded.authorModelList[0]._links.authorBooks.href").value("http://localhost/api/v1/authors/4/books?desiredAverageRating=0"),
+                        jsonPath("$._embedded.authorModelList[0]._links.self.href").value(AUTHORS_DATA.getSelfHref()),
+                        jsonPath("$._embedded.authorModelList[0]._links.authorBooks.href").value(AUTHORS_DATA.getAuthorBooksHref()),
                         jsonPath("$.page.size").value("10"),
                         jsonPath("$.page.totalElements").value("1"),
                         jsonPath("$.page.totalPages").value("1"),
@@ -114,8 +116,8 @@ class AuthorControllerTest {
                         status().isOk(),
                         jsonPath("$.id").value(AUTHORS_DATA.getId()),
                         jsonPath("$.name").value(AUTHORS_DATA.getName()),
-                        jsonPath("$._links.self.href").value("http://localhost/api/v1/authors/4"),
-                        jsonPath("$._links.authorBooks.href").value("http://localhost/api/v1/authors/4/books?desiredAverageRating=0")
+                        jsonPath("$._links.self.href").value(AUTHORS_DATA.getSelfHref()),
+                        jsonPath("$._links.authorBooks.href").value(AUTHORS_DATA.getAuthorBooksHref())
                 );
     }
 
@@ -129,8 +131,8 @@ class AuthorControllerTest {
                         status().isCreated(),
                         jsonPath("$.id").value(AUTHORS_DATA.getId()),
                         jsonPath("$.name").value(AUTHORS_DATA.getName()),
-                        jsonPath("$._links.self.href").value("http://localhost/api/v1/authors/4"),
-                        jsonPath("$._links.authorBooks.href").value("http://localhost/api/v1/authors/4/books?desiredAverageRating=0")
+                        jsonPath("$._links.self.href").value(AUTHORS_DATA.getSelfHref()),
+                        jsonPath("$._links.authorBooks.href").value(AUTHORS_DATA.getAuthorBooksHref())
                 );
     }
 
@@ -144,8 +146,8 @@ class AuthorControllerTest {
                         status().isOk(),
                         jsonPath("$.id").value(AUTHORS_DATA.getId()),
                         jsonPath("$.name").value(AUTHORS_DATA.getName()),
-                        jsonPath("$._links.self.href").value("http://localhost/api/v1/authors/4"),
-                        jsonPath("$._links.authorBooks.href").value("http://localhost/api/v1/authors/4/books?desiredAverageRating=0")
+                        jsonPath("$._links.self.href").value(AUTHORS_DATA.getSelfHref()),
+                        jsonPath("$._links.authorBooks.href").value(AUTHORS_DATA.getAuthorBooksHref())
                 );
     }
 

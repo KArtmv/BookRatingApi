@@ -15,6 +15,7 @@ import ua.foxminded.bookrating.assembler.PublisherModelAssembler;
 import ua.foxminded.bookrating.assembler.SimpleBookModelAssembler;
 import ua.foxminded.bookrating.persistance.entity.Publisher;
 import ua.foxminded.bookrating.service.PublisherService;
+import ua.foxminded.bookrating.util.author.AuthorsData;
 import ua.foxminded.bookrating.util.book.BookData;
 import ua.foxminded.bookrating.util.publisher.PublisherData;
 
@@ -33,6 +34,7 @@ class PublisherControllerTest {
 
     public static final PublisherData PUBLISHER_DATA = new PublisherData();
     public static final BookData BOOK_DATA = new BookData();
+    public static final AuthorsData AUTHOR_DATA = new AuthorsData();
 
     @MockBean
     private PublisherService publisherService;
@@ -48,8 +50,8 @@ class PublisherControllerTest {
                         status().isOk(),
                         jsonPath("$._embedded.publisherModelList[0].id").value(PUBLISHER_DATA.getId()),
                         jsonPath("$._embedded.publisherModelList[0].name").value(PUBLISHER_DATA.getName()),
-                        jsonPath("$._embedded.publisherModelList[0]._links.self.href").value("http://localhost/api/v1/publishers/1577"),
-                        jsonPath("$._embedded.publisherModelList[0]._links.publisherBooks.href").value("http://localhost/api/v1/publishers/1577/books?desiredAverageRating=0"),
+                        jsonPath("$._embedded.publisherModelList[0]._links.self.href").value(PUBLISHER_DATA.getSelfHref()),
+                        jsonPath("$._embedded.publisherModelList[0]._links.publisherBooks.href").value(PUBLISHER_DATA.getPublisherBooksHref()),
                         jsonPath("$._embedded.publisherModelList[1].id").value(PUBLISHER_DATA.getId2()),
                         jsonPath("$._embedded.publisherModelList[1].name").value(PUBLISHER_DATA.getName2()),
                         jsonPath("$._embedded.publisherModelList[1]._links.self.href").value("http://localhost/api/v1/publishers/21"),
@@ -68,16 +70,16 @@ class PublisherControllerTest {
         mockMvc.perform(get("/api/v1/publishers/{id}/books", PUBLISHER_DATA.getId())).andDo(print())
                 .andExpectAll(
                         status().isOk(),
-                        jsonPath("$._embedded.simpleBookModelList[0].id").value(110464),
-                        jsonPath("$._embedded.simpleBookModelList[0].title").value("Reversible Errors"),
-                        jsonPath("$._embedded.simpleBookModelList[0].author[0]").value("Scott Turow"),
-                        jsonPath("$._embedded.simpleBookModelList[0].publisher").value("Books on Tape"),
-                        jsonPath("$._embedded.simpleBookModelList[0].publicationYear").value("2003"),
+                        jsonPath("$._embedded.simpleBookModelList[0].id").value(BOOK_DATA.getId()),
+                        jsonPath("$._embedded.simpleBookModelList[0].title").value(BOOK_DATA.getTitle()),
+                        jsonPath("$._embedded.simpleBookModelList[0].author[0]").value(AUTHOR_DATA.getName()),
+                        jsonPath("$._embedded.simpleBookModelList[0].publisher").value(PUBLISHER_DATA.getName()),
+                        jsonPath("$._embedded.simpleBookModelList[0].publicationYear").value(BOOK_DATA.getPublicationYear()),
                         jsonPath("$._embedded.simpleBookModelList[0].averageRating").value("0.0"),
-                        jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlSmall").value("http://images.amazon.com/images/P/0736688390.01.THUMBZZZ.jpg"),
-                        jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlMedium").value("http://images.amazon.com/images/P/0736688390.01.MZZZZZZZ.jpg"),
-                        jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlLarge").value("http://images.amazon.com/images/P/0736688390.01.LZZZZZZZ.jpg"),
-                        jsonPath("$._embedded.simpleBookModelList[0]._links.self.href").value("http://localhost/api/v1/books/110464"),
+                        jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlSmall").value(BOOK_DATA.getImage().getImageUrlSmall()),
+                        jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlMedium").value(BOOK_DATA.getImage().getImageUrlMedium()),
+                        jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlLarge").value(BOOK_DATA.getImage().getImageUrlLarge()),
+                        jsonPath("$._embedded.simpleBookModelList[0]._links.self.href").value(BOOK_DATA.getSelfHref()),
                         jsonPath("$._links.self.href").value("http://localhost/api/v1/publishers/1577/books?page=0&size=10"),
                         jsonPath("$.page.size").value("10"),
                         jsonPath("$.page.totalElements").value("1"),
@@ -96,8 +98,8 @@ class PublisherControllerTest {
                         status().isOk(),
                         jsonPath("$._embedded.publisherModelList[0].id").value(PUBLISHER_DATA.getId()),
                         jsonPath("$._embedded.publisherModelList[0].name").value(PUBLISHER_DATA.getName()),
-                        jsonPath("$._embedded.publisherModelList[0]._links.self.href").value("http://localhost/api/v1/publishers/1577"),
-                        jsonPath("$._embedded.publisherModelList[0]._links.publisherBooks.href").value("http://localhost/api/v1/publishers/1577/books?desiredAverageRating=0"),
+                        jsonPath("$._embedded.publisherModelList[0]._links.self.href").value(PUBLISHER_DATA.getSelfHref()),
+                        jsonPath("$._embedded.publisherModelList[0]._links.publisherBooks.href").value(PUBLISHER_DATA.getPublisherBooksHref()),
                         jsonPath("$.page.size").value("10"),
                         jsonPath("$.page.totalElements").value("1"),
                         jsonPath("$.page.totalPages").value("1"),
@@ -114,8 +116,8 @@ class PublisherControllerTest {
                         status().isOk(),
                         jsonPath("$.id").value(PUBLISHER_DATA.getId()),
                         jsonPath("$.name").value(PUBLISHER_DATA.getName()),
-                        jsonPath("$._links.self.href").value("http://localhost/api/v1/publishers/1577"),
-                        jsonPath("$._links.publisherBooks.href").value("http://localhost/api/v1/publishers/1577/books?desiredAverageRating=0")
+                        jsonPath("$._links.self.href").value(PUBLISHER_DATA.getSelfHref()),
+                        jsonPath("$._links.publisherBooks.href").value(PUBLISHER_DATA.getPublisherBooksHref())
                 );
     }
 
@@ -129,8 +131,8 @@ class PublisherControllerTest {
                         status().isCreated(),
                         jsonPath("$.id").value(PUBLISHER_DATA.getId()),
                         jsonPath("$.name").value(PUBLISHER_DATA.getName()),
-                        jsonPath("$._links.self.href").value("http://localhost/api/v1/publishers/1577"),
-                        jsonPath("$._links.publisherBooks.href").value("http://localhost/api/v1/publishers/1577/books?desiredAverageRating=0")
+                        jsonPath("$._links.self.href").value(PUBLISHER_DATA.getSelfHref()),
+                        jsonPath("$._links.publisherBooks.href").value(PUBLISHER_DATA.getPublisherBooksHref())
                 );
     }
 
@@ -144,8 +146,8 @@ class PublisherControllerTest {
                         status().isOk(),
                         jsonPath("$.id").value(PUBLISHER_DATA.getId()),
                         jsonPath("$.name").value(PUBLISHER_DATA.getName()),
-                        jsonPath("$._links.self.href").value("http://localhost/api/v1/publishers/1577"),
-                        jsonPath("$._links.publisherBooks.href").value("http://localhost/api/v1/publishers/1577/books?desiredAverageRating=0")
+                        jsonPath("$._links.self.href").value(PUBLISHER_DATA.getSelfHref()),
+                        jsonPath("$._links.publisherBooks.href").value(PUBLISHER_DATA.getPublisherBooksHref())
                 );
     }
 
