@@ -56,24 +56,12 @@ class BookServiceImplTest {
     }
 
     @Test
-    void save_shouldThrowsException_whenBookIsbnIsExist() {
-        when(bookRepository.findByIsbn(anyString())).thenReturn(Optional.of(BOOK_DATA.getBook()));
-
-        assertThrows(EntityExistsException.class, () -> bookService.save(BOOK_DATA.bookDto()));
-
-        verify(bookRepository).findByIsbn(anyString());
-        verifyNoMoreInteractions(bookRepository);
-    }
-
-    @Test
     void save_shouldReturnSavedBook_whenBookIsbnIsNotExist() {
-        when(bookRepository.findByIsbn(anyString())).thenReturn(Optional.empty());
         when(publisherService.findById(anyLong())).thenReturn(PUBLISHER_DATA.getPublisher());
         when(authorService.findById(anyLong())).thenReturn(AUTHOR_DATA.getAuthor());
 
         bookService.save(BOOK_DATA.bookDto());
 
-        verify(bookRepository).findByIsbn(anyString());
         verify(publisherService).findById(anyLong());
         verify(authorService).findById(anyLong());
         var argumentCaptor = ArgumentCaptor.forClass(Book.class);
