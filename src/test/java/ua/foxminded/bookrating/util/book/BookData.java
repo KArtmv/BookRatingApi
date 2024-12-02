@@ -77,6 +77,6 @@ public class BookData {
     );
 
     private final String selfHref = "http://localhost/api/v1/books/110464";
-
+    private final String bookRatingHref = "http://localhost/api/v1/books/110464/ratings";
 
 }
