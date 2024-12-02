@@ -21,10 +21,6 @@ import java.util.Set;
 @Entity
 @Table(name = "book")
 @SequenceGenerator(name = "default_gen", sequenceName = "book_id_seq", allocationSize = 1)
-@SQLInsert(sql = """
-        INSERT INTO book (image_url_small, image_url_medium, image_url_large, isbn, publication_year, publisher_id, title, id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        ON CONFLICT (isbn) DO NOTHING""")
 public class Book extends BaseEntity {
 
     @NotBlank(message = "The ISBN of book is required")
@@ -51,10 +47,6 @@ public class Book extends BaseEntity {
     @JoinTable(name = "book_authors",
             joinColumns = @JoinColumn(name = "book_isbn", referencedColumnName = "isbn"),
             inverseJoinColumns = @JoinColumn(name = "author_id"))
-    @SQLInsert(sql = """
-            INSERT INTO book_authors (book_isbn, author_id)
-                        VALUES (?, ?)
-                        ON CONFLICT (book_isbn, author_id) DO NOTHING""")
     private Set<Author> authors = new LinkedHashSet<>();
 
     @Embedded
@@ -92,18 +84,21 @@ public class Book extends BaseEntity {
     }
 
     @Override
-    public final boolean equals(Object o) {
+    public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null) return false;
-        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
-        if (thisEffectiveClass != oEffectiveClass) return false;
+        if (o == null || getClass() != o.getClass()) return false;
+
         Book book = (Book) o;
-        return getId() != null && Objects.equals(getId(), book.getId());
+
+        if (getId() != null && book.getId() != null) {
+            return getId().equals(book.getId());
+        }
+
+        return isbn != null && isbn.equals(book.isbn);
     }
 
     @Override
-    public final int hashCode() {
-        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    public int hashCode() {
+        return getId() != null ? getId().hashCode() : (isbn != null ? isbn.hashCode() : 0);
     }
 }

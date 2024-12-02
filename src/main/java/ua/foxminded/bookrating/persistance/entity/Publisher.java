@@ -20,7 +20,6 @@ import java.util.Set;
 @Entity
 @Table(name = "publisher")
 @SequenceGenerator(name = "default_gen", sequenceName = "publisher_is_seq", allocationSize = 1)
-@SQLInsert(sql = "INSERT INTO publisher (name, id) VALUES (?, ?) ON CONFLICT (name) DO NOTHING")
 public class Publisher extends NamedItem {
 
     @OneToMany(mappedBy = "publisher", orphanRemoval = true)
