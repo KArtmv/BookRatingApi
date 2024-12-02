@@ -78,7 +78,7 @@ public class BookServiceImpl extends CrudServiceImpl<Book> implements BookServic
     private Book toEntity(BookDto dto, Book book) {
         book.setIsbn(dto.getIsbn());
         book.setTitle(dto.getTitle());
-        book.setPublicationYear(dto.getPublicationYear());
+        book.setPublicationYear(dto.getPublicationYear().toString());
         book.setPublisher(publisherService.findById(dto.getPublisherId()));
         book.setAuthors(dto.getAuthorsId().stream().map(authorService::findById).collect(Collectors.toSet()));
         book.setImage(dto.getImage());
