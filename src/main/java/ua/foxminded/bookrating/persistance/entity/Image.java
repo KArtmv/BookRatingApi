@@ -14,18 +14,18 @@ import org.hibernate.validator.constraints.URL;
 @Embeddable
 public class Image {
 
-    @URL
     @NotBlank(message = "Image URL Small is required")
+    @URL(protocol = "http", message = "Image URL Small must be a valid HTTP URL.")
     @Column(name = "image_url_small")
     private String imageUrlSmall;
 
-    @URL
     @NotBlank(message = "Image URL Medium is required")
+    @URL(protocol = "http", message = "Image URL Medium must be a valid HTTP URL.")
     @Column(name = "image_url_medium")
     private String imageUrlMedium;
 
-    @URL
     @NotBlank(message = "Image URL Large is required")
+    @URL(protocol = "http", message = "Image URL Large must be a valid HTTP URL.")
     @Column(name = "image_url_large")
     private String imageUrlLarge;
 
