@@ -25,4 +25,7 @@ public class PublisherData {
             List.of(publisher, publisher2),
             PageRequest.of(0, 2), 100
     );
+
+    private final String selfHref = "http://localhost/api/v1/publishers/1577";
+    private final String publisherBooksHref = "http://localhost/api/v1/publishers/1577/books?desiredAverageRating=0";
 }

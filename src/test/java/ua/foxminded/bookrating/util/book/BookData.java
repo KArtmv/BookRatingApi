@@ -11,6 +11,7 @@ import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.util.author.AuthorsData;
 import ua.foxminded.bookrating.util.publisher.PublisherData;
 
+import java.time.Year;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class BookData {
         BookDto bookDto = new BookDto();
         bookDto.setIsbn(isbn);
         bookDto.setTitle(title);
-        bookDto.setPublicationYear(publicationYear);
+        bookDto.setPublicationYear(Year.of(Integer.parseInt(publicationYear)));
         bookDto.setPublisherId(PUBLISHER_DATA.getId());
         bookDto.setAuthorsId(Collections.singletonList(AUTHORS_DATA.getId()));
         bookDto.setImage(image);
@@ -50,7 +51,7 @@ public class BookData {
         BookDto bookDto = new BookDto();
         bookDto.setIsbn(updatedIsbn);
         bookDto.setTitle(updatedTitle);
-        bookDto.setPublicationYear(updatedPublicationYear);
+        bookDto.setPublicationYear(Year.of(Integer.parseInt(updatedPublicationYear)));
         bookDto.setPublisherId(PUBLISHER_DATA.getId());
         bookDto.setAuthorsId(Collections.singletonList(AUTHORS_DATA.getId()));
         bookDto.setImage(image);
@@ -73,5 +74,8 @@ public class BookData {
             ),
             PageRequest.of(0, 10), 1
     );
+
+    private final String selfHref = "http://localhost/api/v1/books/110464";
+
 
 }

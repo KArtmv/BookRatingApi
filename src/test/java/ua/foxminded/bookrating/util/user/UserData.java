@@ -9,6 +9,8 @@ public class UserData {
     private final String location = "Fenton, Michigan, Usa";
     private final Integer age = 21;
     private final User user = new User(id, location, age);
-
     private final User newUser = new User("stockton, california, usa", 18);
+
+    private final String userRatedBooksHref = "http://localhost/api/v1/users/58792/rated-books";
+    private final String selfHref = "http://localhost/api/v1/users/58792";
 }
