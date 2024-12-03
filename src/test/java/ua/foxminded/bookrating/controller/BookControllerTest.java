@@ -1,6 +1,9 @@
 package ua.foxminded.bookrating.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,12 +25,12 @@ import ua.foxminded.bookrating.util.user.UserData;
 
 import java.util.Optional;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Import({AuthorModelAssembler.class, PublisherModelAssembler.class, IsbnValidator.class,
         BookModelAssembler.class, SimpleBookModelAssembler.class, FullBookModelAssembler.class, ValidatorConfig.class,
@@ -49,7 +52,7 @@ class BookControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    void getBookRatings() throws Exception {
+    void getBookRatings_shouldReturnBooks_whenRatingsExist() throws Exception {
         when(bookService.getRatingsByBookId(anyLong(), any(Pageable.class))).thenReturn(RATING_DATA.getRatings());
 
         mockMvc.perform(get("/api/v1/books/{id}/ratings", BOOK_DATA.getId())).andDo(print())
@@ -69,7 +72,7 @@ class BookControllerTest {
     }
 
     @Test
-    void getBooks() throws Exception {
+    void getBooks_shouldReturnBooks_whenBooksExist() throws Exception {
         when(bookService.findAllPaginated(anyInt(), any(Pageable.class))).thenReturn(BOOK_DATA.getBookRatingProjections());
 
         mockMvc.perform(get("/api/v1/books")).andDo(print())
@@ -93,7 +96,7 @@ class BookControllerTest {
     }
 
     @Test
-    void get_() throws Exception {
+    void getBookById_shouldReturnBook_whenBookExists() throws Exception {
         when(bookService.findById(anyLong())).thenReturn(BOOK_DATA.getBook());
 
         mockMvc.perform(get("/api/v1/books/{id}", BOOK_DATA.getId())).andDo(print())
@@ -120,7 +123,22 @@ class BookControllerTest {
     }
 
     @Test
-    void getBookByIsbn() throws Exception {
+    void getBookById_shouldThrowNotFoundException_whenBookDoesNotExist() throws Exception {
+        when(bookService.findById(anyLong())).thenThrow(new EntityNotFoundException("A book with id: " + BOOK_DATA.getId() + " is not found"));
+
+        mockMvc.perform(get("/api/v1/books/{id}", BOOK_DATA.getId())).andDo(print())
+                .andExpectAll(
+                        status().isNotFound(),
+                        jsonPath("$.type").value("about:blank"),
+                        jsonPath("$.title").value("Not Found"),
+                        jsonPath("$.status").value(404),
+                        jsonPath("$.detail").value("A book with id: " + BOOK_DATA.getId() + " is not found"),
+                        jsonPath("$.instance").value("/api/v1/books/110464")
+                );
+    }
+
+    @Test
+    void getBookByIsbn_shouldReturnBook_whenBookExists() throws Exception {
         when(bookService.getByIsbn(anyString())).thenReturn(BOOK_DATA.getBook());
 
         mockMvc.perform(get("/api/v1/books/isbn").param("isbn", BOOK_DATA.getIsbn())).andDo(print())
@@ -147,7 +165,31 @@ class BookControllerTest {
     }
 
     @Test
-    void getBooksContainTitle() throws Exception {
+    void getBookByIsbn_shouldThrowNotFoundException_whenBookDoesNotExist() throws Exception {
+        when(bookService.getByIsbn(anyString())).thenThrow(new EntityNotFoundException("A book with the given ISBN: " + BOOK_DATA.getIsbn() + " is not found"));
+
+        mockMvc.perform(get("/api/v1/books/isbn").param("isbn", BOOK_DATA.getIsbn())).andDo(print())
+                .andExpectAll(
+                        status().isNotFound(),
+                        jsonPath("$.type").value("about:blank"),
+                        jsonPath("$.title").value("Not Found"),
+                        jsonPath("$.status").value(404),
+                        jsonPath("$.detail").value("A book with the given ISBN: 0736688390 is not found"),
+                        jsonPath("$.instance").value("/api/v1/books/isbn")
+                );
+    }
+
+    @Test
+    void getBookByIsbn_shouldReturnError_whenIsbnIsInvalid() throws Exception {
+        mockMvc.perform(get("/api/v1/books/isbn").param("isbn", BOOK_DATA.getUpdatedIsbn())).andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        content().string(containsString("The provided ISBN is not valid")
+                        ));
+    }
+
+    @Test
+    void getBooksContainTitle_shouldReturnBooks_whenTitleMatches() throws Exception {
         when(bookService.getByTitleContaining(anyString(), any(Pageable.class))).thenReturn(BOOK_DATA.getBookRatingProjections());
 
         mockMvc.perform(get("/api/v1/books/title").param("title", "errors")).andDo(print())
@@ -170,8 +212,20 @@ class BookControllerTest {
                 );
     }
 
+    @ParameterizedTest
+    @ValueSource(strings = {"", " ", "   "})
+    void getBooksContainTitle_shouldReturnError_whenTitleIsBlank(String title) throws Exception {
+        when(bookService.getByTitleContaining(anyString(), any(Pageable.class))).thenReturn(BOOK_DATA.getBookRatingProjections());
+
+        mockMvc.perform(get("/api/v1/books/title").param("title", title)).andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        content().string(containsString("The title cannot be blank or empty"))
+                );
+    }
+
     @Test
-    void add_shouldReturnBookInstance_whenSuccessfullySaved() throws Exception {
+    void add_shouldReturnCreatedBook_whenRequestIsValid() throws Exception {
         when(bookService.save(any(BookDto.class))).thenReturn(BOOK_DATA.getBook());
         when(bookRepository.findByIsbn(anyString())).thenReturn(Optional.empty());
 
@@ -211,7 +265,7 @@ class BookControllerTest {
     }
 
     @Test
-    void add_shouldReturnErrorMessage_whenDataIsInvalid() throws Exception {
+    void add_shouldReturnBadRequestWithErrorMessage_whenInvalidDataProvided() throws Exception {
         when(bookService.save(any(BookDto.class))).thenReturn(BOOK_DATA.getBook());
         when(bookRepository.findByIsbn(anyString())).thenReturn(Optional.empty());
 
@@ -242,7 +296,7 @@ class BookControllerTest {
     }
 
     @Test
-    void add_shouldReturnErrorMessage_whenIsbnAlreadyExist() throws Exception {
+    void add_shouldReturnBadRequestWithErrorMessage_whenIsbnAlreadyExists() throws Exception {
         when(bookService.save(any(BookDto.class))).thenReturn(BOOK_DATA.getBook());
         when(bookRepository.findByIsbn(anyString())).thenReturn(Optional.of(BOOK_DATA.getBook()));
 
@@ -266,7 +320,7 @@ class BookControllerTest {
     }
 
     @Test
-    void update() throws Exception {
+    void update_shouldReturnUpdatedBook_whenValidParamsProvided() throws Exception {
         when(bookService.update(anyLong(), any(BookDto.class))).thenReturn(BOOK_DATA.getBook());
         when(bookRepository.findByIsbn(anyString())).thenReturn(Optional.empty());
 
@@ -306,9 +360,8 @@ class BookControllerTest {
                 );
     }
 
-
     @Test
-    void update_shouldReturnErrorMessage_whenDataIsInvalid() throws Exception {
+    void update_shouldReturnValidationErrors_whenInvalidDataProvided() throws Exception {
         when(bookService.update(anyLong(), any(BookDto.class))).thenReturn(BOOK_DATA.getBook());
         when(bookRepository.findByIsbn(anyString())).thenReturn(Optional.empty());
 
@@ -339,7 +392,7 @@ class BookControllerTest {
     }
 
     @Test
-    void update_shouldReturnErrorMessage_whenIsbnAlreadyExist() throws Exception {
+    void update_shouldReturnError_whenIsbnAlreadyExists() throws Exception {
         when(bookService.update(anyLong(), any(BookDto.class))).thenReturn(BOOK_DATA.getBook());
         when(bookRepository.findByIsbn(anyString())).thenReturn(Optional.of(BOOK_DATA.getBook()));
 
@@ -364,16 +417,16 @@ class BookControllerTest {
     }
 
     @Test
-    void delete_() throws Exception {
+    void delete_shouldDeleteBook_whenBookExists() throws Exception {
         mockMvc.perform(delete("/api/v1/books/{id}", BOOK_DATA.getId()))
                 .andDo(print()).andExpect(status().isNoContent());
     }
 
     @Test
-    void getFilteredBooks() throws Exception {
+    void getFilteredBooks_shouldReturnBooks_whenValidFilterParamsProvided() throws Exception {
         when(bookService.getBooksByAuthorAndPublisher(anyList(), anyList(), anyInt(), anyString(), any(Pageable.class))).thenReturn(BOOK_DATA.getBookRatingProjections());
 
-        mockMvc.perform(get("/api/v1/books/filter-by").param("authorsId", "4").param("publishersId", "1577"))
+        mockMvc.perform(get("/api/v1/books/filter-by").param("authorsId", AUTHORS_DATA.getId().toString()).param("publishersId", PUBLISHER_DATA.getId().toString()))
                 .andDo(print()).andExpectAll(
                         status().isOk(),
                         jsonPath("$._embedded.simpleBookModelList[0].id").value(BOOK_DATA.getId()),
@@ -390,6 +443,16 @@ class BookControllerTest {
                         jsonPath("$.page.totalElements").value("1"),
                         jsonPath("$.page.totalPages").value("1"),
                         jsonPath("$.page.number").value("0")
+                );
+    }
+
+    @Test
+    void getFilteredBooks_shouldReturnError_whenAuthorsIdParamIsMissing() throws Exception {
+        mockMvc.perform(get("/api/v1/books/filter-by")).andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        content().string(containsString("Required parameter 'authors' is not present.")),
+                        content().string(containsString("Required parameter 'publisher' is not present."))
                 );
     }
 }
