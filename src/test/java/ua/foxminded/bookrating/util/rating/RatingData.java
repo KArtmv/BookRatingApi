@@ -19,12 +19,15 @@ public class RatingData {
 
     private final Long id = 220481L;
     private final Integer userRating = 7;
-    private final Integer updatedRating = 5;
+    private final Integer updatedUserRating = 5;
     private final Rating newRating = new Rating(BOOK_DATA.getBook(), USER_DATA.getUser(), userRating);
     private final Rating rating = new Rating(id, BOOK_DATA.getBook(), USER_DATA.getUser(), userRating);
+    private final Rating updatedRating = new Rating(id, BOOK_DATA.getBook(), USER_DATA.getUser(), updatedUserRating);
     private final RatingDto ratingDto = new RatingDto(BOOK_DATA.getId(), USER_DATA.getId(), userRating);
+    private final String selfHref = "http://localhost/api/v1/ratings/220481";
 
     private final Page<Rating> ratings = new PageImpl<>(
             List.of(rating), PageRequest.of(0, 10), 1
     );
+
 }
