@@ -3,12 +3,14 @@ package ua.foxminded.bookrating.service.implementation;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.bookrating.persistance.entity.Rating;
 import ua.foxminded.bookrating.persistance.entity.User;
 import ua.foxminded.bookrating.persistance.repo.UserRepository;
 import ua.foxminded.bookrating.service.UserService;
 
 @Service
+@Transactional(readOnly = true)
 public class UserServiceImpl extends CrudServiceImpl<User> implements UserService {
 
     private final UserRepository userRepository;
@@ -21,5 +23,14 @@ public class UserServiceImpl extends CrudServiceImpl<User> implements UserServic
     @Override
     public Page<Rating> findRatedBooksByUser(Long userId, Pageable pageable) {
         return userRepository.findByRatingsUser(findById(userId), pageable);
+    }
+
+    @Override
+    @Transactional
+    public User update(Long id, User updateUser) {
+        User user = findById(id);
+        user.setLocation(updateUser.getLocation());
+        user.setAge(updateUser.getAge());
+        return userRepository.save(user);
     }
 }
