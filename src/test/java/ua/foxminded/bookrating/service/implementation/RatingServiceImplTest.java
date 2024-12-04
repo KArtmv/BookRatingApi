@@ -66,7 +66,7 @@ class RatingServiceImplTest {
         when(userService.findById(anyLong())).thenReturn(USER_DATA.getUser());
         when(bookService.findById(anyLong())).thenReturn(BOOK_DATA.getBook());
 
-        ratingService.update(RATING_DATA.getId(), RATING_DATA.getUpdatedRating());
+        ratingService.update(RATING_DATA.getId(), RATING_DATA.getUpdatedUserRating());
 
         verify(ratingRepository).findById(anyLong());
         var argumentCaptor = ArgumentCaptor.forClass(Rating.class);
@@ -76,7 +76,7 @@ class RatingServiceImplTest {
             assertThat(result.getId()).isEqualTo(RATING_DATA.getId());
             assertThat(result.getUser()).isEqualTo(USER_DATA.getUser());
             assertThat(result.getBook()).isEqualTo(BOOK_DATA.getBook());
-            assertThat(result.getBookRating()).isEqualTo(RATING_DATA.getUpdatedRating());
+            assertThat(result.getBookRating()).isEqualTo(RATING_DATA.getUpdatedUserRating());
         });
         verifyNoMoreInteractions(ratingRepository);
     }
