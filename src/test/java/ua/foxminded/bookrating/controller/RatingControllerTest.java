@@ -57,7 +57,7 @@ class RatingControllerTest {
                         {
                          "bookId": "110464",
                          "userId": "58792",
-                         "rating": "7"
+                         "bookRating": "7"
                         }
                         """)).andDo(print()).andExpectAll(
                 status().isCreated(),
