@@ -67,8 +67,8 @@ public class BookServiceImpl extends CrudServiceImpl<Book> implements BookServic
                                                                    String title,
                                                                    Pageable pageable) {
         return bookRepository.findByAuthorsOrPublisherIn(
-                authorsId.isEmpty() ? Collections.emptyList() : authorsId.stream().map(authorService::findById).toList(),
-                publisherId.isEmpty() ? Collections.emptyList() : publisherId.stream().map(publisherService::findById).toList(),
+                authorsId == null ? Collections.emptyList() : authorsId.stream().map(authorService::findById).toList(),
+                publisherId == null ? Collections.emptyList() : publisherId.stream().map(publisherService::findById).toList(),
                 desiredAverageRating,
                 title.trim(),
                 pageable);
