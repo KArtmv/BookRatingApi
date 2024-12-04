@@ -33,8 +33,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Import({AuthorModelAssembler.class, PublisherModelAssembler.class, IsbnValidator.class,
-        BookModelAssembler.class, SimpleBookModelAssembler.class, FullBookModelAssembler.class, ValidatorConfig.class,
-        RatingModelAssembler.class, RatingModelAssembler.class, UserModelAssembler.class})
+        BookModelAssembler.class, SimpleBookModelAssembler.class, FullBookModelAssembler.class,
+        ValidatorConfig.class, RatingModelAssembler.class, UserModelAssembler.class})
 @WebMvcTest(BookController.class)
 class BookControllerTest {
 
