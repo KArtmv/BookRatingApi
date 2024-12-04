@@ -17,7 +17,6 @@ import ua.foxminded.bookrating.util.book.BookData;
 import ua.foxminded.bookrating.util.rating.RatingData;
 import ua.foxminded.bookrating.util.user.UserData;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
