@@ -447,12 +447,31 @@ class BookControllerTest {
     }
 
     @Test
-    void getFilteredBooks_shouldReturnError_whenAuthorsIdParamIsMissing() throws Exception {
+    void getFilteredBooks_shouldReturnError_whenAuthorsIdPublisherIdParamsIsMissing() throws Exception {
         mockMvc.perform(get("/api/v1/books/filter-by")).andDo(print())
                 .andExpectAll(
                         status().isBadRequest(),
-                        content().string(containsString("Required parameter 'authors' is not present.")),
-                        content().string(containsString("Required parameter 'publisher' is not present."))
+                        content().string(containsString("authorsId\":\"At least authors or publishers must be provided.")),
+                        content().string(containsString("publishersId\":\"At least authors or publishers must be provided."))
                 );
     }
+
+    @Test
+    void getFilteredBooks_shouldReturnError_whenAuthorsIdParamIsMissing() throws Exception {
+        mockMvc.perform(get("/api/v1/books/filter-by").param("publisherId", PUBLISHER_DATA.getId().toString())).andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        content().string(containsString("authorsId\":\"At least authors or publishers must be provided."))
+                );
+    }
+
+    @Test
+    void getFilteredBooks_shouldReturnError_whenPublisherIdParamIsMissing() throws Exception {
+        mockMvc.perform(get("/api/v1/books/filter-by").param("authorId", AUTHORS_DATA.getId().toString())).andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        content().string(containsString("publishersId\":\"At least authors or publishers must be provided."))
+                );
+    }
+
 }
