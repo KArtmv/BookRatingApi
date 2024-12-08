@@ -39,6 +39,16 @@ public class Rating extends BaseEntity {
         this.bookRating = bookRating;
     }
 
+    public void setBook(Book book) {
+        this.book = book;
+        book.getRatings().add(this);
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+        user.getRatings().add(this);
+    }
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;
