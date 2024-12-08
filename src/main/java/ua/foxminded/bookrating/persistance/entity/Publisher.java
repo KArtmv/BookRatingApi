@@ -21,7 +21,7 @@ import java.util.Set;
 @SequenceGenerator(name = "default_gen", sequenceName = "publisher_is_seq", allocationSize = 1)
 public class Publisher extends NamedItem {
 
-    @OneToMany(mappedBy = "publisher", orphanRemoval = true)
+    @OneToMany(mappedBy = "publisher")
     private Set<Book> books = new LinkedHashSet<>();
 
     public Publisher(String name) {
