@@ -49,7 +49,7 @@ public class Book extends BaseEntity {
     @Embedded
     private Image image;
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "book")
     private Set<Rating> ratings = new LinkedHashSet<>();
 
     public Book(String isbn, String title, String publicationYear, Publisher publisher, Set<Author> authors, Image image) {
@@ -73,11 +73,32 @@ public class Book extends BaseEntity {
 
     public void addAuthor(Author author) {
         this.authors.add(author);
+        author.getBooks().add(this);
     }
 
     public Double getAverageRating() {
         return ratings.stream().mapToDouble(Rating::getBookRating)
                 .average().orElse(0.0);
+    }
+
+    public void setAuthors(Set<Author> authors) {
+        if (!authors.isEmpty()) {
+            authors.forEach(a -> a.getBooks().remove(this));
+        }
+        this.authors = authors;
+        if (!authors.isEmpty()) {
+            authors.forEach(author -> author.getBooks().add(this));
+        }
+    }
+
+    public void setPublisher(Publisher publisher) {
+        if (this.publisher != null) {
+            this.publisher.getBooks().remove(this);
+        }
+        this.publisher = publisher;
+        if (publisher != null) {
+            publisher.getBooks().add(this);
+        }
     }
 
     @Override
