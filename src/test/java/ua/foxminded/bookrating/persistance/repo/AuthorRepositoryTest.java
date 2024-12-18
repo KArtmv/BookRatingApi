@@ -9,9 +9,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import ua.foxminded.bookrating.persistance.entity.Author;
+import ua.foxminded.bookrating.persistance.entity.Rating;
 import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.util.author.AuthorsData;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,6 +30,10 @@ class AuthorRepositoryTest {
 
     @Autowired
     private AuthorRepository authorRepository;
+    @Autowired
+    private BookRepository bookRepository;
+    @Autowired
+    private RatingRepository ratingRepository;
 
     @Test
     void getBooksByAuthor() {
@@ -95,9 +101,22 @@ class AuthorRepositoryTest {
     @Test
     void delete() {
         assertAll(() -> {
+            List<BookRatingProjection> authorBooks = authorRepository.getBooksByEntity(AUTHORS_DATA.getAuthor(), 0, Pageable.unpaged()).getContent();
+            int authorBooksCount = authorBooks.size();
+            int allBooksCount = bookRepository.findAll().size();
+            int allRatingsCount = ratingRepository.findAll().size();
+            int authorBooksRatingsCount = authorBooks.stream().mapToInt(value -> value.getBook().getRatings().size()).sum();
+
+            assertThat(allRatingsCount).isEqualTo(1006);
+            assertThat(authorBooksCount).isEqualTo(24);
+            assertThat(allBooksCount).isEqualTo(33);
+
             assertThat(authorRepository.findAll()).hasSize(10);
             authorRepository.delete(AUTHORS_DATA.getAuthor());
             assertThat(authorRepository.findAll()).hasSize(9);
+
+            assertThat(bookRepository.findAll()).hasSize(allBooksCount - authorBooksCount);
+            assertThat(ratingRepository.findAll()).hasSize(allRatingsCount - authorBooksRatingsCount);
         });
     }
 }

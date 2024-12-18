@@ -12,6 +12,7 @@ import ua.foxminded.bookrating.persistance.entity.Rating;
 import ua.foxminded.bookrating.persistance.entity.User;
 import ua.foxminded.bookrating.util.user.UserData;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,6 +29,8 @@ class UserRepositoryTest {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RatingRepository ratingRepository;
 
     @Test
     void findByRatingsUser() {
@@ -61,9 +64,16 @@ class UserRepositoryTest {
     @Test
     void delete() {
         assertAll(() -> {
+            int userRatingsCount = userRepository.findByRatingsUser(USER_DATA.getUser(), Pageable.unpaged()).getContent().size();
+            int allRatingsCount = ratingRepository.findAll().size();
+
+            assertThat(allRatingsCount).isEqualTo(1006);
+
             assertThat(userRepository.findAll()).hasSize(744);
             userRepository.deleteById(USER_DATA.getId());
             assertThat(userRepository.findAll()).hasSize(743);
+
+            assertThat(ratingRepository.findAll()).hasSize(allRatingsCount - userRatingsCount);
         });
     }
 }

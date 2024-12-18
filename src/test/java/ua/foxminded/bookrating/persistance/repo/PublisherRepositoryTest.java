@@ -12,12 +12,12 @@ import ua.foxminded.bookrating.persistance.entity.Publisher;
 import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.util.publisher.PublisherData;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -29,6 +29,10 @@ class PublisherRepositoryTest {
 
     @Autowired
     private PublisherRepository publisherRepository;
+    @Autowired
+    private BookRepository bookRepository;
+    @Autowired
+    private RatingRepository ratingRepository;
 
     @Test
     void getBooksByPublisher() {
@@ -96,9 +100,22 @@ class PublisherRepositoryTest {
     @Test
     void delete() {
         assertAll(() -> {
+            List<BookRatingProjection> publisherBooks = publisherRepository.getBooksByEntity(PUBLISHER_DATA.getPublisher(), 0, Pageable.unpaged()).getContent();
+            int publisherBooksCount = publisherBooks.size();
+            int allBooksCount = bookRepository.findAll().size();
+            int allRatingsCount = ratingRepository.findAll().size();
+            int publisherBooksRatingsCount = publisherBooks.stream().mapToInt(value -> value.getBook().getRatings().size()).sum();
+
+            assertThat(allBooksCount).isEqualTo(33);
+            assertThat(allRatingsCount).isEqualTo(1006);
+            assertThat(publisherBooksCount).isEqualTo(10);
+
             assertThat(publisherRepository.findAll()).hasSize(10);
             publisherRepository.delete(PUBLISHER_DATA.getPublisher());
             assertThat(publisherRepository.findAll()).hasSize(9);
+
+            assertThat(bookRepository.findAll()).hasSize(allBooksCount - publisherBooksCount);
+            assertThat(ratingRepository.findAll()).hasSize(allRatingsCount - publisherBooksRatingsCount);
         });
     }
 }

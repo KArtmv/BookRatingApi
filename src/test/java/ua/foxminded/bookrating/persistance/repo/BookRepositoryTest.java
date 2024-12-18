@@ -16,6 +16,7 @@ import ua.foxminded.bookrating.util.book.BookData;
 import ua.foxminded.bookrating.util.publisher.PublisherData;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,6 +35,8 @@ class BookRepositoryTest {
 
     @Autowired
     private BookRepository bookRepository;
+    @Autowired
+    private RatingRepository ratingRepository;
 
     @Test
     void findByIsbn() {
@@ -124,9 +127,16 @@ class BookRepositoryTest {
     @Test
     void delete() {
         assertAll(() -> {
+            int bookRatingsCount = bookRepository.findBookRatings(BOOK_DATA.getBook(), Pageable.unpaged()).getContent().size();
+            int allRatingsCount = ratingRepository.findAll().size();
+
+            assertThat(allRatingsCount).isEqualTo(1006);
+
             assertThat(bookRepository.findAll()).hasSize(33);
             bookRepository.delete(BOOK_DATA.getBook());
             assertThat(bookRepository.findAll()).hasSize(32);
+
+            assertThat(ratingRepository.findAll()).hasSize(allRatingsCount - bookRatingsCount);
         });
     }
 
