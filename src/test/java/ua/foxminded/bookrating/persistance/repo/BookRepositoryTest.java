@@ -16,7 +16,6 @@ import ua.foxminded.bookrating.util.book.BookData;
 import ua.foxminded.bookrating.util.publisher.PublisherData;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -12,7 +12,6 @@ import ua.foxminded.bookrating.persistance.entity.Rating;
 import ua.foxminded.bookrating.persistance.entity.User;
 import ua.foxminded.bookrating.util.user.UserData;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;

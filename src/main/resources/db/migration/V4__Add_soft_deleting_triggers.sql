@@ -24,7 +24,8 @@ $$
 BEGIN
     update book
     set deleted = true
-    where publisher_id = new.id and new.deleted = true;
+    where publisher_id = new.id
+      and new.deleted = true;
     return NEW;
 END;
 $$ language plpgsql;
@@ -41,7 +42,8 @@ $$
 BEGIN
     update rating
     set deleted = true
-    where book_id = new.id and new.deleted = true;
+    where book_id = new.id
+      and new.deleted = true;
     return NEW;
 END;
 $$ language plpgsql;
@@ -58,7 +60,8 @@ $$
 BEGIN
     update rating
     set deleted = true
-    where book_id = new.id and new.deleted = true;
+    where book_id = new.id
+      and new.deleted = true;
     return NEW;
 END;
 $$ language plpgsql;
