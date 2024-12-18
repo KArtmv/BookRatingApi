@@ -1,9 +1,12 @@
 package ua.foxminded.bookrating.persistance.entity;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SoftDelete;
+import org.hibernate.annotations.SoftDeleteType;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -12,6 +15,7 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @MappedSuperclass
+@SoftDelete
 public class BaseEntity implements Serializable {
 
     @Serial
