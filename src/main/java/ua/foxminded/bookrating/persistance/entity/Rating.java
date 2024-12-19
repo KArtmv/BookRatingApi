@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.SQLInsert;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
@@ -15,9 +14,6 @@ import java.util.Objects;
 @Entity
 @Table(name = "rating")
 @SequenceGenerator(name = "default_gen", sequenceName = "rating_id_seq", allocationSize = 1)
-@SQLInsert(sql = "INSERT INTO rating (book_id, book_rating, user_id, id) " +
-        "VALUES (?, ?, ?, ?) " +
-        "ON CONFLICT (book_id, user_id) DO NOTHING")
 public class Rating extends BaseEntity {
 
     @ManyToOne
@@ -30,27 +26,27 @@ public class Rating extends BaseEntity {
 
     private Integer bookRating;
 
-    public Rating(Book book) {
-        this.book = book;
-    }
-
-    public Rating(User user) {
-        this.user = user;
-    }
-
-    public Rating(Integer bookRating) {
-        this.bookRating = bookRating;
-    }
-
-    public Rating(User user, Integer bookRating) {
-        this.user = user;
-        this.bookRating = bookRating;
-    }
-
     public Rating(Book book, User user, Integer bookRating) {
         this.book = book;
         this.user = user;
         this.bookRating = bookRating;
+    }
+
+    public Rating(Long id, Book book, User user, Integer bookRating) {
+        super(id);
+        this.book = book;
+        this.user = user;
+        this.bookRating = bookRating;
+    }
+
+    public void setBook(Book book) {
+        this.book = book;
+        book.getRatings().add(this);
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+        user.getRatings().add(this);
     }
 
     @Override

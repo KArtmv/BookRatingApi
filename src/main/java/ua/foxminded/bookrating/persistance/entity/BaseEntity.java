@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.SoftDelete;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -12,6 +13,7 @@ import java.io.Serializable;
 @Setter
 @NoArgsConstructor
 @MappedSuperclass
+@SoftDelete
 public class BaseEntity implements Serializable {
 
     @Serial

@@ -4,11 +4,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.SQLInsert;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.LinkedHashSet;
@@ -21,22 +19,17 @@ import java.util.Set;
 @Entity
 @Table(name = "author")
 @SequenceGenerator(name = "default_gen", sequenceName = "author_id_seq", allocationSize = 1)
-@SQLInsert(sql = "INSERT INTO author (name, id) VALUES (?, ?) ON CONFLICT (name) DO NOTHING")
-public class Author extends BaseEntity {
-
-    @NotBlank(message = "The author name is required")
-    private String name;
+public class Author extends NamedItem {
 
     @ManyToMany(mappedBy = "authors")
     private Set<Book> books = new LinkedHashSet<>();
 
-
     public Author(String name) {
-        this.name = name;
+        super(name);
     }
 
-    public Author(Long id) {
-        super(id);
+    public Author(Long id, String name) {
+        super(id, name);
     }
 
     @Override

@@ -8,7 +8,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.SQLInsert;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -19,24 +18,24 @@ import java.util.Set;
 @Entity
 @Table(name = "book")
 @SequenceGenerator(name = "default_gen", sequenceName = "book_id_seq", allocationSize = 1)
-@SQLInsert(sql = "INSERT INTO book (image_id, isbn, publication_year, publisher_id, title, id) " +
-        "VALUES (?, ?, ?, ?, ?, ?) " +
-        "ON CONFLICT (isbn) DO NOTHING")
 public class Book extends BaseEntity {
 
     @NotBlank(message = "The ISBN of book is required")
     @Size(min = 10, max = 13, message = "The ISBN must be between 10 and 13 characters long")
+    @Column(name = "isbn")
     private String isbn;
 
     @NotBlank(message = "The title of the book is required and cannot be empty")
+    @Column(name = "title")
     private String title;
 
     @NotBlank(message = "The year of publication is required")
     @Pattern(regexp = "^[0-9]+", message = "The year can contains just digits")
     @Size(max = 4, message = "The length of year is 4 characters")
+    @Column(name = "publication_year")
     private String publicationYear;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "publisher_id")
     @NotNull(message = "A publisher is required.")
     private Publisher publisher;
@@ -45,28 +44,79 @@ public class Book extends BaseEntity {
     @JoinTable(name = "book_authors",
             joinColumns = @JoinColumn(name = "book_isbn", referencedColumnName = "isbn"),
             inverseJoinColumns = @JoinColumn(name = "author_id"))
-    @SQLInsert(sql = "INSERT INTO book_authors (book_isbn, author_id) " +
-            "VALUES (?, ?) " +
-            "ON CONFLICT (book_isbn, author_id) DO NOTHING")
     private Set<Author> authors = new LinkedHashSet<>();
 
-
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE, orphanRemoval = true)
-    @JoinColumn(name = "image_id")
+    @Embedded
     private Image image;
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "book")
     private Set<Rating> ratings = new LinkedHashSet<>();
 
-    public Book(Long id) {
+    public Book(String isbn, String title, String publicationYear, Publisher publisher, Set<Author> authors, Image image) {
+        this.isbn = isbn;
+        this.title = title;
+        this.publicationYear = publicationYear;
+        this.publisher = publisher;
+        this.authors = authors;
+        this.image = image;
+    }
+
+    public Book(Long id, String isbn, String title, String publicationYear, Publisher publisher, Set<Author> authors, Image image) {
         super(id);
+        this.isbn = isbn;
+        this.title = title;
+        this.publicationYear = publicationYear;
+        this.publisher = publisher;
+        this.authors = authors;
+        this.image = image;
     }
 
     public void addAuthor(Author author) {
         this.authors.add(author);
+        author.getBooks().add(this);
     }
 
-    public void addRating(Rating rating) {
-        this.ratings.add(rating);
+    public Double getAverageRating() {
+        return ratings.stream().mapToDouble(Rating::getBookRating)
+                .average().orElse(0.0);
+    }
+
+    public void setAuthors(Set<Author> authors) {
+        if (!authors.isEmpty()) {
+            authors.forEach(a -> a.getBooks().remove(this));
+        }
+        this.authors = authors;
+        if (!authors.isEmpty()) {
+            authors.forEach(author -> author.getBooks().add(this));
+        }
+    }
+
+    public void setPublisher(Publisher publisher) {
+        if (this.publisher != null) {
+            this.publisher.getBooks().remove(this);
+        }
+        this.publisher = publisher;
+        if (publisher != null) {
+            publisher.getBooks().add(this);
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Book book = (Book) o;
+
+        if (getId() != null && book.getId() != null) {
+            return getId().equals(book.getId());
+        }
+
+        return isbn != null && isbn.equals(book.isbn);
+    }
+
+    @Override
+    public int hashCode() {
+        return getId() != null ? getId().hashCode() : (isbn != null ? isbn.hashCode() : 0);
     }
 }

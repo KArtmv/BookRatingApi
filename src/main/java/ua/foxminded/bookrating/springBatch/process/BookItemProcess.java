@@ -11,7 +11,6 @@ import ua.foxminded.bookrating.persistance.entity.Author;
 import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.persistance.entity.Image;
 import ua.foxminded.bookrating.persistance.entity.Publisher;
-import ua.foxminded.bookrating.persistance.repo.ImageRepository;
 import ua.foxminded.bookrating.service.AuthorService;
 import ua.foxminded.bookrating.service.PublisherService;
 
@@ -28,7 +27,6 @@ public class BookItemProcess implements ItemProcessor<BookCsvDto, Book>, StepExe
 
     private final AuthorService authorService;
     private final PublisherService publisherService;
-    private final ImageRepository imageRepository;
 
     @Override
     public Book process(BookCsvDto item) {
@@ -49,12 +47,8 @@ public class BookItemProcess implements ItemProcessor<BookCsvDto, Book>, StepExe
         book.setPublisher(publisher);
         book.setPublicationYear(item.publicationYear());
         book.addAuthor(author);
-        book.setImage(getImage(item.imageUrlS(), item.imageUrlM(), item.imageUrlL()));
+        book.setImage(new Image(item.imageUrlS(), item.imageUrlM(), item.imageUrlL()));
         return book;
-    }
-
-    private Image getImage(String imageUrlS, String imageUrlM, String imageUrlL) {
-        return imageRepository.save(new Image(imageUrlS, imageUrlM, imageUrlL));
     }
 
     @Override
@@ -70,7 +64,7 @@ public class BookItemProcess implements ItemProcessor<BookCsvDto, Book>, StepExe
         return ExitStatus.COMPLETED;
     }
 
-    private String replaceAmpersand(String author) {
-        return author.replace("&amp;", "&");
+    private String replaceAmpersand(String string) {
+        return string.replace("&amp;", "&").trim();
     }
 }

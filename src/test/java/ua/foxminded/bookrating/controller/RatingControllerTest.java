@@ -1,0 +1,92 @@
+package ua.foxminded.bookrating.controller;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import ua.foxminded.bookrating.assembler.FullRatingModelAssembler;
+import ua.foxminded.bookrating.assembler.RatingModelAssembler;
+import ua.foxminded.bookrating.assembler.SimpleBookModelAssembler;
+import ua.foxminded.bookrating.assembler.UserModelAssembler;
+import ua.foxminded.bookrating.dto.RatingDto;
+import ua.foxminded.bookrating.service.RatingService;
+import ua.foxminded.bookrating.util.book.BookData;
+import ua.foxminded.bookrating.util.rating.RatingData;
+import ua.foxminded.bookrating.util.user.UserData;
+
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@Import({SimpleBookModelAssembler.class, UserModelAssembler.class, RatingModelAssembler.class, FullRatingModelAssembler.class})
+@WebMvcTest(RatingController.class)
+class RatingControllerTest {
+
+    private static final RatingData RATING_DATA = new RatingData();
+    private static final BookData BOOK_DATA = new BookData();
+    private static final UserData USER_DATA = new UserData();
+
+    @MockBean
+    private RatingService ratingService;
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Test
+    void get_() throws Exception {
+        when(ratingService.findById(anyLong())).thenReturn(RATING_DATA.getRating());
+
+        mockMvc.perform(get("/api/v1/ratings/{id}", RATING_DATA.getId())).andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.book.id").value(BOOK_DATA.getId())
+                );
+    }
+
+    @Test
+    void add_() throws Exception {
+        when(ratingService.save(any(RatingDto.class))).thenReturn(RATING_DATA.getRating());
+
+        mockMvc.perform(post("/api/v1/ratings").contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                         "bookId": "110464",
+                         "userId": "58792",
+                         "bookRating": "7"
+                        }
+                        """)).andDo(print()).andExpectAll(
+                status().isCreated(),
+                jsonPath("$.user.id").value(USER_DATA.getId()),
+                jsonPath("$.user.location").value(USER_DATA.getLocation()),
+                jsonPath("$.user.age").value(USER_DATA.getAge()),
+                jsonPath("$.user._links.self.href").value(USER_DATA.getSelfHref()),
+                jsonPath("$.user._links.ratedBooks.href").value(USER_DATA.getUserRatedBooksHref()),
+                jsonPath("$.rating").value(RATING_DATA.getUserRating()),
+                jsonPath("$._links.self.href").value(RATING_DATA.getSelfHref())
+
+        );
+    }
+
+    @Test
+    void update_() throws Exception {
+        when(ratingService.update(anyLong(), anyInt())).thenReturn(RATING_DATA.getUpdatedRating());
+
+        mockMvc.perform(put("/api/v1/ratings/{id}", RATING_DATA.getId()).param("newRating", RATING_DATA.getUpdatedUserRating().toString()))
+                .andDo(print()).andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.book.id").value(BOOK_DATA.getId())
+                );
+    }
+
+    @Test
+    void delete_() throws Exception {
+        mockMvc.perform(delete("/api/v1/ratings/{id}", RATING_DATA.getId())).andDo(print())
+                .andExpect(status().isNoContent());
+    }
+
+}

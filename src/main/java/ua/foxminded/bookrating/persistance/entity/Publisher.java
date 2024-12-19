@@ -4,11 +4,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.SQLInsert;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.LinkedHashSet;
@@ -21,21 +19,17 @@ import java.util.Set;
 @Entity
 @Table(name = "publisher")
 @SequenceGenerator(name = "default_gen", sequenceName = "publisher_is_seq", allocationSize = 1)
-@SQLInsert(sql = "INSERT INTO publisher (name, id) VALUES (?, ?) ON CONFLICT (name) DO NOTHING")
-public class Publisher extends BaseEntity {
+public class Publisher extends NamedItem {
 
-    @NotBlank(message = "The publisher name is required and cannot be empty.")
-    private String name;
-
-    @OneToMany(mappedBy = "publisher", orphanRemoval = true)
+    @OneToMany(mappedBy = "publisher")
     private Set<Book> books = new LinkedHashSet<>();
 
     public Publisher(String name) {
-        this.name = name;
+        super(name);
     }
 
-    public Publisher(Long id) {
-        super(id);
+    public Publisher(Long id, String name) {
+        super(id, name);
     }
 
     @Override

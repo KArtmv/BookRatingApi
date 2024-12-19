@@ -8,16 +8,16 @@ import ua.foxminded.bookrating.persistance.entity.BaseEntity;
 import java.util.List;
 
 @Transactional(readOnly = true)
-public class AbstractServiceImpl<T extends BaseEntity> {
+public class CrudServiceImpl<T extends BaseEntity> {
 
     protected final JpaRepository<T, Long> repository;
 
-    public AbstractServiceImpl(JpaRepository<T, Long> repository) {
+    protected CrudServiceImpl(JpaRepository<T, Long> repository) {
         this.repository = repository;
     }
 
     public T findById(Long id) {
-        return repository.findById(id).orElseThrow(EntityNotFoundException::new);
+        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Entity with id: " + id + "is not found"));
     }
 
     public List<T> findAll() {
@@ -25,12 +25,17 @@ public class AbstractServiceImpl<T extends BaseEntity> {
     }
 
     @Transactional
-    public void save(T entity) {
-        repository.save(entity);
+    public T save(T entity) {
+        return repository.save(entity);
     }
 
     @Transactional
-    public void delete(T entity) {
-        repository.delete(entity);
+    public T update(Long id, T entity) {
+        return repository.save(entity);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        repository.delete(findById(id));
     }
 }
