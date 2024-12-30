@@ -68,9 +68,9 @@ class UserRepositoryTest {
 
             assertThat(allRatingsCount).isEqualTo(1006);
 
-            assertThat(userRepository.findAll()).hasSize(744);
+            assertThat(userRepository.findAll()).hasSize(774);
             userRepository.deleteById(USER_DATA.getId());
-            assertThat(userRepository.findAll()).hasSize(743);
+            assertThat(userRepository.findAll()).hasSize(773);
 
             assertThat(ratingRepository.findAll()).hasSize(allRatingsCount - userRatingsCount);
         });

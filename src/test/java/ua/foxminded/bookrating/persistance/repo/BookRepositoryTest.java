@@ -131,9 +131,9 @@ class BookRepositoryTest {
 
             assertThat(allRatingsCount).isEqualTo(1006);
 
-            assertThat(bookRepository.findAll()).hasSize(33);
+            assertThat(bookRepository.findAll()).hasSize(38);
             bookRepository.delete(BOOK_DATA.getBook());
-            assertThat(bookRepository.findAll()).hasSize(32);
+            assertThat(bookRepository.findAll()).hasSize(37);
 
             assertThat(ratingRepository.findAll()).hasSize(allRatingsCount - bookRatingsCount);
         });
@@ -141,7 +141,7 @@ class BookRepositoryTest {
 
     @Test
     void findAll() {
-        assertThat(bookRepository.findAll()).hasSize(33);
+        assertThat(bookRepository.findAll()).hasSize(38);
     }
 
     @Test

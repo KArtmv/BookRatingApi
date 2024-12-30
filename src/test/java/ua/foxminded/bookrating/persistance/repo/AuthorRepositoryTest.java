@@ -58,7 +58,7 @@ class AuthorRepositoryTest {
         assertAll(() -> {
             Page<Author> result = authorRepository.findAllPaginated(Pageable.unpaged());
             assertTrue(result.hasContent());
-            assertThat(result.getTotalElements()).isEqualTo(10);
+            assertThat(result.getTotalElements()).isEqualTo(24);
             assertThat(result.getTotalPages()).isEqualTo(1);
         });
     }
@@ -84,7 +84,7 @@ class AuthorRepositoryTest {
 
     @Test
     void findAll() {
-        assertThat(authorRepository.findAll()).hasSize(10);
+        assertThat(authorRepository.findAll()).hasSize(24);
     }
 
     @Test
@@ -108,11 +108,11 @@ class AuthorRepositoryTest {
 
             assertThat(allRatingsCount).isEqualTo(1006);
             assertThat(authorBooksCount).isEqualTo(24);
-            assertThat(allBooksCount).isEqualTo(33);
+            assertThat(allBooksCount).isEqualTo(38);
 
-            assertThat(authorRepository.findAll()).hasSize(10);
+            assertThat(authorRepository.findAll()).hasSize(24);
             authorRepository.delete(AUTHORS_DATA.getAuthor());
-            assertThat(authorRepository.findAll()).hasSize(9);
+            assertThat(authorRepository.findAll()).hasSize(23);
 
             assertThat(bookRepository.findAll()).hasSize(allBooksCount - authorBooksCount);
             assertThat(ratingRepository.findAll()).hasSize(allRatingsCount - authorBooksRatingsCount);

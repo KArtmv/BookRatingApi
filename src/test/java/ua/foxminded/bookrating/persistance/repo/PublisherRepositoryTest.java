@@ -58,7 +58,7 @@ class PublisherRepositoryTest {
         assertAll(() -> {
             Page<Publisher> result = publisherRepository.findAllPaginated(Pageable.unpaged());
             assertTrue(result.hasContent());
-            assertThat(result.getTotalElements()).isEqualTo(10);
+            assertThat(result.getTotalElements()).isEqualTo(23);
             assertThat(result.getTotalPages()).isEqualTo(1);
         });
     }
@@ -84,7 +84,7 @@ class PublisherRepositoryTest {
 
     @Test
     void findAll() {
-        assertThat(publisherRepository.findAll()).hasSize(10);
+        assertThat(publisherRepository.findAll()).hasSize(23);
     }
 
     @Test
@@ -106,13 +106,13 @@ class PublisherRepositoryTest {
             int allRatingsCount = ratingRepository.findAll().size();
             int publisherBooksRatingsCount = publisherBooks.stream().mapToInt(value -> value.getBook().getRatings().size()).sum();
 
-            assertThat(allBooksCount).isEqualTo(33);
+            assertThat(allBooksCount).isEqualTo(38);
             assertThat(allRatingsCount).isEqualTo(1006);
             assertThat(publisherBooksCount).isEqualTo(10);
 
-            assertThat(publisherRepository.findAll()).hasSize(10);
+            assertThat(publisherRepository.findAll()).hasSize(23);
             publisherRepository.delete(PUBLISHER_DATA.getPublisher());
-            assertThat(publisherRepository.findAll()).hasSize(9);
+            assertThat(publisherRepository.findAll()).hasSize(22);
 
             assertThat(bookRepository.findAll()).hasSize(allBooksCount - publisherBooksCount);
             assertThat(ratingRepository.findAll()).hasSize(allRatingsCount - publisherBooksRatingsCount);
