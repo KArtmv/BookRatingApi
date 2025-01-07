@@ -17,6 +17,7 @@ create trigger after_author_restore_trigger
     after update of deleted
     on author
     for each row
+    when (old.deleted = true and new.deleted = false)
 execute function update_books_on_author_restore();
 
 create or replace function update_books_on_publisher_restore()
@@ -38,6 +39,7 @@ create trigger after_publisher_restore_trigger
     after update of deleted
     on publisher
     for each row
+    when (old.deleted = true and new.deleted = false)
 execute function update_books_on_publisher_restore();
 
 create or replace function update_rating_on_book_restore()
@@ -59,6 +61,7 @@ create trigger after_book_restore_trigger
     after update of deleted
     on book
     for each row
+    when (old.deleted = true and new.deleted = false)
 execute function update_rating_on_book_restore();
 
 create or replace function update_rating_on_user_restore()
@@ -82,4 +85,5 @@ create trigger after_user_restore_trigger
     after update of deleted
     on users
     for each row
+    when (old.deleted = true and new.deleted = false)
 execute function update_rating_on_user_restore();
