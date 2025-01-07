@@ -13,7 +13,7 @@ import java.io.Serializable;
 import java.util.Optional;
 
 @NoRepositoryBean
-public interface ExtendedRepository<T extends NamedItem, ID extends Serializable> extends JpaRepository<T, ID> {
+public interface ExtendedRepository<T extends NamedItem, ID extends Serializable> extends BaseRepo<T, ID> {
 
     @Query("""
             SELECT b as book, AVG(r.bookRating) AS averageRating
@@ -34,4 +34,7 @@ public interface ExtendedRepository<T extends NamedItem, ID extends Serializable
     Page<T> findAllPaginated(Pageable pageable);
 
     Page<T> findByNameContainingIgnoreCase(String name, Pageable pageable);
+
+    @Query(value = "select * from #{#entityName} e where e.deleted = true and e.name = :name", nativeQuery = true)
+    Optional<T> findDeletedByName(@Param("name") String name);
 }
