@@ -70,13 +70,13 @@ $$
 BEGIN
     update rating
     set deleted = false
-    where book_id in (select book_id
-                      from rating
-                      join public.book b on b.id = rating.book_id
-                      join public.book_authors ba on b.isbn = ba.book_isbn
-                      join public.author a on ba.author_id = a.id
-                      join public.publisher p on p.id = b.publisher_id
-                      where user_id = new.id and p.deleted = false and a.deleted = false);
+    where rating.id in (select rating.id
+                        from rating
+                                 join public.book b on b.id = rating.book_id
+                                 join public.book_authors ba on b.isbn = ba.book_isbn
+                                 join public.author a on ba.author_id = a.id
+                                 join public.publisher p on p.id = b.publisher_id
+                        where rating.user_id = new.id and p.deleted = false and a.deleted = false);
     return NEW;
 END;
 $$ language plpgsql;
