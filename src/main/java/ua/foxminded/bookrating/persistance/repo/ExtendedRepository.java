@@ -2,18 +2,17 @@ package ua.foxminded.bookrating.persistance.repo;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.query.Param;
-import ua.foxminded.bookrating.persistance.entity.NamedItem;
+import ua.foxminded.bookrating.persistance.entity.NamedEntity;
 import ua.foxminded.bookrating.projection.BookRatingProjection;
 
 import java.io.Serializable;
 import java.util.Optional;
 
 @NoRepositoryBean
-public interface ExtendedRepository<T extends NamedItem, ID extends Serializable> extends BaseRepo<T, ID> {
+public interface ExtendedRepository<T extends NamedEntity, ID extends Serializable> extends BaseRepo<T, ID> {
 
     @Query("""
             SELECT b as book, AVG(r.bookRating) AS averageRating

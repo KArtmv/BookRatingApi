@@ -10,16 +10,16 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @MappedSuperclass
-public abstract class NamedItem extends BaseEntity {
+public abstract class NamedEntity extends BaseEntity {
 
     @NotBlank(message = "The name is required and cannot be empty.")
     private String name;
 
-    protected NamedItem(String name) {
+    protected NamedEntity(String name) {
         this.name = name;
     }
 
-    protected NamedItem(Long id, String name) {
+    protected NamedEntity(Long id, String name) {
         super(id);
         this.name = name;
     }
