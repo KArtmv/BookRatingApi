@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BookRepository extends JpaRepository<Book, Long> {
+public interface BookRepository extends BaseRepo<Book, Long> {
 
     Optional<Book> findByIsbn(String isbn);
 
@@ -63,4 +63,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             where r.book = :book""")
     Page<Rating> findBookRatings(@Param("book") Book book, Pageable pageable);
 
+    @Query(value = "select * from book b where b.deleted = true and b.isbn = :isbn", nativeQuery = true)
+    Optional<Book> findDeletedBookByIsbn(@Param("isbn") String isbn);
 }
