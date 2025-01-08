@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
-public class BookServiceImpl extends CrudServiceImpl<Book> implements BookService {
+public class BookServiceImpl extends RestoreServiceImpl<Book> implements BookService {
 
     private final BookRepository bookRepository;
     private final PublisherService publisherService;
@@ -74,6 +74,11 @@ public class BookServiceImpl extends CrudServiceImpl<Book> implements BookServic
                 pageable);
     }
 
+    @Override
+    public Page<Rating> getRatingsByBookId(Long id, Pageable pageable) {
+        return bookRepository.findBookRatings(findById(id), pageable);
+    }
+
     private Book toEntity(BookDto dto, Book book) {
         book.setIsbn(dto.getIsbn());
         book.setTitle(dto.getTitle());
@@ -82,10 +87,5 @@ public class BookServiceImpl extends CrudServiceImpl<Book> implements BookServic
         book.setAuthors(dto.getAuthorsId().stream().map(authorService::findById).collect(Collectors.toSet()));
         book.setImage(dto.getImage());
         return book;
-    }
-
-    @Override
-    public Page<Rating> getRatingsByBookId(Long id, Pageable pageable) {
-        return bookRepository.findBookRatings(findById(id), pageable);
     }
 }

@@ -9,7 +9,7 @@ import ua.foxminded.bookrating.persistance.repo.ExtendedRepository;
 import ua.foxminded.bookrating.projection.BookRatingProjection;
 
 @Transactional(readOnly = true)
-public class ExtendedCrudServiceImpl<T extends NamedEntity> extends CrudServiceImpl<T> {
+public class ExtendedCrudServiceImpl<T extends NamedEntity> extends RestoreServiceImpl<T> {
 
     private final ExtendedRepository<T, Long> extendedRepository;
 

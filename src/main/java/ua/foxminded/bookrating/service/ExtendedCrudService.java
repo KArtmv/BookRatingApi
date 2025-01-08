@@ -4,8 +4,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ua.foxminded.bookrating.persistance.entity.BaseEntity;
 import ua.foxminded.bookrating.projection.BookRatingProjection;
+import ua.foxminded.bookrating.service.implementation.RestoreServiceImpl;
 
-public interface ExtendedCrudService<T extends BaseEntity> extends CrudService<T> {
+public interface ExtendedCrudService<T extends BaseEntity> extends RestoreService<T> {
     Page<T> findAllPaginated(Pageable pageable);
 
     Page<BookRatingProjection> getAllBooksById(Long id, Integer desiredAverageRating, Pageable pageRequest);
