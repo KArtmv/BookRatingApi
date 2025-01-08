@@ -124,16 +124,24 @@ class BookRepositoryTest {
     }
 
     @Test
-    void delete() {
+    void delete_shouldDeleteBook_whenInvoke() {
+        assertAll(() -> {
+            assertThat(bookRepository.findAll()).hasSize(38);
+            bookRepository.delete(BOOK_DATA.getBook());
+            assertThat(bookRepository.findAll()).hasSize(37);
+        });
+    }
+
+    @Test
+    void delete_shouldDeleteBookRatings_whenBooksIsDeleted() {
         assertAll(() -> {
             int bookRatingsCount = bookRepository.findBookRatings(BOOK_DATA.getBook(), Pageable.unpaged()).getContent().size();
             int allRatingsCount = ratingRepository.findAll().size();
 
             assertThat(allRatingsCount).isEqualTo(1006);
 
-            assertThat(bookRepository.findAll()).hasSize(38);
             bookRepository.delete(BOOK_DATA.getBook());
-            assertThat(bookRepository.findAll()).hasSize(37);
+            bookRepository.flush();
 
             assertThat(ratingRepository.findAll()).hasSize(allRatingsCount - bookRatingsCount);
         });
@@ -162,4 +170,30 @@ class BookRepositoryTest {
             assertThat(bookRatings.getTotalPages()).isEqualTo(1);
         });
     }
+
+    @Test
+    void findDeletedBookByIsbn_shouldReturnDeletedBook_whenIsFound() {
+        assertTrue(bookRepository.findDeletedBookByIsbn(BOOK_DATA.getDeletedBooksIsbn()).isPresent());
+    }
+
+    @Test
+    void restore_shouldRestoreBook_whenIsFound() {
+        assertAll(() -> {
+            assertThat(bookRepository.findAll()).hasSize(38);
+            bookRepository.restore(BOOK_DATA.getDeletedBookId());
+            assertThat(bookRepository.findAll()).hasSize(39);
+        });
+    }
+
+    @Test
+    void restore_shouldRestoreBookRatings_whenBookIsRestored() {
+        assertAll(() -> {
+            assertThat(ratingRepository.findAll()).hasSize(1006);
+            bookRepository.restore(BOOK_DATA.getDeletedBookId());
+            bookRepository.flush();
+            assertThat(bookRepository.findById(BOOK_DATA.getDeletedBookId()).get().getRatings()).hasSize(2);
+            assertThat(ratingRepository.findAll()).hasSize(1008);
+        });
+    }
+
 }
