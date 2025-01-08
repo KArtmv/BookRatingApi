@@ -61,18 +61,47 @@ class UserRepositoryTest {
     }
 
     @Test
-    void delete() {
+    void delete_shouldDeleteUser_whenInvoke() {
+        assertAll(() -> {
+            assertThat(userRepository.findAll()).hasSize(774);
+            userRepository.deleteById(USER_DATA.getId());
+            assertThat(userRepository.findAll()).hasSize(773);
+        });
+    }
+
+    @Test
+    void delete_shouldDeleteUserRatings_whenUserIsDeleted() {
         assertAll(() -> {
             int userRatingsCount = userRepository.findByRatingsUser(USER_DATA.getUser(), Pageable.unpaged()).getContent().size();
             int allRatingsCount = ratingRepository.findAll().size();
 
             assertThat(allRatingsCount).isEqualTo(1006);
 
-            assertThat(userRepository.findAll()).hasSize(774);
-            userRepository.deleteById(USER_DATA.getId());
-            assertThat(userRepository.findAll()).hasSize(773);
+            userRepository.delete(USER_DATA.getUser());
+            userRepository.flush();
 
             assertThat(ratingRepository.findAll()).hasSize(allRatingsCount - userRatingsCount);
+        });
+    }
+
+    @Test
+    void restore_shouldRestoreDeletedUser_whenIsInvoked() {
+        assertAll(() -> {
+            assertThat(userRepository.findAll()).hasSize(774);
+            userRepository.restore(USER_DATA.getDeletedUserId());
+            userRepository.flush();
+            assertThat(userRepository.findAll()).hasSize(775);
+        });
+    }
+
+    @Test
+    void restore_shouldRestoreUserRatings_whenUserIsRestored() {
+        assertAll(() -> {
+            assertThat(ratingRepository.findAll()).hasSize(1006);
+            userRepository.restore(USER_DATA.getDeletedUserId());
+            userRepository.flush();
+            assertThat(userRepository.findById(USER_DATA.getDeletedUserId()).get().getRatings()).hasSize(5);
+            assertThat(ratingRepository.findAll()).hasSize(1011);
         });
     }
 }
