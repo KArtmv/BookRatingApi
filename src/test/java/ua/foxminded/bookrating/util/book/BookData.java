@@ -32,6 +32,8 @@ public class BookData {
     private final Image image = new Image("http://images.amazon.com/images/P/0736688390.01.THUMBZZZ.jpg",
             "http://images.amazon.com/images/P/0736688390.01.MZZZZZZZ.jpg",
             "http://images.amazon.com/images/P/0736688390.01.LZZZZZZZ.jpg");
+    private final Long deletedBookId = 2L;
+    private final String deletedBooksIsbn = "3257201761";
 
     private final Book book = new Book(id, isbn, title, publicationYear, PUBLISHER_DATA.getPublisher(), Collections.singleton(AUTHORS_DATA.getAuthor()), image);
     private final Book newBook = new Book(isbn, title, publicationYear, PUBLISHER_DATA.getPublisher(), Collections.singleton(AUTHORS_DATA.getAuthor()), image);
