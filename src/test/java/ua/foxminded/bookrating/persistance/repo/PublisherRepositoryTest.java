@@ -8,16 +8,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.persistance.entity.Publisher;
+import ua.foxminded.bookrating.persistance.entity.Rating;
 import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.util.publisher.PublisherData;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -116,6 +118,89 @@ class PublisherRepositoryTest {
 
             assertThat(bookRepository.findAll()).hasSize(allBooksCount - publisherBooksCount);
             assertThat(ratingRepository.findAll()).hasSize(allRatingsCount - publisherBooksRatingsCount);
+        });
+    }
+
+
+    @Test
+    void delete_shouldDeletePublisher_whenIsInvoke() {
+        assertAll(() -> {
+            assertThat(publisherRepository.findAll()).hasSize(23);
+            publisherRepository.delete(PUBLISHER_DATA.getPublisher());
+            assertThat(publisherRepository.findAll()).hasSize(22);
+
+            assertTrue(publisherRepository.findDeletedByName(PUBLISHER_DATA.getDeletedPublisherName()).isPresent());
+        });
+    }
+
+    @Test
+    void delete_shouldDeletePublisherBooks_whenPublisherIsDeleted() {
+        assertAll(() -> {
+            int authorBooksCount = publisherRepository.getBooksByEntity(PUBLISHER_DATA.getPublisher(), 0, Pageable.unpaged()).getContent().size();
+            int allBooksCount = bookRepository.findAll().size();
+
+            assertThat(authorBooksCount).isEqualTo(10);
+            assertThat(allBooksCount).isEqualTo(38);
+
+            publisherRepository.delete(PUBLISHER_DATA.getPublisher());
+            publisherRepository.flush();
+
+            List<Book> allBooksAfterPublisherDeleting = bookRepository.findAll();
+            assertThat(allBooksAfterPublisherDeleting).hasSize(allBooksCount - authorBooksCount);
+        });
+    }
+
+    @Test
+    void delete_shouldDeleteRatingsOfPublisherBooks_whenPublisherIsDeleted() {
+        assertAll(() -> {
+            int allRatingsCount = ratingRepository.findAll().size();
+            int authorBooksRatingsCount = publisherRepository.getBooksByEntity(PUBLISHER_DATA.getPublisher(), 0, Pageable.unpaged()).getContent()
+                    .stream().mapToInt(value -> value.getBook().getRatings().size()).sum();
+
+            assertThat(allRatingsCount).isEqualTo(1006);
+            publisherRepository.delete(PUBLISHER_DATA.getPublisher());
+            publisherRepository.flush();
+
+            List<Rating> allRatingsAfterPublisherDeleting = ratingRepository.findAll();
+            assertThat(allRatingsAfterPublisherDeleting).hasSize(allRatingsCount - authorBooksRatingsCount);
+        });
+    }
+
+    @Test
+    void findDeletedEntityByName_shouldReturnAppropriatePublisher_whenIsFound() {
+        assertTrue(publisherRepository.findDeletedByName(PUBLISHER_DATA.getDeletedPublisherName()).isPresent());
+    }
+
+    @Test
+    void restore_shouldRestorePublisher_whenInvoke() {
+        assertAll(() -> {
+            assertFalse(publisherRepository.findByName(PUBLISHER_DATA.getDeletedPublisherName()).isPresent());
+            publisherRepository.restore(PUBLISHER_DATA.getDeletedPublisherId());
+            assertTrue(publisherRepository.findByName(PUBLISHER_DATA.getDeletedPublisherName()).isPresent());
+        });
+    }
+
+    @Test
+    void restore_shouldRestorePublisherBooks_whenRestorePublisher() {
+        assertAll(() -> {
+            int countOfAllBooks = bookRepository.findAll().size();
+            assertThat(countOfAllBooks).isEqualTo(38);
+            publisherRepository.restore(PUBLISHER_DATA.getDeletedPublisherId());
+            int countOfPublisherBooks = publisherRepository.findByName(PUBLISHER_DATA.getDeletedPublisherName()).get().getBooks().size();
+            assertThat(countOfPublisherBooks).isEqualTo(6);
+            assertThat(bookRepository.findAll()).hasSize(countOfAllBooks + countOfPublisherBooks);
+        });
+    }
+
+    @Test
+    void restore_shouldRestorePublisherBooksRatings_whenRestorePublisher() {
+        assertAll(() -> {
+            int countOfAllRatings = ratingRepository.findAll().size();
+            assertThat(countOfAllRatings).isEqualTo(1006);
+            publisherRepository.restore(PUBLISHER_DATA.getDeletedPublisherId());
+            int countOfPublisherBooksRatings = publisherRepository.findById(PUBLISHER_DATA.getDeletedPublisherId()).get().getBooks().stream().map(Book::getRatings).map(Set::size).mapToInt(Integer::intValue).sum();
+            assertThat(countOfPublisherBooksRatings).isEqualTo(11);
+            assertThat(ratingRepository.findAll()).hasSize(countOfAllRatings + countOfPublisherBooksRatings);
         });
     }
 }
