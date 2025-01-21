@@ -6,10 +6,14 @@ import ua.foxminded.bookrating.persistance.entity.BaseEntity;
 import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.service.implementation.RestoreServiceImpl;
 
+import java.util.Optional;
+
 public interface ExtendedCrudService<T extends BaseEntity> extends RestoreService<T> {
     Page<T> findAllPaginated(Pageable pageable);
 
     Page<BookRatingProjection> getAllBooksById(Long id, Integer desiredAverageRating, Pageable pageRequest);
 
     Page<T> getByNameContaining(String name, Pageable pageable);
+
+    T findOrSave(T entity);
 }
