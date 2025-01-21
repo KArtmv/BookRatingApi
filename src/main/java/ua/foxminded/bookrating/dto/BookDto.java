@@ -9,11 +9,17 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.ISBN;
 import ua.foxminded.bookrating.annotation.Isbn;
+import ua.foxminded.bookrating.persistance.entity.Author;
+import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.persistance.entity.Image;
+import ua.foxminded.bookrating.persistance.entity.Publisher;
 
 import java.time.Year;
 import java.util.List;
 
+/**
+ * DTO for {@link Book}
+ */
 @Getter
 @Setter
 @Isbn(bookId = "id", isbn = "isbn", message = "The provided ISBN already exists for another book.")
@@ -32,10 +38,10 @@ public class BookDto {
     private Year publicationYear;
 
     @NotEmpty(message = "At least one author is required for the book.")
-    private List<Long> authorsId;
+    private List<Author> authors;
 
     @NotNull(message = "The publisher is required and cannot be null.")
-    private Long publisherId;
+    private Publisher publisher;
 
     @Valid
     private Image image;
