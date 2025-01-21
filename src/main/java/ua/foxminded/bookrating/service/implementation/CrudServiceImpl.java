@@ -17,7 +17,7 @@ public class CrudServiceImpl<T extends BaseEntity> {
     }
 
     public T findById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Entity with id: " + id + "is not found"));
+        return repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Entity with id: " + id + " is not found"));
     }
 
     public List<T> findAll() {
