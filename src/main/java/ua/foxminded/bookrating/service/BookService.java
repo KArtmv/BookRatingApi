@@ -9,12 +9,8 @@ import ua.foxminded.bookrating.projection.BookRatingProjection;
 
 import java.util.List;
 
-public interface BookService extends RestoreService<Book> {
+public interface BookService extends RestoreService<Book, BookDto> {
     Page<BookRatingProjection> findAllPaginated(Integer desiredAverageRating, Pageable pageable);
-
-    Book save(BookDto entity);
-
-    Book update(Long id, BookDto entity);
 
     Book getByIsbn(String isbn);
 

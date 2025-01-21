@@ -8,7 +8,7 @@ import ua.foxminded.bookrating.service.implementation.RestoreServiceImpl;
 
 import java.util.Optional;
 
-public interface ExtendedCrudService<T extends BaseEntity> extends RestoreService<T> {
+public interface ExtendedCrudService<T extends BaseEntity, D> extends RestoreService<T, D> {
     Page<T> findAllPaginated(Pageable pageable);
 
     Page<BookRatingProjection> getAllBooksById(Long id, Integer desiredAverageRating, Pageable pageRequest);
