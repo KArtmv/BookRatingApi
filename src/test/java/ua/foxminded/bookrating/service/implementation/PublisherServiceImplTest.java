@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import ua.foxminded.bookrating.persistance.entity.Author;
 import ua.foxminded.bookrating.persistance.entity.Publisher;
 import ua.foxminded.bookrating.persistance.repo.PublisherRepository;
 import ua.foxminded.bookrating.service.PublisherService;
@@ -46,8 +47,11 @@ class PublisherServiceImplTest {
     void save_shouldThrowsException_whenAuthorIsExist() {
         when(publisherRepository.findByName(anyString())).thenReturn(Optional.of(PUBLISHER_DATA.getPublisher()));
 
-        assertThrows(EntityExistsException.class, () -> publisherService.save(PUBLISHER_DATA.getPublisher()));
-
+        try {
+            publisherService.save(PUBLISHER_DATA.getPublisher());
+        } catch (EntityExistsException e) {
+            assertThat(e.getMessage()).isEqualTo(PUBLISHER_DATA.getPublisher().getName() + " already exists");
+        }
         verify(publisherRepository).findByName(anyString());
         verifyNoMoreInteractions(publisherRepository);
     }
@@ -67,7 +71,11 @@ class PublisherServiceImplTest {
     void update_shouldThrowsException_whenAuthorIsNotExist() {
         when(publisherRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> publisherService.update(PUBLISHER_DATA.getId(), PUBLISHER_DATA.getNewPublisher()));
+        try {
+            publisherService.update(PUBLISHER_DATA.getId(), PUBLISHER_DATA.getNewPublisher());
+        } catch (EntityNotFoundException e) {
+            assertThat(e.getMessage()).isEqualTo("Entity with id: " + PUBLISHER_DATA.getId() + " is not found");
+        }
 
         verify(publisherRepository).findById(anyLong());
         verifyNoMoreInteractions(publisherRepository);
@@ -93,7 +101,13 @@ class PublisherServiceImplTest {
     @Test
     void delete_shouldThrowsException_whenAuthorIsNotExist() {
         when(publisherRepository.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> publisherService.delete(PUBLISHER_DATA.getId()));
+
+        try {
+            publisherService.delete(PUBLISHER_DATA.getId());
+        } catch (EntityNotFoundException e) {
+            assertThat(e.getMessage()).isEqualTo("Entity with id: " + PUBLISHER_DATA.getId() + " is not found");
+        }
+
         verify(publisherRepository).findById(anyLong());
         verifyNoMoreInteractions(publisherRepository);
     }
@@ -138,6 +152,37 @@ class PublisherServiceImplTest {
         publisherService.findAll();
 
         verify(publisherRepository).findAll();
+        verifyNoMoreInteractions(publisherRepository);
+    }
+
+    @Test
+    void findOrSave_shouldSaveAuthor_whenAuthorIsNotExist() {
+        when(publisherRepository.findByName(anyString())).thenReturn(Optional.empty());
+
+        publisherService.findOrSave(PUBLISHER_DATA.getNewPublisher());
+
+        verify(publisherRepository).findByName(PUBLISHER_DATA.getName());
+        verify(publisherRepository).save(any(Publisher.class));
+        verifyNoMoreInteractions(publisherRepository);
+    }
+
+    @Test
+    void findOrSave_shouldReturnAuthor_whenAuthorIsExist() {
+        when(publisherRepository.findByName(anyString())).thenReturn(Optional.of(PUBLISHER_DATA.getPublisher()));
+
+        publisherService.findOrSave(PUBLISHER_DATA.getNewPublisher());
+
+        verify(publisherRepository).findByName(PUBLISHER_DATA.getName());
+        verifyNoMoreInteractions(publisherRepository);
+    }
+
+    @Test
+    void restoreById_shouldDoNothing_whenMethodIsInvoke() {
+        doNothing().when(publisherRepository).restore(anyLong());
+
+        publisherService.restoreById(PUBLISHER_DATA.getId());
+
+        verify(publisherRepository).restore(anyLong());
         verifyNoMoreInteractions(publisherRepository);
     }
 }
