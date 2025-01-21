@@ -1,5 +1,6 @@
 package ua.foxminded.bookrating.service.implementation;
 
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -8,7 +9,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import ua.foxminded.bookrating.persistance.entity.Author;
 import ua.foxminded.bookrating.persistance.entity.Book;
+import ua.foxminded.bookrating.persistance.entity.Publisher;
 import ua.foxminded.bookrating.persistance.repo.BookRepository;
 import ua.foxminded.bookrating.service.AuthorService;
 import ua.foxminded.bookrating.service.BookService;
@@ -56,13 +59,13 @@ class BookServiceImplTest {
 
     @Test
     void save_shouldReturnSavedBook_whenBookIsbnIsNotExist() {
-        when(publisherService.findById(anyLong())).thenReturn(PUBLISHER_DATA.getPublisher());
-        when(authorService.findById(anyLong())).thenReturn(AUTHOR_DATA.getAuthor());
+        when(publisherService.findOrSave(any(Publisher.class))).thenReturn(PUBLISHER_DATA.getPublisher());
+        when(authorService.findOrSave(any(Author.class))).thenReturn(AUTHOR_DATA.getAuthor());
 
         bookService.save(BOOK_DATA.bookDto());
 
-        verify(publisherService).findById(anyLong());
-        verify(authorService).findById(anyLong());
+        verify(publisherService).findOrSave(any(Publisher.class));
+        verify(authorService).findOrSave(any(Author.class));
         var argumentCaptor = ArgumentCaptor.forClass(Book.class);
         verify(bookRepository).save(argumentCaptor.capture());
         Book value = argumentCaptor.getValue();
@@ -81,7 +84,11 @@ class BookServiceImplTest {
     void update_shouldThrowsException_whenBookIsNotFound() {
         when(bookRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> bookService.update(BOOK_DATA.getId(), BOOK_DATA.bookDtoUpdate()));
+        try {
+            bookService.update(BOOK_DATA.getId(), BOOK_DATA.bookDtoUpdate());
+        } catch (EntityNotFoundException e) {
+            assertThat(e.getMessage()).isEqualTo("Entity with id: " + BOOK_DATA.getId() + "is not found");
+        }
 
         verify(bookRepository).findById(anyLong());
         verifyNoMoreInteractions(bookRepository);
@@ -90,14 +97,14 @@ class BookServiceImplTest {
     @Test
     void update_shouldReturnUpdatedBook_whenBookIsFound() {
         when(bookRepository.findById(anyLong())).thenReturn(Optional.of(BOOK_DATA.getBook()));
-        when(publisherService.findById(anyLong())).thenReturn(PUBLISHER_DATA.getPublisher());
-        when(authorService.findById(anyLong())).thenReturn(AUTHOR_DATA.getAuthor());
+        when(publisherService.findOrSave(any(Publisher.class))).thenReturn(PUBLISHER_DATA.getPublisher());
+        when(authorService.findOrSave(any(Author.class))).thenReturn(AUTHOR_DATA.getAuthor());
 
         bookService.update(BOOK_DATA.getId(), BOOK_DATA.bookDtoUpdate());
 
-        verify(bookRepository).findById(anyLong());
-        verify(publisherService).findById(anyLong());
-        verify(authorService).findById(anyLong());
+        verify(bookRepository).findById(BOOK_DATA.getId());
+        verify(publisherService).findOrSave(any(Publisher.class));
+        verify(authorService).findOrSave(any(Author.class));
         var argumentCaptor = ArgumentCaptor.forClass(Book.class);
         verify(bookRepository).save(argumentCaptor.capture());
         Book value = argumentCaptor.getValue();
@@ -126,7 +133,11 @@ class BookServiceImplTest {
     void getByIsbn_shouldThrowsException_whenBookIsNotFound() {
         when(bookRepository.findByIsbn(anyString())).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> bookService.getByIsbn(BOOK_DATA.getIsbn()));
+        try {
+            bookService.getByIsbn(BOOK_DATA.getIsbn());
+        } catch (EntityNotFoundException e) {
+            assertThat(e.getMessage()).isEqualTo("A book with the given ISBN: " + BOOK_DATA.getIsbn() + " is not found");
+        }
 
         verify(bookRepository).findByIsbn(anyString());
         verifyNoMoreInteractions(bookRepository);
