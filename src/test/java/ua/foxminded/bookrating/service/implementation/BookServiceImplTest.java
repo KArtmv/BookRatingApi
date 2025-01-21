@@ -87,7 +87,7 @@ class BookServiceImplTest {
         try {
             bookService.update(BOOK_DATA.getId(), BOOK_DATA.bookDtoUpdate());
         } catch (EntityNotFoundException e) {
-            assertThat(e.getMessage()).isEqualTo("Entity with id: " + BOOK_DATA.getId() + "is not found");
+            assertThat(e.getMessage()).isEqualTo("Entity with id: " + BOOK_DATA.getId() + " is not found");
         }
 
         verify(bookRepository).findById(anyLong());
