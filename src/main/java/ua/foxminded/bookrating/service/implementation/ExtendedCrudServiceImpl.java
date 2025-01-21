@@ -46,4 +46,8 @@ public class ExtendedCrudServiceImpl<T extends NamedEntity> extends RestoreServi
     public Page<BookRatingProjection> getAllBooksById(Long id, Integer desiredAverageRating, Pageable pageRequest) {
         return extendedRepository.getBooksByEntity(findById(id), desiredAverageRating, pageRequest);
     }
+
+    public T findOrSave(T entity) {
+        return extendedRepository.findByName(entity.getName()).orElseGet(() -> extendedRepository.save(entity));
+    }
 }
