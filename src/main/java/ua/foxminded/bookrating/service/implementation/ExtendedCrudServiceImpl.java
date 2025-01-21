@@ -1,6 +1,7 @@
 package ua.foxminded.bookrating.service.implementation;
 
 import jakarta.persistence.EntityExistsException;
+import org.apache.commons.text.WordUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,7 @@ public class ExtendedCrudServiceImpl<T extends NamedEntity> extends RestoreServi
     @Transactional
     public T save(T entity) {
         if (extendedRepository.findByName(entity.getName()).isPresent()) {
-            throw new EntityExistsException(entity.getName() + "{} already exists");
+            throw new EntityExistsException(entity.getName() + " already exists");
         }
         return extendedRepository.save(entity);
     }
@@ -47,6 +48,7 @@ public class ExtendedCrudServiceImpl<T extends NamedEntity> extends RestoreServi
         return extendedRepository.getBooksByEntity(findById(id), desiredAverageRating, pageRequest);
     }
 
+    @Transactional
     public T findOrSave(T entity) {
         return extendedRepository.findByName(entity.getName()).orElseGet(() -> extendedRepository.save(entity));
     }
