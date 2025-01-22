@@ -38,9 +38,11 @@ public class BookDto {
     private Year publicationYear;
 
     @NotEmpty(message = "At least one author is required for the book.")
+    @Valid
     private List<Author> authors;
 
     @NotNull(message = "The publisher is required and cannot be null.")
+    @Valid
     private Publisher publisher;
 
     @Valid
