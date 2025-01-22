@@ -234,8 +234,14 @@ class BookControllerTest {
                                 {"isbn": "0195153448",
                                  "title": "Classical Mythology",
                                  "publicationYear": "2002",
-                                 "authorsId": [4],
-                                 "publisherId": 1577,
+                                 "authors": [
+                                     {
+                                        "name": "Scott Turow"
+                                     }
+                                 ],
+                                 "publisher": {
+                                     "name": "Books on Tape"
+                                 },
                                  "image": {
                                      "imageUrlSmall": "http://images.amazon.com/images/P/0736688390.01.THUMBZZZ.jpg",
                                      "imageUrlMedium": "http://images.amazon.com/images/P/0736688390.01.MZZZZZZZ.jpg",
@@ -274,8 +280,8 @@ class BookControllerTest {
                                 {"isbn": "1212121212",
                                  "title": " ",
                                  "publicationYear": "",
-                                 "authorsId": [],
-                                 "publisherId": "",
+                                 "authors": [],
+                                 "publisher": null,
                                  "image": {
                                      "imageUrlSmall": "",
                                      "imageUrlMedium": " ",
@@ -287,8 +293,8 @@ class BookControllerTest {
                         jsonPath("$.isbn").value("The provided ISBN is not valid."),
                         jsonPath("$.title").value("The title of the book is required and cannot be empty."),
                         jsonPath("$.publicationYear").value("The publication year is required and cannot be null."),
-                        jsonPath("$.authorsId").value("At least one author is required for the book."),
-                        jsonPath("$.publisherId").value("The publisher is required and cannot be null."),
+                        jsonPath("$.authors").value("At least one author is required for the book."),
+                        jsonPath("$.publisher").value("The publisher is required and cannot be null."),
                         jsonPath("$.['image.imageUrlSmall']").value("Image URL Small is required"),
                         jsonPath("$.['image.imageUrlMedium']").value("Image URL Medium is required"),
                         jsonPath("$.['image.imageUrlLarge']").value("Image URL Large must be a valid HTTP URL.")
@@ -305,8 +311,14 @@ class BookControllerTest {
                                 {"isbn": "0736688390",
                                  "title": "Reversible Errors",
                                  "publicationYear": "2003",
-                                 "authorsId": [4],
-                                 "publisherId": 1577,
+                                 "authors": [
+                                     {
+                                        "name": "Scott Turow"
+                                     }
+                                 ],
+                                 "publisher": {
+                                     "name": "Books on Tape"
+                                 },
                                  "image": {
                                      "imageUrlSmall": "http://images.amazon.com/images/P/0736688390.01.THUMBZZZ.jpg",
                                      "imageUrlMedium": "http://images.amazon.com/images/P/0736688390.01.MZZZZZZZ.jpg",
@@ -330,8 +342,14 @@ class BookControllerTest {
                                  "isbn": "0736688390",
                                  "title": "Reversible Errors",
                                  "publicationYear": "2003",
-                                 "authorsId": [4],
-                                 "publisherId": 1577,
+                                 "authors": [
+                                     {
+                                        "name": "Scott Turow"
+                                     }
+                                 ],
+                                 "publisher": {
+                                     "name": "Books on Tape"
+                                 },
                                  "image": {
                                      "imageUrlSmall": "http://images.amazon.com/images/P/0736688390.01.THUMBZZZ.jpg",
                                      "imageUrlMedium": "http://images.amazon.com/images/P/0736688390.01.MZZZZZZZ.jpg",
@@ -371,8 +389,14 @@ class BookControllerTest {
                                  "isbn": "0736688390",
                                  "title": " ",
                                  "publicationYear": " ",
-                                 "authorsId": [],
-                                 "publisherId": "",
+                                 "authors": [
+                                     {
+                                        "name": ""
+                                     }
+                                 ],
+                                 "publisher": {
+                                     "name": ""
+                                 },
                                  "image": {
                                      "imageUrlSmall": "",
                                      "imageUrlMedium": " ",
@@ -383,8 +407,40 @@ class BookControllerTest {
                         status().isBadRequest(),
                         jsonPath("$.title").value("The title of the book is required and cannot be empty."),
                         jsonPath("$.publicationYear").value("The publication year is required and cannot be null."),
-                        jsonPath("$.authorsId").value("At least one author is required for the book."),
-                        jsonPath("$.publisherId").value("The publisher is required and cannot be null."),
+                        jsonPath("$.['authors[0].name']").value("The name is required and cannot be empty."),
+                        jsonPath("$.['publisher.name']").value("The name is required and cannot be empty."),
+                        jsonPath("$.['image.imageUrlSmall']").value("Image URL Small is required"),
+                        jsonPath("$.['image.imageUrlMedium']").value("Image URL Medium is required"),
+                        jsonPath("$.['image.imageUrlLarge']").value("Image URL Large must be a valid HTTP URL.")
+                );
+    }
+
+
+    @Test
+    void update_shouldReturnValidationErrors_whenAuthorAndPublisherAreEmpty() throws Exception {
+        when(bookService.update(anyLong(), any(BookDto.class))).thenReturn(BOOK_DATA.getBook());
+        when(bookRepository.findByIsbn(anyString())).thenReturn(Optional.empty());
+
+        mockMvc.perform(put("/api/v1/books/{id}", BOOK_DATA.getId()).contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {"id": "110464",
+                                 "isbn": "0736688390",
+                                 "title": " ",
+                                 "publicationYear": " ",
+                                 "authors": [],
+                                 "publisher": null,
+                                 "image": {
+                                     "imageUrlSmall": "",
+                                     "imageUrlMedium": " ",
+                                     "imageUrlLarge": "ftp://images.amazon.com/images/P/0736688390.01.LZZZZZZZ.jpg"
+                                 }
+                                }""")).andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.title").value("The title of the book is required and cannot be empty."),
+                        jsonPath("$.publicationYear").value("The publication year is required and cannot be null."),
+                        jsonPath("$.authors").value("At least one author is required for the book."),
+                        jsonPath("$.publisher").value("The publisher is required and cannot be null."),
                         jsonPath("$.['image.imageUrlSmall']").value("Image URL Small is required"),
                         jsonPath("$.['image.imageUrlMedium']").value("Image URL Medium is required"),
                         jsonPath("$.['image.imageUrlLarge']").value("Image URL Large must be a valid HTTP URL.")
@@ -402,8 +458,14 @@ class BookControllerTest {
                                  "isbn": "0736688390",
                                  "title": "Reversible Errors",
                                  "publicationYear": "2003",
-                                 "authorsId": [4],
-                                 "publisherId": 1577,
+                                 "authors": [
+                                     {
+                                        "name": "Scott Turow"
+                                     }
+                                 ],
+                                 "publisher": {
+                                     "name": "Books on Tape"
+                                 },
                                  "image": {
                                      "imageUrlSmall": "http://images.amazon.com/images/P/0736688390.01.THUMBZZZ.jpg",
                                      "imageUrlMedium": "http://images.amazon.com/images/P/0736688390.01.MZZZZZZZ.jpg",
