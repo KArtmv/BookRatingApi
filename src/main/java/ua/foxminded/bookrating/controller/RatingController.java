@@ -31,8 +31,8 @@ public class RatingController {
 
     @PutMapping("/ratings/{id}")
     public RatingModel update(@PathVariable("id") Long id,
-                              @RequestParam("newRating") Integer newRating) {
-        return fullRatingModelAssembler.toModel(ratingService.update(id, newRating));
+                              @RequestBody RatingDto dto) {
+        return fullRatingModelAssembler.toModel(ratingService.update(id, dto));
     }
 
     @DeleteMapping("/ratings/{id}")
