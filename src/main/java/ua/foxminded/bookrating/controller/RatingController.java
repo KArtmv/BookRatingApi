@@ -16,7 +16,6 @@ public class RatingController {
 
     private final RatingService ratingService;
     private final FullRatingModelAssembler fullRatingModelAssembler;
-    private final RatingModelAssembler ratingModelAssembler;
 
     @GetMapping("/ratings/{id}")
     public RatingModel get(@PathVariable("id") Long id) {
@@ -26,7 +25,7 @@ public class RatingController {
     @PostMapping("/ratings")
     @ResponseStatus(HttpStatus.CREATED)
     public RatingModel add(@RequestBody RatingDto ratingDto) {
-        return ratingModelAssembler.toModel(ratingService.save(ratingDto));
+        return fullRatingModelAssembler.toModel(ratingService.save(ratingDto));
     }
 
     @PutMapping("/ratings/{id}")
