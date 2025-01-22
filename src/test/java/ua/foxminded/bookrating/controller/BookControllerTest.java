@@ -232,8 +232,8 @@ class BookControllerTest {
         mockMvc.perform(post("/api/v1/books").contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {"isbn": "0195153448",
-                                 "title": "Classical Mythology",
-                                 "publicationYear": "2002",
+                                 "title": "Reversible Errors",
+                                 "publicationYear": "2003",
                                  "authors": [
                                      {
                                         "name": "Scott Turow"
