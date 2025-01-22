@@ -39,7 +39,7 @@ public class SimpleBookModelAssembler implements RepresentationModelAssembler<Bo
     }
 
     private Link getSelfLink(Book book) {
-        return linkTo(methodOn(BookController.class).getBook(book.getId())).withSelfRel();
+        return linkTo(methodOn(BookController.class).get(book.getId())).withSelfRel();
     }
 }
 
