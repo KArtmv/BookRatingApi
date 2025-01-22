@@ -17,7 +17,8 @@ import ua.foxminded.bookrating.util.book.BookData;
 import ua.foxminded.bookrating.util.rating.RatingData;
 import ua.foxminded.bookrating.util.user.UserData;
 
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -44,7 +45,24 @@ class RatingControllerTest {
         mockMvc.perform(get("/api/v1/ratings/{id}", RATING_DATA.getId())).andDo(print())
                 .andExpectAll(
                         status().isOk(),
-                        jsonPath("$.book.id").value(BOOK_DATA.getId())
+                        jsonPath("$.id").value(RATING_DATA.getId()),
+                        jsonPath("$.user.id").value(USER_DATA.getId()),
+                        jsonPath("$.user.location").value(USER_DATA.getLocation()),
+                        jsonPath("$.user.age").value(USER_DATA.getAge()),
+                        jsonPath("$.user._links.ratedBooks.href").value(USER_DATA.getUserRatedBooksHref()),
+                        jsonPath("$.user._links.self.href").value(USER_DATA.getSelfHref()),
+                        jsonPath("$.book.id").value(BOOK_DATA.getId()),
+                        jsonPath("$.book.title").value(BOOK_DATA.getTitle()),
+                        jsonPath("$.book.author").value(BOOK_DATA.getBook().getAuthors().stream().findFirst().get().getName()),
+                        jsonPath("$.book.publisher").value(BOOK_DATA.getBook().getPublisher().getName()),
+                        jsonPath("$.book.publicationYear").value(BOOK_DATA.getPublicationYear()),
+                        jsonPath("$.book.averageRating").value("0.0"),
+                        jsonPath("$.book.image.imageUrlSmall").value(BOOK_DATA.getImage().getImageUrlSmall()),
+                        jsonPath("$.book.image.imageUrlMedium").value(BOOK_DATA.getImage().getImageUrlMedium()),
+                        jsonPath("$.book.image.imageUrlLarge").value(BOOK_DATA.getImage().getImageUrlLarge()),
+                        jsonPath("$.book._links.self.href").value(BOOK_DATA.getSelfHref()),
+                        jsonPath("$.rating").value(RATING_DATA.getUserRating()),
+                        jsonPath("$._links.self.href").value(RATING_DATA.getSelfHref())
                 );
     }
 
@@ -61,26 +79,58 @@ class RatingControllerTest {
                         }
                         """)).andDo(print()).andExpectAll(
                 status().isCreated(),
+                jsonPath("$.id").value(RATING_DATA.getId()),
                 jsonPath("$.user.id").value(USER_DATA.getId()),
                 jsonPath("$.user.location").value(USER_DATA.getLocation()),
                 jsonPath("$.user.age").value(USER_DATA.getAge()),
-                jsonPath("$.user._links.self.href").value(USER_DATA.getSelfHref()),
                 jsonPath("$.user._links.ratedBooks.href").value(USER_DATA.getUserRatedBooksHref()),
+                jsonPath("$.user._links.self.href").value(USER_DATA.getSelfHref()),
+                jsonPath("$.book.id").value(BOOK_DATA.getId()),
+                jsonPath("$.book.title").value(BOOK_DATA.getTitle()),
+                jsonPath("$.book.author").value(BOOK_DATA.getBook().getAuthors().stream().findFirst().get().getName()),
+                jsonPath("$.book.publisher").value(BOOK_DATA.getBook().getPublisher().getName()),
+                jsonPath("$.book.publicationYear").value(BOOK_DATA.getPublicationYear()),
+                jsonPath("$.book.averageRating").value("0.0"),
+                jsonPath("$.book.image.imageUrlSmall").value(BOOK_DATA.getImage().getImageUrlSmall()),
+                jsonPath("$.book.image.imageUrlMedium").value(BOOK_DATA.getImage().getImageUrlMedium()),
+                jsonPath("$.book.image.imageUrlLarge").value(BOOK_DATA.getImage().getImageUrlLarge()),
+                jsonPath("$.book._links.self.href").value(BOOK_DATA.getSelfHref()),
                 jsonPath("$.rating").value(RATING_DATA.getUserRating()),
                 jsonPath("$._links.self.href").value(RATING_DATA.getSelfHref())
-
         );
     }
 
     @Test
     void update_() throws Exception {
-        when(ratingService.update(anyLong(), anyInt())).thenReturn(RATING_DATA.getUpdatedRating());
+        when(ratingService.update(anyLong(), any(RatingDto.class))).thenReturn(RATING_DATA.getUpdatedRating());
 
-        mockMvc.perform(put("/api/v1/ratings/{id}", RATING_DATA.getId()).param("newRating", RATING_DATA.getUpdatedUserRating().toString()))
-                .andDo(print()).andExpectAll(
-                        status().isOk(),
-                        jsonPath("$.book.id").value(BOOK_DATA.getId())
-                );
+        mockMvc.perform(put("/api/v1/ratings/{id}", RATING_DATA.getId()).contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {
+                        "bookId": "",
+                        "userId": "",
+                        "bookRating": "5"
+                                }""")).andDo(print()).andExpectAll(
+                status().isOk(),
+                jsonPath("$.id").value(RATING_DATA.getId()),
+                jsonPath("$.user.id").value(USER_DATA.getId()),
+                jsonPath("$.user.location").value(USER_DATA.getLocation()),
+                jsonPath("$.user.age").value(USER_DATA.getAge()),
+                jsonPath("$.user._links.ratedBooks.href").value(USER_DATA.getUserRatedBooksHref()),
+                jsonPath("$.user._links.self.href").value(USER_DATA.getSelfHref()),
+                jsonPath("$.book.id").value(BOOK_DATA.getId()),
+                jsonPath("$.book.title").value(BOOK_DATA.getTitle()),
+                jsonPath("$.book.author").value(BOOK_DATA.getBook().getAuthors().stream().findFirst().get().getName()),
+                jsonPath("$.book.publisher").value(BOOK_DATA.getBook().getPublisher().getName()),
+                jsonPath("$.book.publicationYear").value(BOOK_DATA.getPublicationYear()),
+                jsonPath("$.book.averageRating").value("0.0"),
+                jsonPath("$.book.image.imageUrlSmall").value(BOOK_DATA.getImage().getImageUrlSmall()),
+                jsonPath("$.book.image.imageUrlMedium").value(BOOK_DATA.getImage().getImageUrlMedium()),
+                jsonPath("$.book.image.imageUrlLarge").value(BOOK_DATA.getImage().getImageUrlLarge()),
+                jsonPath("$.book._links.self.href").value(BOOK_DATA.getSelfHref()),
+                jsonPath("$.rating").value(RATING_DATA.getUpdatedUserRating()),
+                jsonPath("$._links.self.href").value(RATING_DATA.getSelfHref())
+        );
     }
 
     @Test
@@ -88,5 +138,4 @@ class RatingControllerTest {
         mockMvc.perform(delete("/api/v1/ratings/{id}", RATING_DATA.getId())).andDo(print())
                 .andExpect(status().isNoContent());
     }
-
 }
