@@ -1,4 +1,3 @@
-
 package ua.foxminded.bookrating.service;
 
 import ua.foxminded.bookrating.persistance.entity.BaseEntity;

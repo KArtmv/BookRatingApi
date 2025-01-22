@@ -6,8 +6,8 @@ BEGIN
     set deleted = true
     where isbn in (select isbn
                    from book
-                   join book_authors ba on book.isbn = ba.book_isbn
-                   join author a on a.id = ba.author_id
+                            join book_authors ba on book.isbn = ba.book_isbn
+                            join author a on a.id = ba.author_id
                    where a.id = new.id);
     return NEW;
 END;

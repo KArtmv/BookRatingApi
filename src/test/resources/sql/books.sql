@@ -132,7 +132,8 @@ VALUES ('http://images.amazon.com/images/P/0374117349.01.THUMBZZZ.jpg',
         'http://images.amazon.com/images/P/073664704X.01.LZZZZZZZ.jpg', '073664704X', '2000', 1577,
         'Summer of Deliverance: A Memoir of Father and Son', 263408);
 
-INSERT INTO book (image_url_small, image_url_medium, image_url_large, isbn, publication_year, publisher_id, title, id, deleted)
+INSERT INTO book (image_url_small, image_url_medium, image_url_large, isbn, publication_year, publisher_id, title, id,
+                  deleted)
 VALUES ( 'http://images.amazon.com/images/P/067170124X.01.THUMBZZZ.jpg'
        , 'http://images.amazon.com/images/P/067170124X.01.MZZZZZZZ.jpg'
        , 'http://images.amazon.com/images/P/067170124X.01.LZZZZZZZ.jpg'
