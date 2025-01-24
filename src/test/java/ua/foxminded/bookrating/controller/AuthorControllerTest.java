@@ -278,8 +278,8 @@ class AuthorControllerTest {
     @Test
     void restore_shouldDoNothing_whenUserIsAuthorized() throws Exception {
         mockMvc.perform(put("/api/v1/authors/{id}/restore", AUTHORS_DATA.getId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .with(jwt()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(jwt()))
                 .andExpect(status().isNoContent());
     }
 }
