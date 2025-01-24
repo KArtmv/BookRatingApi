@@ -14,6 +14,7 @@ import ua.foxminded.bookrating.assembler.AuthorModelAssembler;
 import ua.foxminded.bookrating.assembler.BookModelAssembler;
 import ua.foxminded.bookrating.assembler.SimpleBookModelAssembler;
 import ua.foxminded.bookrating.persistance.entity.Author;
+import ua.foxminded.bookrating.security.SecurityConfig;
 import ua.foxminded.bookrating.service.AuthorService;
 import ua.foxminded.bookrating.util.author.AuthorsData;
 import ua.foxminded.bookrating.util.book.BookData;
@@ -23,12 +24,13 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Import({AuthorModelAssembler.class, BookModelAssembler.class, SimpleBookModelAssembler.class})
+@Import({AuthorModelAssembler.class, BookModelAssembler.class, SimpleBookModelAssembler.class, SecurityConfig.class})
 @WebMvcTest(AuthorController.class)
 class AuthorControllerTest {
 
@@ -42,7 +44,7 @@ class AuthorControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    void getAll_shouldReturn() throws Exception {
+    void getAll_shouldReturnAuthors_whenUserIsUnauthorized() throws Exception {
         when(authorService.findAllPaginated(any(Pageable.class))).thenReturn(AUTHORS_DATA.getAuthors());
 
         mockMvc.perform(get("/api/v1/authors")).andDo(print())
@@ -64,7 +66,7 @@ class AuthorControllerTest {
     }
 
     @Test
-    void getAuthorBooks() throws Exception {
+    void getAuthorBooks_shouldReturnAuthorBooks_whenUserIsUnauthorized() throws Exception {
         when(authorService.getAllBooksById(anyLong(), anyInt(), any(Pageable.class))).thenReturn(BOOK_DATA.getBookRatingProjections());
 
         mockMvc.perform(get("/api/v1/authors/{id}/books", AUTHORS_DATA.getId())).andDo(print())
@@ -89,7 +91,7 @@ class AuthorControllerTest {
     }
 
     @Test
-    void getAuthorsContainName() throws Exception {
+    void getAuthorsContainName_shouldReturnAuthorByName_whenUserIsUnauthorized() throws Exception {
         when(authorService.getByNameContaining(anyString(), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(List.of(AUTHORS_DATA.getAuthor()), PageRequest.of(0, 10), 1));
 
@@ -108,7 +110,7 @@ class AuthorControllerTest {
     }
 
     @Test
-    void get_() throws Exception {
+    void get_shouldReturnAuthor_whenUseIsUnauthorized() throws Exception {
         when(authorService.findById(anyLong())).thenReturn(AUTHORS_DATA.getAuthor());
 
         mockMvc.perform(get("/api/v1/authors/{id}", AUTHORS_DATA.getId())).andDo(print())
@@ -122,26 +124,105 @@ class AuthorControllerTest {
     }
 
     @Test
-    void add() throws Exception {
+    void add_shouldReturnUnauthorized_whenUseIsUnauthorized() throws Exception {
         when(authorService.save(any(Author.class))).thenReturn(AUTHORS_DATA.getAuthor());
 
         mockMvc.perform(post("/api/v1/authors").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\" : \"Scott Turow\"}")).andDo(print())
                 .andExpectAll(
-                        status().isCreated(),
-                        jsonPath("$.id").value(AUTHORS_DATA.getId()),
-                        jsonPath("$.name").value(AUTHORS_DATA.getName()),
-                        jsonPath("$._links.self.href").value(AUTHORS_DATA.getSelfHref()),
-                        jsonPath("$._links.authorBooks.href").value(AUTHORS_DATA.getAuthorBooksHref())
+                        status().isUnauthorized()
                 );
     }
 
     @Test
-    void update() throws Exception {
+    void update_shouldReturnUnauthorized_whenUseIsUnauthorized() throws Exception {
         when(authorService.update(anyLong(), any(Author.class))).thenReturn(AUTHORS_DATA.getAuthor());
 
         mockMvc.perform(put("/api/v1/authors/{id}", AUTHORS_DATA.getId()).contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\" : \"Scott Turow\"}")).andDo(print())
+                .andExpectAll(
+                        status().isUnauthorized()
+                );
+    }
+
+    @Test
+    void delete_shouldReturnUnauthorized_whenUseIsUnauthorized() throws Exception {
+        mockMvc.perform(delete("/api/v1/authors/{id}", AUTHORS_DATA.getId()))
+                .andExpect(status().isUnauthorized());
+    }
+
+
+    @Test
+    void getAll_shouldReturnAuthors_whenUserIsAuthorized() throws Exception {
+        when(authorService.findAllPaginated(any(Pageable.class))).thenReturn(AUTHORS_DATA.getAuthors());
+
+        mockMvc.perform(get("/api/v1/authors").with(jwt())).andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$._embedded.authorModelList[0].id").value(AUTHORS_DATA.getId()),
+                        jsonPath("$._embedded.authorModelList[0].name").value(AUTHORS_DATA.getName()),
+                        jsonPath("$._embedded.authorModelList[0]._links.self.href").value(AUTHORS_DATA.getSelfHref()),
+                        jsonPath("$._embedded.authorModelList[0]._links.authorBooks.href").value(AUTHORS_DATA.getAuthorBooksHref()),
+                        jsonPath("$._embedded.authorModelList[1].id").value(AUTHORS_DATA.getId2()),
+                        jsonPath("$._embedded.authorModelList[1].name").value(AUTHORS_DATA.getName2()),
+                        jsonPath("$._embedded.authorModelList[1]._links.self.href").value("http://localhost/api/v1/authors/2172"),
+                        jsonPath("$._embedded.authorModelList[1]._links.authorBooks.href").value("http://localhost/api/v1/authors/2172/books?desiredAverageRating=0"),
+                        jsonPath("$.page.size").value("2"),
+                        jsonPath("$.page.totalElements").value("100"),
+                        jsonPath("$.page.totalPages").value("50"),
+                        jsonPath("$.page.number").value("0")
+                );
+    }
+
+    @Test
+    void getAuthorBooks_shouldReturnAuthorsBooks_whenUserIsAuthorized() throws Exception {
+        when(authorService.getAllBooksById(anyLong(), anyInt(), any(Pageable.class))).thenReturn(BOOK_DATA.getBookRatingProjections());
+
+        mockMvc.perform(get("/api/v1/authors/{id}/books", AUTHORS_DATA.getId()).with(jwt())).andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$._embedded.simpleBookModelList[0].id").value(BOOK_DATA.getId()),
+                        jsonPath("$._embedded.simpleBookModelList[0].title").value(BOOK_DATA.getTitle()),
+                        jsonPath("$._embedded.simpleBookModelList[0].author[0]").value(AUTHORS_DATA.getName()),
+                        jsonPath("$._embedded.simpleBookModelList[0].publisher").value(PUBLISHER_DATA.getName()),
+                        jsonPath("$._embedded.simpleBookModelList[0].publicationYear").value(BOOK_DATA.getPublicationYear()),
+                        jsonPath("$._embedded.simpleBookModelList[0].averageRating").value("0.0"),
+                        jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlSmall").value(BOOK_DATA.getImage().getImageUrlSmall()),
+                        jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlMedium").value(BOOK_DATA.getImage().getImageUrlMedium()),
+                        jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlLarge").value(BOOK_DATA.getImage().getImageUrlLarge()),
+                        jsonPath("$._embedded.simpleBookModelList[0]._links.self.href").value(BOOK_DATA.getSelfHref()),
+                        jsonPath("$._links.self.href").value("http://localhost/api/v1/authors/4/books?page=0&size=10"),
+                        jsonPath("$.page.size").value("10"),
+                        jsonPath("$.page.totalElements").value("1"),
+                        jsonPath("$.page.totalPages").value("1"),
+                        jsonPath("$.page.number").value("0")
+                );
+    }
+
+    @Test
+    void getAuthorsContainName_shouldReturnAuthorByName_whenUserIsAuthorized() throws Exception {
+        when(authorService.getByNameContaining(anyString(), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(AUTHORS_DATA.getAuthor()), PageRequest.of(0, 10), 1));
+
+        mockMvc.perform(get("/api/v1/authors/find-by-name").param("name", "scott").with(jwt())).andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$._embedded.authorModelList[0].id").value(AUTHORS_DATA.getId()),
+                        jsonPath("$._embedded.authorModelList[0].name").value(AUTHORS_DATA.getName()),
+                        jsonPath("$._embedded.authorModelList[0]._links.self.href").value(AUTHORS_DATA.getSelfHref()),
+                        jsonPath("$._embedded.authorModelList[0]._links.authorBooks.href").value(AUTHORS_DATA.getAuthorBooksHref()),
+                        jsonPath("$.page.size").value("10"),
+                        jsonPath("$.page.totalElements").value("1"),
+                        jsonPath("$.page.totalPages").value("1"),
+                        jsonPath("$.page.number").value("0")
+                );
+    }
+
+    @Test
+    void get_shouldReturnAuthor_whenUserIsAuthorized() throws Exception {
+        when(authorService.findById(anyLong())).thenReturn(AUTHORS_DATA.getAuthor());
+
+        mockMvc.perform(get("/api/v1/authors/{id}", AUTHORS_DATA.getId()).with(jwt())).andDo(print())
                 .andExpectAll(
                         status().isOk(),
                         jsonPath("$.id").value(AUTHORS_DATA.getId()),
@@ -152,8 +233,53 @@ class AuthorControllerTest {
     }
 
     @Test
-    void delete_() throws Exception {
-        mockMvc.perform(delete("/api/v1/authors/{id}", AUTHORS_DATA.getId()))
+    void add_shouldReturnAuthor_whenUserIsAuthorized() throws Exception {
+        when(authorService.save(any(Author.class))).thenReturn(AUTHORS_DATA.getAuthor());
+
+        mockMvc.perform(post("/api/v1/authors").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\" : \"Scott Turow\"}").with(jwt())).andDo(print())
+                .andExpectAll(
+                        status().isCreated(),
+                        jsonPath("$.id").value(AUTHORS_DATA.getId()),
+                        jsonPath("$.name").value(AUTHORS_DATA.getName()),
+                        jsonPath("$._links.self.href").value(AUTHORS_DATA.getSelfHref()),
+                        jsonPath("$._links.authorBooks.href").value(AUTHORS_DATA.getAuthorBooksHref())
+                );
+    }
+
+    @Test
+    void update_shouldReturnAuthor_whenUserIsAuthorized() throws Exception {
+        when(authorService.update(anyLong(), any(Author.class))).thenReturn(AUTHORS_DATA.getAuthor());
+
+        mockMvc.perform(put("/api/v1/authors/{id}", AUTHORS_DATA.getId()).contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"name\" : \"Scott Turow\"}").with(jwt())).andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.id").value(AUTHORS_DATA.getId()),
+                        jsonPath("$.name").value(AUTHORS_DATA.getName()),
+                        jsonPath("$._links.self.href").value(AUTHORS_DATA.getSelfHref()),
+                        jsonPath("$._links.authorBooks.href").value(AUTHORS_DATA.getAuthorBooksHref())
+                );
+    }
+
+    @Test
+    void delete_shouldDoNothing_whenUserIsAuthorized() throws Exception {
+        mockMvc.perform(delete("/api/v1/authors/{id}", AUTHORS_DATA.getId()).with(jwt()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void restore_shouldReturnUnauthorizedStatus_whenUserIsNotAuthorized() throws Exception {
+        mockMvc.perform(put("/api/v1/authors/{id}/restore", AUTHORS_DATA.getId()))
+                .andDo(print())
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void restore_shouldDoNothing_whenUserIsAuthorized() throws Exception {
+        mockMvc.perform(put("/api/v1/authors/{id}/restore", AUTHORS_DATA.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .with(jwt()))
                 .andExpect(status().isNoContent());
     }
 }
