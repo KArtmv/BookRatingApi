@@ -27,4 +27,4 @@ spring:
         jwt:
           issuer-uri: https://dev-14kfurp1ib7mmn64.us.auth0.com/
 auth0:
-  audience: https://book-ratings.com/api
+  audience: https://book-ratings.com/
