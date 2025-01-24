@@ -39,11 +39,7 @@ public class RatingItemProcess implements ItemProcessor<RatingCsvDto, Rating>, S
         User user = userCache.getOrDefault(item.userId(), null);
 
         if (book != null && user != null) {
-            Rating rating = new Rating();
-            rating.setBook(book);
-            rating.setUser(user);
-            rating.setBookRating(item.bookRaring());
-            return rating;
+            return new Rating(book, user, item.bookRaring());
         } else {
             return null;
         }
