@@ -11,7 +11,7 @@ import ua.foxminded.bookrating.service.UserService;
 
 @Service
 @Transactional(readOnly = true)
-public class UserServiceImpl extends CrudServiceImpl<User> implements UserService {
+public class UserServiceImpl extends RestoreServiceImpl<User> implements UserService {
 
     private final UserRepository userRepository;
 

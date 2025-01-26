@@ -32,9 +32,9 @@ public class RatingServiceImpl extends CrudServiceImpl<Rating> implements Rating
 
     @Transactional
     @Override
-    public Rating update(Long id, Integer newRating) {
+    public Rating update(Long id, RatingDto ratingDto) {
         Rating rating = findById(id);
-        rating.setBookRating(newRating);
+        rating.setBookRating(ratingDto.bookRating());
         return ratingRepository.save(rating);
     }
 

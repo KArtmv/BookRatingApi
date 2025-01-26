@@ -1,5 +1,6 @@
 package ua.foxminded.bookrating.service.implementation;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,10 +64,8 @@ class RatingServiceImplTest {
     @Test
     void update_shouldUpdateRating_whenIsInvoke() {
         when(ratingRepository.findById(anyLong())).thenReturn(Optional.of(RATING_DATA.getRating()));
-        when(userService.findById(anyLong())).thenReturn(USER_DATA.getUser());
-        when(bookService.findById(anyLong())).thenReturn(BOOK_DATA.getBook());
 
-        ratingService.update(RATING_DATA.getId(), RATING_DATA.getUpdatedUserRating());
+        ratingService.update(RATING_DATA.getId(), RATING_DATA.getUpdateRatingDto());
 
         verify(ratingRepository).findById(anyLong());
         var argumentCaptor = ArgumentCaptor.forClass(Rating.class);
@@ -78,6 +77,20 @@ class RatingServiceImplTest {
             assertThat(result.getBook()).isEqualTo(BOOK_DATA.getBook());
             assertThat(result.getBookRating()).isEqualTo(RATING_DATA.getUpdatedUserRating());
         });
+        verifyNoMoreInteractions(ratingRepository);
+    }
+
+    @Test
+    void update_shouldThrowsException_whenRatingIsNotFound() {
+        when(ratingRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        try {
+            ratingService.update(RATING_DATA.getId(), RATING_DATA.getUpdateRatingDto());
+        } catch (EntityNotFoundException e) {
+            assertThat(e.getMessage()).contains("Entity with id: " + RATING_DATA.getId() + " is not found");
+        }
+
+        verify(ratingRepository).findById(anyLong());
         verifyNoMoreInteractions(ratingRepository);
     }
 

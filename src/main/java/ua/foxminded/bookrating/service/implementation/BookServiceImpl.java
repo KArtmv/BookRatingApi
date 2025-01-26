@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
-public class BookServiceImpl extends CrudServiceImpl<Book> implements BookService {
+public class BookServiceImpl extends RestoreServiceImpl<Book> implements BookService {
 
     private final BookRepository bookRepository;
     private final PublisherService publisherService;
@@ -40,8 +40,8 @@ public class BookServiceImpl extends CrudServiceImpl<Book> implements BookServic
 
     @Transactional
     @Override
-    public Book save(BookDto entity) {
-        return bookRepository.save(toEntity(entity, new Book()));
+    public Book save(BookDto bookDto) {
+        return bookRepository.save(toEntity(bookDto, new Book()));
     }
 
     @Transactional
@@ -74,18 +74,18 @@ public class BookServiceImpl extends CrudServiceImpl<Book> implements BookServic
                 pageable);
     }
 
-    private Book toEntity(BookDto dto, Book book) {
-        book.setIsbn(dto.getIsbn());
-        book.setTitle(dto.getTitle());
-        book.setPublicationYear(dto.getPublicationYear().toString());
-        book.setPublisher(publisherService.findById(dto.getPublisherId()));
-        book.setAuthors(dto.getAuthorsId().stream().map(authorService::findById).collect(Collectors.toSet()));
-        book.setImage(dto.getImage());
-        return book;
-    }
-
     @Override
     public Page<Rating> getRatingsByBookId(Long id, Pageable pageable) {
         return bookRepository.findBookRatings(findById(id), pageable);
+    }
+
+    private Book toEntity(BookDto bookDto, Book book) {
+        book.setIsbn(bookDto.getIsbn());
+        book.setTitle(bookDto.getTitle());
+        book.setPublicationYear(bookDto.getPublicationYear().toString());
+        book.setPublisher(publisherService.findOrSave(bookDto.getPublisher()));
+        book.setAuthors(bookDto.getAuthors().stream().map(authorService::findOrSave).collect(Collectors.toSet()));
+        book.setImage(bookDto.getImage());
+        return book;
     }
 }

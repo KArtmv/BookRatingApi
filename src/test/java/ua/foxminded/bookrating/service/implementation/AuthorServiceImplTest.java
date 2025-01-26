@@ -19,7 +19,6 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -47,7 +46,11 @@ class AuthorServiceImplTest {
     void save_shouldThrowsException_whenAuthorIsExist() {
         when(authorRepository.findByName(anyString())).thenReturn(Optional.of(AUTHORS_DATA.getAuthor()));
 
-        assertThrows(EntityExistsException.class, () -> authorService.save(AUTHORS_DATA.getAuthor()));
+        try {
+            authorService.save(AUTHORS_DATA.getAuthor());
+        } catch (EntityExistsException e) {
+            assertThat(e.getMessage()).isEqualTo(AUTHORS_DATA.getAuthor().getName() + " already exists");
+        }
 
         verify(authorRepository).findByName(anyString());
         verifyNoMoreInteractions(authorRepository);
@@ -68,7 +71,11 @@ class AuthorServiceImplTest {
     void update_shouldThrowsException_whenAuthorIsNotExist() {
         when(authorRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> authorService.update(AUTHORS_DATA.getId(), AUTHORS_DATA.getNewAuthor()));
+        try {
+            authorService.update(AUTHORS_DATA.getId(), AUTHORS_DATA.getNewAuthor());
+        } catch (EntityNotFoundException e) {
+            assertThat(e.getMessage()).isEqualTo("Entity with id: " + AUTHORS_DATA.getId() + " is not found");
+        }
 
         verify(authorRepository).findById(anyLong());
         verifyNoMoreInteractions(authorRepository);
@@ -94,7 +101,13 @@ class AuthorServiceImplTest {
     @Test
     void delete_shouldThrowsException_whenAuthorIsNotExist() {
         when(authorRepository.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(EntityNotFoundException.class, () -> authorService.delete(AUTHORS_DATA.getId()));
+
+        try {
+            authorService.delete(AUTHORS_DATA.getId());
+        } catch (EntityNotFoundException e) {
+            assertThat(e.getMessage()).isEqualTo("Entity with id: " + AUTHORS_DATA.getId() + " is not found");
+        }
+
         verify(authorRepository).findById(anyLong());
         verifyNoMoreInteractions(authorRepository);
     }
@@ -139,6 +152,37 @@ class AuthorServiceImplTest {
         authorService.findAll();
 
         verify(authorRepository).findAll();
+        verifyNoMoreInteractions(authorRepository);
+    }
+
+    @Test
+    void findOrSave_shouldSaveAuthor_whenAuthorIsNotExist() {
+        when(authorRepository.findByName(anyString())).thenReturn(Optional.empty());
+
+        authorService.findOrSave(AUTHORS_DATA.getNewAuthor());
+
+        verify(authorRepository).findByName(AUTHORS_DATA.getName());
+        verify(authorRepository).save(any(Author.class));
+        verifyNoMoreInteractions(authorRepository);
+    }
+
+    @Test
+    void findOrSave_shouldReturnAuthor_whenAuthorIsExist() {
+        when(authorRepository.findByName(anyString())).thenReturn(Optional.of(AUTHORS_DATA.getAuthor()));
+
+        authorService.findOrSave(AUTHORS_DATA.getNewAuthor());
+
+        verify(authorRepository).findByName(AUTHORS_DATA.getName());
+        verifyNoMoreInteractions(authorRepository);
+    }
+
+    @Test
+    void restoreById_shouldDoNothing_whenMethodIsInvoke() {
+        doNothing().when(authorRepository).restore(anyLong());
+
+        authorService.restoreById(AUTHORS_DATA.getId());
+
+        verify(authorRepository).restore(anyLong());
         verifyNoMoreInteractions(authorRepository);
     }
 }

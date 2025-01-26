@@ -1,24 +1,14 @@
 ALTER TABLE author
-    ADD deleted BOOLEAN,
-    ALTER COLUMN deleted SET NOT NULL,
-    ALTER COLUMN deleted SET DEFAULT false;
+    ADD deleted BOOLEAN DEFAULT false NOT NULL;
 
 ALTER TABLE book
-    ADD deleted BOOLEAN,
-    ALTER COLUMN deleted SET NOT NULL,
-    ALTER COLUMN deleted SET DEFAULT false;
+    ADD deleted BOOLEAN DEFAULT false NOT NULL;
 
 ALTER TABLE publisher
-    ADD deleted BOOLEAN,
-    ALTER COLUMN deleted SET NOT NULL,
-    ALTER COLUMN deleted SET DEFAULT false;
+    ADD deleted BOOLEAN DEFAULT false NOT NULL;
 
 ALTER TABLE rating
-    ADD deleted BOOLEAN,
-    ALTER COLUMN deleted SET NOT NULL,
-    ALTER COLUMN deleted SET DEFAULT false;
+    ADD deleted BOOLEAN DEFAULT false NOT NULL;
 
 ALTER TABLE users
-    ADD deleted BOOLEAN,
-    ALTER COLUMN deleted SET NOT NULL,
-    ALTER COLUMN deleted SET DEFAULT false;
+    ADD deleted BOOLEAN DEFAULT false NOT NULL;

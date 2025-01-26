@@ -19,7 +19,7 @@ import java.util.Set;
 @Entity
 @Table(name = "publisher")
 @SequenceGenerator(name = "default_gen", sequenceName = "publisher_is_seq", allocationSize = 1)
-public class Publisher extends NamedItem {
+public class Publisher extends NamedEntity {
 
     @OneToMany(mappedBy = "publisher")
     private Set<Book> books = new LinkedHashSet<>();

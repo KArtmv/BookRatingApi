@@ -20,6 +20,8 @@ public class AuthorsData {
     private final Author author2 = new Author(id2, name2);
     private final Author newAuthor = new Author(name);
     private final Author updatedAuthor = new Author(updatedName);
+    private final Long deletedAuthorId = 487L;
+    private final String deletedAuthorName = "Judith Rossner";
 
     private final Page<Author> authors = new PageImpl<>(
             List.of(author, author2),

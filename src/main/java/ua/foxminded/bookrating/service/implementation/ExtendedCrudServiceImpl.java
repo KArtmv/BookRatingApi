@@ -4,12 +4,12 @@ import jakarta.persistence.EntityExistsException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
-import ua.foxminded.bookrating.persistance.entity.NamedItem;
+import ua.foxminded.bookrating.persistance.entity.NamedEntity;
 import ua.foxminded.bookrating.persistance.repo.ExtendedRepository;
 import ua.foxminded.bookrating.projection.BookRatingProjection;
 
 @Transactional(readOnly = true)
-public class ExtendedCrudServiceImpl<T extends NamedItem> extends CrudServiceImpl<T> {
+public class ExtendedCrudServiceImpl<T extends NamedEntity> extends RestoreServiceImpl<T> {
 
     private final ExtendedRepository<T, Long> extendedRepository;
 
@@ -26,7 +26,7 @@ public class ExtendedCrudServiceImpl<T extends NamedItem> extends CrudServiceImp
     @Transactional
     public T save(T entity) {
         if (extendedRepository.findByName(entity.getName()).isPresent()) {
-            throw new EntityExistsException(entity.getName() + "{} already exists");
+            throw new EntityExistsException(entity.getName() + " already exists");
         }
         return extendedRepository.save(entity);
     }
@@ -45,5 +45,10 @@ public class ExtendedCrudServiceImpl<T extends NamedItem> extends CrudServiceImp
 
     public Page<BookRatingProjection> getAllBooksById(Long id, Integer desiredAverageRating, Pageable pageRequest) {
         return extendedRepository.getBooksByEntity(findById(id), desiredAverageRating, pageRequest);
+    }
+
+    @Transactional
+    public T findOrSave(T entity) {
+        return extendedRepository.findByName(entity.getName()).orElseGet(() -> extendedRepository.save(entity));
     }
 }

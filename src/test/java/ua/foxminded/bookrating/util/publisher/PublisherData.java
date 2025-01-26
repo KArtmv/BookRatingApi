@@ -20,6 +20,8 @@ public class PublisherData {
     private final Publisher publisher2 = new Publisher(id2, name2);
     private final Publisher newPublisher = new Publisher(name);
     private final Publisher updatedPublisher = new Publisher(updatedName);
+    private final Long deletedPublisherId = 1182L;
+    private final String deletedPublisherName = "Simon and Schuster";
 
     private final Page<Publisher> publishers = new PageImpl<>(
             List.of(publisher, publisher2),

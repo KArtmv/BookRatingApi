@@ -15,6 +15,7 @@ import ua.foxminded.bookrating.service.AuthorService;
 import ua.foxminded.bookrating.service.PublisherService;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -34,21 +35,10 @@ public class BookItemProcess implements ItemProcessor<BookCsvDto, Book>, StepExe
         Author author = authorCache.getOrDefault(replaceAmpersand(item.author().trim()), null);
 
         if (author != null && publisher != null && item.title().length() < 255) {
-            return toBook(item, publisher, author);
+            return new Book(item.isbn(), item.title(), item.publicationYear(), publisher, Set.of(author), new Image(item.imageUrlS(), item.imageUrlM(), item.imageUrlL()));
         } else {
             return null;
         }
-    }
-
-    private Book toBook(BookCsvDto item, Publisher publisher, Author author) {
-        Book book = new Book();
-        book.setIsbn(item.isbn().trim());
-        book.setTitle(replaceAmpersand(item.title()));
-        book.setPublisher(publisher);
-        book.setPublicationYear(item.publicationYear());
-        book.addAuthor(author);
-        book.setImage(new Image(item.imageUrlS(), item.imageUrlM(), item.imageUrlL()));
-        return book;
     }
 
     @Override

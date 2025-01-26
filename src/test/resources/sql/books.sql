@@ -131,3 +131,91 @@ VALUES ('http://images.amazon.com/images/P/0374117349.01.THUMBZZZ.jpg',
         'http://images.amazon.com/images/P/073664704X.01.MZZZZZZZ.jpg',
         'http://images.amazon.com/images/P/073664704X.01.LZZZZZZZ.jpg', '073664704X', '2000', 1577,
         'Summer of Deliverance: A Memoir of Father and Son', 263408);
+
+INSERT INTO book (image_url_small, image_url_medium, image_url_large, isbn, publication_year, publisher_id, title, id,
+                  deleted)
+VALUES ( 'http://images.amazon.com/images/P/067170124X.01.THUMBZZZ.jpg'
+       , 'http://images.amazon.com/images/P/067170124X.01.MZZZZZZZ.jpg'
+       , 'http://images.amazon.com/images/P/067170124X.01.LZZZZZZZ.jpg'
+       , '067170124X', '1991', 57, 'HIS LITTLE WOMEN : HIS LITTLE WOMEN', 1, true),
+       ( 'http://images.amazon.com/images/P/067122591X.01.THUMBZZZ.jpg'
+       , 'http://images.amazon.com/images/P/067122591X.01.MZZZZZZZ.jpg'
+       , 'http://images.amazon.com/images/P/067122591X.01.LZZZZZZZ.jpg'
+       , '067122591X', '1977', 1182, 'Attachments', 24037, true),
+       ( 'http://images.amazon.com/images/P/0671422278.01.THUMBZZZ.jpg'
+       , 'http://images.amazon.com/images/P/0671422278.01.MZZZZZZZ.jpg'
+       , 'http://images.amazon.com/images/P/0671422278.01.LZZZZZZZ.jpg'
+       , '0671422278', '1980', 1182
+       , 'Other worlds: A portrait of nature in rebellion, space, superspace, and the quantum universe', 187840, true),
+       ( 'http://images.amazon.com/images/P/0671673114.01.THUMBZZZ.jpg'
+       , 'http://images.amazon.com/images/P/0671673114.01.MZZZZZZZ.jpg'
+       , 'http://images.amazon.com/images/P/0671673114.01.LZZZZZZZ.jpg'
+       , '0671673114', '1990', 1182
+       , 'Shifting gears: How to master career change and find the work that''s right for you', 105285, true),
+       ( 'http://images.amazon.com/images/P/0937539228.01.THUMBZZZ.jpg'
+       , 'http://images.amazon.com/images/P/0937539228.01.MZZZZZZZ.jpg'
+       , 'http://images.amazon.com/images/P/0937539228.01.LZZZZZZZ.jpg'
+       , '0937539228', '1995', 5560
+       , 'Speaking Secrets of the Masters: The Personal Techniques Used by 22 of the World''s Top Professional Speakers'
+       , 105808, false),
+       ( 'http://images.amazon.com/images/P/092927959X.01.THUMBZZZ.jpg'
+       , 'http://images.amazon.com/images/P/092927959X.01.MZZZZZZZ.jpg'
+       , 'http://images.amazon.com/images/P/092927959X.01.LZZZZZZZ.jpg'
+       , '092927959X', '1990', 8129, 'Nausicaa of the Valley of Wind (Nausicaa of the Valley of Wind, Graphic Novel)'
+       , 105940, false),
+       ( 'http://images.amazon.com/images/P/0971732507.01.THUMBZZZ.jpg'
+       , 'http://images.amazon.com/images/P/0971732507.01.MZZZZZZZ.jpg'
+       , 'http://images.amazon.com/images/P/0971732507.01.LZZZZZZZ.jpg'
+       , '0971732507', '2002', 8136, 'To Live or Die in Arizona', 105515, false),
+       ( 'http://images.amazon.com/images/P/0933999992.01.THUMBZZZ.jpg'
+       , 'http://images.amazon.com/images/P/0933999992.01.MZZZZZZZ.jpg'
+       , 'http://images.amazon.com/images/P/0933999992.01.LZZZZZZZ.jpg'
+       , '0933999992', '1991', 8135, 'The Unvarnished New Testament', 105243, false),
+       ( 'http://images.amazon.com/images/P/1558748946.01.THUMBZZZ.jpg'
+       , 'http://images.amazon.com/images/P/1558748946.01.MZZZZZZZ.jpg'
+       , 'http://images.amazon.com/images/P/1558748946.01.LZZZZZZZ.jpg'
+       , '1558748946', '2001', 23
+       , 'Chicken Soup for the Father''s Soul, 101 Stories to Open the Hearts and Rekindle the Spirits of Fathers (Chicken Soup for the Soul)'
+       , 105628, false),
+       ( 'http://images.amazon.com/images/P/0671450824.01.THUMBZZZ.jpg'
+       , 'http://images.amazon.com/images/P/0671450824.01.MZZZZZZZ.jpg'
+       , 'http://images.amazon.com/images/P/0671450824.01.LZZZZZZZ.jpg'
+       , '0671450824', '1982', 1182
+       , 'The complete make it now--bake it later!: \"all make-aheads\"--fun, easy, and tasty! : combines all six smaller books!'
+       , 241350, true),
+       ( 'http://images.amazon.com/images/P/067144977X.01.THUMBZZZ.jpg'
+       , 'http://images.amazon.com/images/P/067144977X.01.MZZZZZZZ.jpg'
+       , 'http://images.amazon.com/images/P/067144977X.01.LZZZZZZZ.jpg'
+       , '067144977X', '1982', 1182, 'Schindler''s list', 27142, true),
+       ( 'http://images.amazon.com/images/P/067165103X.01.THUMBZZZ.jpg'
+       , 'http://images.amazon.com/images/P/067165103X.01.MZZZZZZZ.jpg'
+       , 'http://images.amazon.com/images/P/067165103X.01.LZZZZZZZ.jpg'
+       , '067165103X', '1970', 1182, 'Zeki and the talking cat Shukru', 267906, true),
+       ( 'http://images.amazon.com/images/P/067122025X.01.THUMBZZZ.jpg'
+       , 'http://images.amazon.com/images/P/067122025X.01.MZZZZZZZ.jpg'
+       , 'http://images.amazon.com/images/P/067122025X.01.LZZZZZZZ.jpg'
+       , '067122025X', '1975', 1953, 'Looking for Mr. Goodbar', 63014, true),
+       ( 'http://images.amazon.com/images/P/0446352241.01.THUMBZZZ.jpg'
+       , 'http://images.amazon.com/images/P/0446352241.01.MZZZZZZZ.jpg'
+       , 'http://images.amazon.com/images/P/0446352241.01.LZZZZZZZ.jpg'
+       , '0446352241', '1984', 107, 'August', 195146, true),
+       ( 'http://images.amazon.com/images/P/0671648586.01.THUMBZZZ.jpg'
+       , 'http://images.amazon.com/images/P/0671648586.01.MZZZZZZZ.jpg'
+       , 'http://images.amazon.com/images/P/0671648586.01.LZZZZZZZ.jpg'
+       , '0671648586', '1990', 329, 'His Little Women: A Novel', 60137, true),
+       ( 'http://images.amazon.com/images/P/3257201761.01.THUMBZZZ.jpg'
+       , 'http://images.amazon.com/images/P/3257201761.01.MZZZZZZZ.jpg'
+       , 'http://images.amazon.com/images/P/3257201761.01.LZZZZZZZ.jpg'
+       , '3257201761', '1974', 116, 'Die zwei Gesichter des Januars.', 2, true),
+       ( 'http://images.amazon.com/images/P/0449904628.01.THUMBZZZ.jpg'
+       , 'http://images.amazon.com/images/P/0449904628.01.MZZZZZZZ.jpg'
+       , 'http://images.amazon.com/images/P/0449904628.01.LZZZZZZZ.jpg'
+       , '0449904628', '1990', 10, 'Dave Barry Slept Here: A Sort of History of the United States', 3, true),
+       ( 'http://images.amazon.com/images/P/0385299842.01.THUMBZZZ.jpg'
+       , 'http://images.amazon.com/images/P/0385299842.01.MZZZZZZZ.jpg'
+       , 'http://images.amazon.com/images/P/0385299842.01.LZZZZZZZ.jpg'
+       , '0385299842', '1990', 413, 'Truckers', 4, true),
+       ( 'http://images.amazon.com/images/P/0345307674.01.THUMBZZZ.jpg'
+       , 'http://images.amazon.com/images/P/0345307674.01.MZZZZZZZ.jpg'
+       , 'http://images.amazon.com/images/P/0345307674.01.LZZZZZZZ.jpg'
+       , '0345307674', '1983', 79, 'Return of the Jedi (Star Wars)', 5, true);
