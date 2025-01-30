@@ -1,5 +1,6 @@
 package ua.foxminded.bookrating.controller;
 
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
@@ -47,7 +48,8 @@ public class PublisherController extends RestoreController<Publisher, Publisher,
     }
 
     @GetMapping("/find-by-name")
-    public PagedModel<PublisherModel> getPublishersContainName(@RequestParam("name") String name, @PageableDefault Pageable pageable) {
+    public PagedModel<PublisherModel> getPublishersContainName(@NotBlank(message = "Name cannot be blank or empty") @RequestParam("name") String name,
+                                                               @PageableDefault Pageable pageable) {
         return publisherPagedResourcesAssembler.toModel(publisherService.getByNameContaining(name, pageable), publisherModelAssembler);
     }
 }
