@@ -8,9 +8,11 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.*;
 import ua.foxminded.bookrating.assembler.AuthorModelAssembler;
 import ua.foxminded.bookrating.assembler.BookModelAssembler;
+import ua.foxminded.bookrating.assembler.SimpleBookModelAssembler;
 import ua.foxminded.bookrating.model.AuthorModel;
 import ua.foxminded.bookrating.model.SimpleBookModel;
 import ua.foxminded.bookrating.persistance.entity.Author;
+import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.service.AuthorService;
 
@@ -21,12 +23,12 @@ public class AuthorController extends RestoreController<Author, Author, AuthorMo
     private final AuthorService authorService;
     private final AuthorModelAssembler authorModelAssembler;
     private final PagedResourcesAssembler<Author> authorPagedResourcesAssembler;
-    private final BookModelAssembler bookModelAssembler;
-    private final PagedResourcesAssembler<BookRatingProjection> bookRatingPagedResourcesAssembler;
+    private final SimpleBookModelAssembler bookModelAssembler;
+    private final PagedResourcesAssembler<Book> bookRatingPagedResourcesAssembler;
 
     public AuthorController(AuthorService authorService, AuthorModelAssembler authorModelAssembler,
                             PagedResourcesAssembler<Author> authorPagedResourcesAssembler,
-                            BookModelAssembler bookModelAssembler, PagedResourcesAssembler<BookRatingProjection> bookRatingPagedResourcesAssembler) {
+                            SimpleBookModelAssembler bookModelAssembler, PagedResourcesAssembler<Book> bookRatingPagedResourcesAssembler) {
         super(authorService, authorModelAssembler);
         this.authorService = authorService;
         this.authorModelAssembler = authorModelAssembler;
@@ -42,9 +44,8 @@ public class AuthorController extends RestoreController<Author, Author, AuthorMo
 
     @GetMapping("/{id}/books")
     public PagedModel<SimpleBookModel> getAuthorBooks(@PathVariable Long id,
-                                                      @PageableDefault(sort = "book.title") Pageable pageable,
-                                                      @RequestParam(value = "desiredAverageRating", required = false, defaultValue = "0") Integer desiredAverageRating) {
-        return bookRatingPagedResourcesAssembler.toModel(authorService.getAllBooksById(id, desiredAverageRating, pageable), bookModelAssembler);
+                                                      @PageableDefault(sort = "book.title") Pageable pageable) {
+        return bookRatingPagedResourcesAssembler.toModel(authorService.getAllBooksById(id, pageable), bookModelAssembler);
     }
 
     @GetMapping("/find-by-name")
