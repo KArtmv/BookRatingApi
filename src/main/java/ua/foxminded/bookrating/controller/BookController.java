@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import ua.foxminded.bookrating.assembler.BookModelAssembler;
 import ua.foxminded.bookrating.assembler.FullBookModelAssembler;
 import ua.foxminded.bookrating.assembler.RatingModelAssembler;
+import ua.foxminded.bookrating.assembler.SimpleBookModelAssembler;
 import ua.foxminded.bookrating.dto.BookDto;
 import ua.foxminded.bookrating.dto.BookFilterRequest;
 import ua.foxminded.bookrating.model.BookModel;
@@ -30,18 +31,23 @@ public class BookController extends RestoreController<Book, BookDto, BookModel> 
     private final BookService bookService;
     private final FullBookModelAssembler fullBookModelAssembler;
     private final BookModelAssembler bookModelAssembler;
+    private final SimpleBookModelAssembler simpleBookModelAssembler;
     private final PagedResourcesAssembler<BookRatingProjection> pagedResourcesAssembler;
+    private final PagedResourcesAssembler<Book> bookPagedResourcesAssembler;
     private final RatingModelAssembler ratingModelAssembler;
     private final PagedResourcesAssembler<Rating> ratingPagedResourcesAssembler;
 
     public BookController(BookService bookService, FullBookModelAssembler fullBookModelAssembler,
-                          BookModelAssembler bookModelAssembler, PagedResourcesAssembler<BookRatingProjection> pagedResourcesAssembler,
+                          BookModelAssembler bookModelAssembler, SimpleBookModelAssembler simpleBookModelAssembler,
+                          PagedResourcesAssembler<BookRatingProjection> pagedResourcesAssembler, PagedResourcesAssembler<Book> bookPagedResourcesAssembler,
                           RatingModelAssembler ratingModelAssembler, PagedResourcesAssembler<Rating> ratingPagedResourcesAssembler) {
         super(bookService, fullBookModelAssembler);
         this.bookService = bookService;
         this.fullBookModelAssembler = fullBookModelAssembler;
         this.bookModelAssembler = bookModelAssembler;
+        this.simpleBookModelAssembler = simpleBookModelAssembler;
         this.pagedResourcesAssembler = pagedResourcesAssembler;
+        this.bookPagedResourcesAssembler = bookPagedResourcesAssembler;
         this.ratingModelAssembler = ratingModelAssembler;
         this.ratingPagedResourcesAssembler = ratingPagedResourcesAssembler;
     }
@@ -53,9 +59,8 @@ public class BookController extends RestoreController<Book, BookDto, BookModel> 
     }
 
     @GetMapping
-    public PagedModel<SimpleBookModel> getBooks(@PageableDefault Pageable pageable,
-                                                @RequestParam(value = "averageRating", required = false, defaultValue = "0") Integer averageRating) {
-        return pagedResourcesAssembler.toModel(bookService.findAll(averageRating, pageable), bookModelAssembler);
+    public PagedModel<SimpleBookModel> getBooks(@PageableDefault(sort = "title") Pageable pageable) {
+        return bookPagedResourcesAssembler.toModel(bookService.findAll(pageable), simpleBookModelAssembler);
     }
 
     @GetMapping("/isbn")
