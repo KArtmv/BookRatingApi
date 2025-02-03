@@ -21,15 +21,6 @@ public interface BookRepository extends BaseRepository<Book, Long> {
 
     @Query("""
             select b as book, AVG(r.bookRating) AS averageRating
-                from Book b
-                join b.ratings r
-                group by b.id
-                having AVG(r.bookRating) >= :desiredAverageRating
-            """)
-    Page<BookRatingProjection> findAllPaginated(@Param("desiredAverageRating") Integer desiredAverageRating, Pageable pageable);
-
-    @Query("""
-            select b as book, AVG(r.bookRating) AS averageRating
             from Book b
             join b.ratings r
             where lower(b.title)
@@ -62,6 +53,6 @@ public interface BookRepository extends BaseRepository<Book, Long> {
             where r.book = :book""")
     Page<Rating> findBookRatings(@Param("book") Book book, Pageable pageable);
 
-    @Query(value = "select * from book b where b.deleted = true and b.isbn = :isbn", nativeQuery = true)
+    @Query(value = "select * from Book b where b.deleted = true and b.isbn = :isbn", nativeQuery = true)
     Optional<Book> findDeletedBookByIsbn(@Param("isbn") String isbn);
 }
