@@ -37,7 +37,7 @@ public class AuthorController extends RestoreController<Author, Author, AuthorMo
 
     @GetMapping
     public PagedModel<AuthorModel> getAll(@PageableDefault(sort = "name") Pageable pageable) {
-        return authorPagedResourcesAssembler.toModel(authorService.findAllPaginated(pageable), authorModelAssembler);
+        return authorPagedResourcesAssembler.toModel(authorService.findAll(pageable), authorModelAssembler);
     }
 
     @GetMapping("/{id}/books")

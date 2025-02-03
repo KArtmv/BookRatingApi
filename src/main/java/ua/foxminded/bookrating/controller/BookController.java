@@ -55,7 +55,7 @@ public class BookController extends RestoreController<Book, BookDto, BookModel> 
     @GetMapping
     public PagedModel<SimpleBookModel> getBooks(@PageableDefault Pageable pageable,
                                                 @RequestParam(value = "averageRating", required = false, defaultValue = "0") Integer averageRating) {
-        return pagedResourcesAssembler.toModel(bookService.findAllPaginated(averageRating, pageable), bookModelAssembler);
+        return pagedResourcesAssembler.toModel(bookService.findAll(averageRating, pageable), bookModelAssembler);
     }
 
     @GetMapping("/isbn")

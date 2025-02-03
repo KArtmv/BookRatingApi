@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
-public class BookServiceImpl extends RestoreServiceImpl<Book> implements BookService {
+public class BookServiceImpl extends PaginatedServiceImpl<Book> implements BookService {
 
     private final BookRepository bookRepository;
     private final PublisherService publisherService;
@@ -31,11 +31,6 @@ public class BookServiceImpl extends RestoreServiceImpl<Book> implements BookSer
         this.bookRepository = repository;
         this.publisherService = publisherService;
         this.authorService = authorService;
-    }
-
-    @Override
-    public Page<BookRatingProjection> findAllPaginated(Integer desiredAverageRating, Pageable pageable) {
-        return bookRepository.findAllPaginated(desiredAverageRating, pageable);
     }
 
     @Transactional

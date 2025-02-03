@@ -18,7 +18,7 @@ public class ExtendedCrudServiceImpl<T extends NamedEntity> extends RestoreServi
         this.extendedRepository = extendedRepository;
     }
 
-    public Page<T> findAllPaginated(Pageable pageable) {
+    public Page<T> findAll(Pageable pageable) {
         return extendedRepository.findAllPaginated(pageable);
     }
 
