@@ -7,13 +7,11 @@ import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.*;
 import ua.foxminded.bookrating.assembler.AuthorModelAssembler;
-import ua.foxminded.bookrating.assembler.BookModelAssembler;
 import ua.foxminded.bookrating.assembler.SimpleBookModelAssembler;
 import ua.foxminded.bookrating.model.AuthorModel;
 import ua.foxminded.bookrating.model.SimpleBookModel;
 import ua.foxminded.bookrating.persistance.entity.Author;
 import ua.foxminded.bookrating.persistance.entity.Book;
-import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.service.AuthorService;
 
 @RestController
@@ -24,17 +22,17 @@ public class AuthorController extends RestoreController<Author, Author, AuthorMo
     private final AuthorModelAssembler authorModelAssembler;
     private final PagedResourcesAssembler<Author> authorPagedResourcesAssembler;
     private final SimpleBookModelAssembler bookModelAssembler;
-    private final PagedResourcesAssembler<Book> bookRatingPagedResourcesAssembler;
+    private final PagedResourcesAssembler<Book> bookPagedResourcesAssembler;
 
     public AuthorController(AuthorService authorService, AuthorModelAssembler authorModelAssembler,
                             PagedResourcesAssembler<Author> authorPagedResourcesAssembler,
-                            SimpleBookModelAssembler bookModelAssembler, PagedResourcesAssembler<Book> bookRatingPagedResourcesAssembler) {
+                            SimpleBookModelAssembler bookModelAssembler, PagedResourcesAssembler<Book> bookPagedResourcesAssembler) {
         super(authorService, authorModelAssembler);
         this.authorService = authorService;
         this.authorModelAssembler = authorModelAssembler;
         this.authorPagedResourcesAssembler = authorPagedResourcesAssembler;
         this.bookModelAssembler = bookModelAssembler;
-        this.bookRatingPagedResourcesAssembler = bookRatingPagedResourcesAssembler;
+        this.bookPagedResourcesAssembler = bookPagedResourcesAssembler;
     }
 
     @GetMapping
@@ -45,7 +43,7 @@ public class AuthorController extends RestoreController<Author, Author, AuthorMo
     @GetMapping("/{id}/books")
     public PagedModel<SimpleBookModel> getAuthorBooks(@PathVariable Long id,
                                                       @PageableDefault(sort = "book.title") Pageable pageable) {
-        return bookRatingPagedResourcesAssembler.toModel(authorService.getAllBooksById(id, pageable), bookModelAssembler);
+        return bookPagedResourcesAssembler.toModel(authorService.getAllBooksById(id, pageable), bookModelAssembler);
     }
 
     @GetMapping("/find-by-name")
