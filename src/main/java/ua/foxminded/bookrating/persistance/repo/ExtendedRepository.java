@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.query.Param;
+import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.persistance.entity.NamedEntity;
 import ua.foxminded.bookrating.projection.BookRatingProjection;
 
@@ -15,22 +16,14 @@ import java.util.Optional;
 public interface ExtendedRepository<T extends NamedEntity, ID extends Serializable> extends BaseRepository<T, ID> {
 
     @Query("""
-            SELECT b as book, AVG(r.bookRating) AS averageRating
+            SELECT book
             FROM #{#entityName} e
-            JOIN e.books b
-            JOIN b.ratings r
+            JOIN e.books book
             WHERE e = :entity
-            GROUP BY b, e, r.book.title, r.book.publicationYear, r.book.publisher.name
-            HAVING AVG(r.bookRating) > :desiredAverageRating
             """)
-    Page<BookRatingProjection> getBooksByEntity(@Param("entity") T entity,
-                                                @Param("desiredAverageRating") Integer desiredAverageRating,
-                                                Pageable pageable);
+    Page<Book> getBooksByEntity(@Param("entity") T entity, Pageable pageable);
 
     Optional<T> findByName(String name);
-
-    @Query("select e from #{#entityName} e")
-    Page<T> findAllPaginated(Pageable pageable);
 
     Page<T> findByNameContainingIgnoreCase(String name, Pageable pageable);
 
