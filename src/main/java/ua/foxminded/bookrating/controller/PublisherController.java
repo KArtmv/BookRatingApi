@@ -6,12 +6,12 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.*;
-import ua.foxminded.bookrating.assembler.BookModelAssembler;
 import ua.foxminded.bookrating.assembler.PublisherModelAssembler;
+import ua.foxminded.bookrating.assembler.SimpleBookModelAssembler;
 import ua.foxminded.bookrating.model.PublisherModel;
 import ua.foxminded.bookrating.model.SimpleBookModel;
+import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.persistance.entity.Publisher;
-import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.service.PublisherService;
 
 @RestController
@@ -21,18 +21,18 @@ public class PublisherController extends RestoreController<Publisher, Publisher,
     private final PublisherService publisherService;
     private final PublisherModelAssembler publisherModelAssembler;
     private final PagedResourcesAssembler<Publisher> publisherPagedResourcesAssembler;
-    private final BookModelAssembler bookModelAssembler;
-    private final PagedResourcesAssembler<BookRatingProjection> bookRatingPagedResourcesAssembler;
+    private final SimpleBookModelAssembler bookModelAssembler;
+    private final PagedResourcesAssembler<Book> bookPagedResourcesAssembler;
 
     public PublisherController(PublisherService publisherService, PublisherModelAssembler publisherModelAssembler,
                                PagedResourcesAssembler<Publisher> publisherPagedResourcesAssembler,
-                               BookModelAssembler bookModelAssembler, PagedResourcesAssembler<BookRatingProjection> bookRatingPagedResourcesAssembler) {
+                               SimpleBookModelAssembler bookModelAssembler, PagedResourcesAssembler<Book> bookPagedResourcesAssembler) {
         super(publisherService, publisherModelAssembler);
         this.publisherService = publisherService;
         this.publisherModelAssembler = publisherModelAssembler;
         this.publisherPagedResourcesAssembler = publisherPagedResourcesAssembler;
         this.bookModelAssembler = bookModelAssembler;
-        this.bookRatingPagedResourcesAssembler = bookRatingPagedResourcesAssembler;
+        this.bookPagedResourcesAssembler = bookPagedResourcesAssembler;
     }
 
     @GetMapping
@@ -42,9 +42,8 @@ public class PublisherController extends RestoreController<Publisher, Publisher,
 
     @GetMapping(value = "/{id}/books")
     public PagedModel<SimpleBookModel> getPublisherBooks(@PathVariable Long id,
-                                                         @PageableDefault(sort = "book.title") Pageable pageable,
-                                                         @RequestParam(value = "desiredAverageRating", required = false, defaultValue = "0") Integer desiredAverageRating) {
-        return bookRatingPagedResourcesAssembler.toModel(publisherService.getAllBooksById(id, desiredAverageRating, pageable), bookModelAssembler);
+                                                         @PageableDefault(sort = "book.title") Pageable pageable) {
+        return bookPagedResourcesAssembler.toModel(publisherService.getAllBooksById(id, pageable), bookModelAssembler);
     }
 
     @GetMapping("/find-by-name")
