@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.bookrating.assembler.AuthorModelAssembler;
-import ua.foxminded.bookrating.assembler.BookModelAssembler;
 import ua.foxminded.bookrating.assembler.SimpleBookModelAssembler;
 import ua.foxminded.bookrating.persistance.entity.Author;
 import ua.foxminded.bookrating.security.SecurityConfig;
@@ -30,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Import({AuthorModelAssembler.class, BookModelAssembler.class, SimpleBookModelAssembler.class, SecurityConfig.class})
+@Import({AuthorModelAssembler.class, SimpleBookModelAssembler.class, SecurityConfig.class})
 @WebMvcTest(AuthorController.class)
 class AuthorControllerTest {
 

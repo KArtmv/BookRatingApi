@@ -10,7 +10,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ua.foxminded.bookrating.assembler.BookModelAssembler;
 import ua.foxminded.bookrating.assembler.PublisherModelAssembler;
 import ua.foxminded.bookrating.assembler.SimpleBookModelAssembler;
 import ua.foxminded.bookrating.persistance.entity.Publisher;
@@ -30,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@Import({PublisherModelAssembler.class, BookModelAssembler.class, SimpleBookModelAssembler.class, SecurityConfig.class})
+@Import({PublisherModelAssembler.class, SimpleBookModelAssembler.class, SecurityConfig.class})
 @WebMvcTest(PublisherController.class)
 class PublisherControllerTest {
 
