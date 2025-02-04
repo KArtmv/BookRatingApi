@@ -23,6 +23,8 @@ import ua.foxminded.bookrating.persistance.entity.Rating;
 import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.service.BookService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/books")
 @Validated
@@ -30,23 +32,18 @@ public class BookController extends RestoreController<Book, BookDto, BookModel> 
 
     private final BookService bookService;
     private final FullBookModelAssembler fullBookModelAssembler;
-    private final BookModelAssembler bookModelAssembler;
     private final SimpleBookModelAssembler simpleBookModelAssembler;
-    private final PagedResourcesAssembler<BookRatingProjection> pagedResourcesAssembler;
     private final PagedResourcesAssembler<Book> bookPagedResourcesAssembler;
     private final RatingModelAssembler ratingModelAssembler;
     private final PagedResourcesAssembler<Rating> ratingPagedResourcesAssembler;
 
     public BookController(BookService bookService, FullBookModelAssembler fullBookModelAssembler,
-                          BookModelAssembler bookModelAssembler, SimpleBookModelAssembler simpleBookModelAssembler,
-                          PagedResourcesAssembler<BookRatingProjection> pagedResourcesAssembler, PagedResourcesAssembler<Book> bookPagedResourcesAssembler,
+                           SimpleBookModelAssembler simpleBookModelAssembler, PagedResourcesAssembler<Book> bookPagedResourcesAssembler,
                           RatingModelAssembler ratingModelAssembler, PagedResourcesAssembler<Rating> ratingPagedResourcesAssembler) {
         super(bookService, fullBookModelAssembler);
         this.bookService = bookService;
         this.fullBookModelAssembler = fullBookModelAssembler;
-        this.bookModelAssembler = bookModelAssembler;
         this.simpleBookModelAssembler = simpleBookModelAssembler;
-        this.pagedResourcesAssembler = pagedResourcesAssembler;
         this.bookPagedResourcesAssembler = bookPagedResourcesAssembler;
         this.ratingModelAssembler = ratingModelAssembler;
         this.ratingPagedResourcesAssembler = ratingPagedResourcesAssembler;
@@ -68,25 +65,16 @@ public class BookController extends RestoreController<Book, BookDto, BookModel> 
         return fullBookModelAssembler.toModel(bookService.getByIsbn(isbn));
     }
 
-    @GetMapping("/title")
-    public PagedModel<SimpleBookModel> getBooksContainTitle(@RequestParam("title") @NotBlank(message = "The title cannot be blank or empty") String title, @PageableDefault Pageable pageable) {
-        return pagedResourcesAssembler.toModel(bookService.getByTitleContaining(title, pageable), bookModelAssembler);
-    }
-
-    @GetMapping("/filter-by")
-    public PagedModel<SimpleBookModel> getFilteredBooks(@Valid @ModelAttribute BookFilterRequest filterRequest,
-                                                        @RequestParam(value = "averageRating", required = false, defaultValue = "0") Integer averageRating,
-                                                        @RequestParam(required = false, defaultValue = "") String title,
+    @GetMapping("/filter")
+    public PagedModel<SimpleBookModel> getFilteredBooks(@RequestParam(value = "title", required = false) String title,
+                                                        @RequestParam(value = "authorIds", required = false) List<Long> authorIds,
+                                                        @RequestParam(value = "publisherIds", required = false) List<Long> publisherIds,
+                                                        @RequestParam(value = "publicationYear", required = false) Integer publicationYear,
+                                                        @RequestParam(value = "averageRating", required = false) Integer averageRating,
                                                         @PageableDefault Pageable pageable) {
-        return pagedResourcesAssembler.toModel(
-                bookService.getBooksByAuthorAndPublisher(
-                        filterRequest.authorsId(),
-                        filterRequest.publishersId(),
-                        averageRating,
-                        title,
-                        pageable
-                ),
-                bookModelAssembler
+        return bookPagedResourcesAssembler.toModel(
+                bookService.getBooksWithFilters(title, authorIds, publisherIds, publicationYear, averageRating, pageable),
+                simpleBookModelAssembler
         );
     }
 }
