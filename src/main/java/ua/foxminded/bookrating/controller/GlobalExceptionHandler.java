@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
     public Map<String, String> handleConstraintViolationException(ConstraintViolationException ex) {
         return ex.getConstraintViolations().stream()
                 .collect(Collectors.toMap(
-                        violation -> violation.getPropertyPath().toString(),
+                        violation -> violation.getPropertyPath().toString().split("\\.")[1],
                         ConstraintViolation::getMessage,
                         (a, b) -> b));
     }
