@@ -4,6 +4,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -21,6 +23,8 @@ import java.util.Set;
 @SequenceGenerator(name = "default_gen", sequenceName = "user_id_seq", allocationSize = 1)
 public class User extends BaseEntity {
 
+    @NotNull(message = "Location is required")
+    @NotBlank(message = "Location can't be blank")
     private String location;
 
     private Integer age;
