@@ -61,20 +61,8 @@ public class BookData {
         return bookDto;
     }
 
-    private final Page<BookRatingProjection> bookRatingProjections = new PageImpl<>(
-            List.of(
-                    new BookRatingProjection() {
-                        @Override
-                        public Book getBook() {
-                            return book;
-                        }
-
-                        @Override
-                        public Double getAverageRating() {
-                            return 0.0;
-                        }
-                    }
-            ),
+    private final Page<Book> bookPage = new PageImpl<>(
+            List.of(book),
             PageRequest.of(0, 10), 1
     );
 
