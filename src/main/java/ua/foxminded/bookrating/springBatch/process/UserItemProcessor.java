@@ -19,10 +19,6 @@ public class UserItemProcessor implements ItemProcessor<UserCsvDto, User> {
     }
 
     private Integer getAge(String age) {
-        if (age.equals("NULL")) {
-            return 0;
-        } else {
-            return Integer.parseInt(age);
-        }
+        return age.equals("NULL") ? null : Integer.parseInt(age);
     }
 }
