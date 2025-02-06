@@ -29,5 +29,5 @@ public class PublisherData {
     );
 
     private final String selfHref = "http://localhost/api/v1/publishers/1577";
-    private final String publisherBooksHref = "http://localhost/api/v1/publishers/1577/books?desiredAverageRating=0";
+    private final String publisherBooksHref = "http://localhost/api/v1/publishers/1577/books";
 }
