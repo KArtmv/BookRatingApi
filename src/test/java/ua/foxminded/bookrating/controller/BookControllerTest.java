@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Import({AuthorModelAssembler.class, PublisherModelAssembler.class, IsbnValidator.class,
-        BookModelAssembler.class, SimpleBookModelAssembler.class, FullBookModelAssembler.class,
+        SimpleBookModelAssembler.class, FullBookModelAssembler.class,
         ValidatorConfig.class, RatingModelAssembler.class, UserModelAssembler.class, SecurityConfig.class})
 @WebMvcTest(BookController.class)
 class BookControllerTest {
@@ -95,7 +95,7 @@ class BookControllerTest {
 
     @Test
     void getBooks_shouldReturnBooks_whenUserIsUnauthorized() throws Exception {
-        when(bookService.findAllPaginated(anyInt(), any(Pageable.class))).thenReturn(BOOK_DATA.getBookRatingProjections());
+        when(bookService.findAll(any(Pageable.class))).thenReturn(BOOK_DATA.getBookPage());
 
         mockMvc.perform(get("/api/v1/books")).andDo(print())
                 .andExpectAll(
@@ -119,7 +119,7 @@ class BookControllerTest {
 
     @Test
     void getBooks_shouldReturnBooks_whenUserIsAuthorized() throws Exception {
-        when(bookService.findAllPaginated(anyInt(), any(Pageable.class))).thenReturn(BOOK_DATA.getBookRatingProjections());
+        when(bookService.findAll(any(Pageable.class))).thenReturn(BOOK_DATA.getBookPage());
 
         mockMvc.perform(get("/api/v1/books").with(jwt())).andDo(print())
                 .andExpectAll(
@@ -286,66 +286,6 @@ class BookControllerTest {
                         status().isBadRequest(),
                         content().string(containsString("The provided ISBN is not valid")
                         ));
-    }
-
-    @Test
-    void getBooksContainTitle_shouldReturnBooks_whenUserIsUnauthorized() throws Exception {
-        when(bookService.getByTitleContaining(anyString(), any(Pageable.class))).thenReturn(BOOK_DATA.getBookRatingProjections());
-
-        mockMvc.perform(get("/api/v1/books/title").param("title", "errors")).andDo(print())
-                .andExpectAll(
-                        status().isOk(),
-                        jsonPath("$._embedded.simpleBookModelList[0].id").value(BOOK_DATA.getId()),
-                        jsonPath("$._embedded.simpleBookModelList[0].title").value(BOOK_DATA.getTitle()),
-                        jsonPath("$._embedded.simpleBookModelList[0].author[0]").value(AUTHORS_DATA.getName()),
-                        jsonPath("$._embedded.simpleBookModelList[0].publisher").value(PUBLISHER_DATA.getName()),
-                        jsonPath("$._embedded.simpleBookModelList[0].publicationYear").value(BOOK_DATA.getPublicationYear()),
-                        jsonPath("$._embedded.simpleBookModelList[0].averageRating").value("0.0"),
-                        jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlSmall").value(BOOK_DATA.getImage().getImageUrlSmall()),
-                        jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlMedium").value(BOOK_DATA.getImage().getImageUrlMedium()),
-                        jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlLarge").value(BOOK_DATA.getImage().getImageUrlLarge()),
-                        jsonPath("$._embedded.simpleBookModelList[0]._links.self.href").value(BOOK_DATA.getSelfHref()),
-                        jsonPath("$.page.size").value("10"),
-                        jsonPath("$.page.totalElements").value("1"),
-                        jsonPath("$.page.totalPages").value("1"),
-                        jsonPath("$.page.number").value("0")
-                );
-    }
-
-    @Test
-    void getBooksContainTitle_shouldReturnBooks_whenUserIsAuthorized() throws Exception {
-        when(bookService.getByTitleContaining(anyString(), any(Pageable.class))).thenReturn(BOOK_DATA.getBookRatingProjections());
-
-        mockMvc.perform(get("/api/v1/books/title").param("title", "errors").with(jwt())).andDo(print())
-                .andExpectAll(
-                        status().isOk(),
-                        jsonPath("$._embedded.simpleBookModelList[0].id").value(BOOK_DATA.getId()),
-                        jsonPath("$._embedded.simpleBookModelList[0].title").value(BOOK_DATA.getTitle()),
-                        jsonPath("$._embedded.simpleBookModelList[0].author[0]").value(AUTHORS_DATA.getName()),
-                        jsonPath("$._embedded.simpleBookModelList[0].publisher").value(PUBLISHER_DATA.getName()),
-                        jsonPath("$._embedded.simpleBookModelList[0].publicationYear").value(BOOK_DATA.getPublicationYear()),
-                        jsonPath("$._embedded.simpleBookModelList[0].averageRating").value("0.0"),
-                        jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlSmall").value(BOOK_DATA.getImage().getImageUrlSmall()),
-                        jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlMedium").value(BOOK_DATA.getImage().getImageUrlMedium()),
-                        jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlLarge").value(BOOK_DATA.getImage().getImageUrlLarge()),
-                        jsonPath("$._embedded.simpleBookModelList[0]._links.self.href").value(BOOK_DATA.getSelfHref()),
-                        jsonPath("$.page.size").value("10"),
-                        jsonPath("$.page.totalElements").value("1"),
-                        jsonPath("$.page.totalPages").value("1"),
-                        jsonPath("$.page.number").value("0")
-                );
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {"", " ", "   "})
-    void getBooksContainTitle_shouldReturnError_whenTitleIsBlank(String title) throws Exception {
-        when(bookService.getByTitleContaining(anyString(), any(Pageable.class))).thenReturn(BOOK_DATA.getBookRatingProjections());
-
-        mockMvc.perform(get("/api/v1/books/title").param("title", title)).andDo(print())
-                .andExpectAll(
-                        status().isBadRequest(),
-                        content().string(containsString("The title cannot be blank or empty"))
-                );
     }
 
     @Test
@@ -667,9 +607,15 @@ class BookControllerTest {
 
     @Test
     void getFilteredBooks_shouldReturnBooks_whenUserIsUnauthorized() throws Exception {
-        when(bookService.getBooksByAuthorAndPublisher(anyList(), anyList(), anyInt(), anyString(), any(Pageable.class))).thenReturn(BOOK_DATA.getBookRatingProjections());
+        when(bookService.getBooksWithFilters(anyString(), anyList(), anyList(), anyInt(), anyInt(), any(Pageable.class))).thenReturn(BOOK_DATA.getBookPage());
 
-        mockMvc.perform(get("/api/v1/books/filter-by").param("authorsId", AUTHORS_DATA.getId().toString()).param("publishersId", PUBLISHER_DATA.getId().toString()))
+        mockMvc.perform(get("/api/v1/books/filter")
+                        .param("title", BOOK_DATA.getTitle())
+                        .param("authorIds", AUTHORS_DATA.getId().toString())
+                        .param("publisherIds", PUBLISHER_DATA.getId().toString())
+                        .param("publicationYear", BOOK_DATA.getPublicationYear())
+                        .param("averageRating", "0")
+                )
                 .andDo(print()).andExpectAll(
                         status().isOk(),
                         jsonPath("$._embedded.simpleBookModelList[0].id").value(BOOK_DATA.getId()),
@@ -691,12 +637,16 @@ class BookControllerTest {
 
     @Test
     void getFilteredBooks_shouldReturnBooks_whenUserIsAuthorized() throws Exception {
-        when(bookService.getBooksByAuthorAndPublisher(anyList(), anyList(), anyInt(), anyString(), any(Pageable.class))).thenReturn(BOOK_DATA.getBookRatingProjections());
+        when(bookService.getBooksWithFilters(anyString(), anyList(), anyList(), anyInt(), anyInt(), any(Pageable.class))).thenReturn(BOOK_DATA.getBookPage());
 
-        mockMvc.perform(get("/api/v1/books/filter-by")
-                        .param("authorsId", AUTHORS_DATA.getId().toString())
-                        .param("publishersId", PUBLISHER_DATA.getId().toString())
-                        .with(jwt()))
+        mockMvc.perform(get("/api/v1/books/filter")
+                        .param("title", BOOK_DATA.getTitle())
+                        .param("authorIds", AUTHORS_DATA.getId().toString())
+                        .param("publisherIds", PUBLISHER_DATA.getId().toString())
+                        .param("publicationYear", BOOK_DATA.getPublicationYear())
+                        .param("averageRating", "0")
+                        .with(jwt())
+                )
                 .andDo(print()).andExpectAll(
                         status().isOk(),
                         jsonPath("$._embedded.simpleBookModelList[0].id").value(BOOK_DATA.getId()),
@@ -713,34 +663,6 @@ class BookControllerTest {
                         jsonPath("$.page.totalElements").value("1"),
                         jsonPath("$.page.totalPages").value("1"),
                         jsonPath("$.page.number").value("0")
-                );
-    }
-
-    @Test
-    void getFilteredBooks_shouldReturnError_whenAuthorsIdPublisherIdParamsIsMissing() throws Exception {
-        mockMvc.perform(get("/api/v1/books/filter-by")).andDo(print())
-                .andExpectAll(
-                        status().isBadRequest(),
-                        content().string(containsString("authorsId\":\"At least authors or publishers must be provided.")),
-                        content().string(containsString("publishersId\":\"At least authors or publishers must be provided."))
-                );
-    }
-
-    @Test
-    void getFilteredBooks_shouldReturnError_whenAuthorsIdParamIsMissing() throws Exception {
-        mockMvc.perform(get("/api/v1/books/filter-by").param("publisherId", PUBLISHER_DATA.getId().toString())).andDo(print())
-                .andExpectAll(
-                        status().isBadRequest(),
-                        content().string(containsString("authorsId\":\"At least authors or publishers must be provided."))
-                );
-    }
-
-    @Test
-    void getFilteredBooks_shouldReturnError_whenPublisherIdParamIsMissing() throws Exception {
-        mockMvc.perform(get("/api/v1/books/filter-by").param("authorId", AUTHORS_DATA.getId().toString())).andDo(print())
-                .andExpectAll(
-                        status().isBadRequest(),
-                        content().string(containsString("publishersId\":\"At least authors or publishers must be provided."))
                 );
     }
 

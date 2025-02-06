@@ -1,6 +1,9 @@
 package ua.foxminded.bookrating.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,13 +24,13 @@ import ua.foxminded.bookrating.util.publisher.PublisherData;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @Import({AuthorModelAssembler.class, SimpleBookModelAssembler.class, SecurityConfig.class})
 @WebMvcTest(AuthorController.class)
@@ -44,7 +47,7 @@ class AuthorControllerTest {
 
     @Test
     void getAll_shouldReturnAuthors_whenUserIsUnauthorized() throws Exception {
-        when(authorService.findAllPaginated(any(Pageable.class))).thenReturn(AUTHORS_DATA.getAuthors());
+        when(authorService.findAll(any(Pageable.class))).thenReturn(AUTHORS_DATA.getAuthors());
 
         mockMvc.perform(get("/api/v1/authors")).andDo(print())
                 .andExpectAll(
@@ -56,7 +59,7 @@ class AuthorControllerTest {
                         jsonPath("$._embedded.authorModelList[1].id").value(AUTHORS_DATA.getId2()),
                         jsonPath("$._embedded.authorModelList[1].name").value(AUTHORS_DATA.getName2()),
                         jsonPath("$._embedded.authorModelList[1]._links.self.href").value("http://localhost/api/v1/authors/2172"),
-                        jsonPath("$._embedded.authorModelList[1]._links.authorBooks.href").value("http://localhost/api/v1/authors/2172/books?desiredAverageRating=0"),
+                        jsonPath("$._embedded.authorModelList[1]._links.authorBooks.href").value("http://localhost/api/v1/authors/2172/books"),
                         jsonPath("$.page.size").value("2"),
                         jsonPath("$.page.totalElements").value("100"),
                         jsonPath("$.page.totalPages").value("50"),
@@ -66,7 +69,7 @@ class AuthorControllerTest {
 
     @Test
     void getAuthorBooks_shouldReturnAuthorBooks_whenUserIsUnauthorized() throws Exception {
-        when(authorService.getAllBooksById(anyLong(), anyInt(), any(Pageable.class))).thenReturn(BOOK_DATA.getBookRatingProjections());
+        when(authorService.getAllBooksById(anyLong(), any(Pageable.class))).thenReturn(BOOK_DATA.getBookPage());
 
         mockMvc.perform(get("/api/v1/authors/{id}/books", AUTHORS_DATA.getId())).andDo(print())
                 .andExpectAll(
@@ -153,7 +156,7 @@ class AuthorControllerTest {
 
     @Test
     void getAll_shouldReturnAuthors_whenUserIsAuthorized() throws Exception {
-        when(authorService.findAllPaginated(any(Pageable.class))).thenReturn(AUTHORS_DATA.getAuthors());
+        when(authorService.findAll(any(Pageable.class))).thenReturn(AUTHORS_DATA.getAuthors());
 
         mockMvc.perform(get("/api/v1/authors").with(jwt())).andDo(print())
                 .andExpectAll(
@@ -165,7 +168,7 @@ class AuthorControllerTest {
                         jsonPath("$._embedded.authorModelList[1].id").value(AUTHORS_DATA.getId2()),
                         jsonPath("$._embedded.authorModelList[1].name").value(AUTHORS_DATA.getName2()),
                         jsonPath("$._embedded.authorModelList[1]._links.self.href").value("http://localhost/api/v1/authors/2172"),
-                        jsonPath("$._embedded.authorModelList[1]._links.authorBooks.href").value("http://localhost/api/v1/authors/2172/books?desiredAverageRating=0"),
+                        jsonPath("$._embedded.authorModelList[1]._links.authorBooks.href").value("http://localhost/api/v1/authors/2172/books"),
                         jsonPath("$.page.size").value("2"),
                         jsonPath("$.page.totalElements").value("100"),
                         jsonPath("$.page.totalPages").value("50"),
@@ -175,7 +178,7 @@ class AuthorControllerTest {
 
     @Test
     void getAuthorBooks_shouldReturnAuthorsBooks_whenUserIsAuthorized() throws Exception {
-        when(authorService.getAllBooksById(anyLong(), anyInt(), any(Pageable.class))).thenReturn(BOOK_DATA.getBookRatingProjections());
+        when(authorService.getAllBooksById(anyLong(), any(Pageable.class))).thenReturn(BOOK_DATA.getBookPage());
 
         mockMvc.perform(get("/api/v1/authors/{id}/books", AUTHORS_DATA.getId()).with(jwt())).andDo(print())
                 .andExpectAll(
@@ -280,5 +283,55 @@ class AuthorControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(jwt()))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void getAuthorBooks_shouldReturnBadRequest_whenAuthorIsNotFounded() throws Exception {
+        when(authorService.getAllBooksById(anyLong(), any(Pageable.class)))
+                .thenThrow(new EntityNotFoundException("Entity with id: " + AUTHORS_DATA.getId() + " is not found"));
+
+        mockMvc.perform(get("/api/v1/authors/{id}/books", AUTHORS_DATA.getId())).andDo(print())
+                .andExpectAll(
+                        status().isNotFound(),
+                        jsonPath("$.type").value("about:blank"),
+                        jsonPath("$.title").value("Not Found"),
+                        jsonPath("$.status").value("404"),
+                        jsonPath("$.detail").value("Entity with id: " + AUTHORS_DATA.getId() + " is not found")
+                );
+    }
+
+    @Test
+    void get_shouldReturnAuthor_whenAuthorIdIsInvalid() throws Exception {
+        mockMvc.perform(get("/api/v1/authors/abc")).andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void get_shouldReturnAuthor_whenAuthorIdIsMissed() throws Exception {
+        mockMvc.perform(get("/api/v1/authors/")).andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getAuthorBooks_shouldReturnBadRequest_whenAuthorIdIsNotValid() throws Exception {
+        mockMvc.perform(get("/api/v1/authors/abc/books")).andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getAuthorBooks_shouldReturnBadRequest_whenAuthorIdIsMissed() throws Exception {
+        mockMvc.perform(get("/api/v1/authors//books")).andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", " "})
+    void getAuthorsContainName_shouldReturnException_whenNameIsEmptyOrBlank(String name) throws Exception {
+        mockMvc.perform(get("/api/v1/authors/find-by-name").param("name", name)).andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        content().string(containsString("name")),
+                        content().string(containsString("Name cannot be blank or empty"))
+                );
     }
 }

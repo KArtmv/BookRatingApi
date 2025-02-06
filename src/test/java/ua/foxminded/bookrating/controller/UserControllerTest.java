@@ -1,11 +1,15 @@
 package ua.foxminded.bookrating.controller;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.bookrating.assembler.RatingOfBookModelAssembler;
@@ -173,6 +177,18 @@ class UserControllerTest {
     }
 
     @Test
+    void add_shouldBedRequest_whenUserDataIsMissed() throws Exception {
+        mockMvc.perform(post("/api/v1/users").contentType(MediaType.APPLICATION_JSON).content("""
+                        {"age": "",
+                        "location": ""
+                        }""").with(jwt())).andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.location").value("Location can't be blank")
+                );
+    }
+
+    @Test
     void update_shouldReturnUser_whenUserIsAuthorized() throws Exception {
         when(userService.update(anyLong(), any(User.class))).thenReturn(USER_DATA.getUser());
 
@@ -184,6 +200,20 @@ class UserControllerTest {
                         status().isOk(),
                         jsonPath("$.age").value(USER_DATA.getAge()),
                         jsonPath("$.location").value(USER_DATA.getLocation())
+                );
+    }
+
+    @Test
+    void update_shouldBedRequest_whenUserDataIsMissed() throws Exception {
+        when(userService.update(anyLong(), any(User.class))).thenReturn(USER_DATA.getUser());
+
+        mockMvc.perform(put("/api/v1/users/{id}", USER_DATA.getId()).contentType(MediaType.APPLICATION_JSON).content("""
+                        {"age": "",
+                        "location": ""
+                        }""").with(jwt())).andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.location").value("Location can't be blank")
                 );
     }
 
@@ -207,5 +237,44 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .with(jwt()))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void getRatedBooksByUser_shouldReturnBadRequest_whenUserIsNotFounded() throws Exception {
+        when(userService.findRatedBooksByUser(anyLong(), any(Pageable.class)))
+                .thenThrow(new EntityNotFoundException("Entity with id: " + USER_DATA.getId() + " is not found"));
+
+        mockMvc.perform(get("/api/v1/users/{id}/rated-books", USER_DATA.getId())).andDo(print())
+                .andExpectAll(
+                        status().isNotFound(),
+                        jsonPath("$.type").value("about:blank"),
+                        jsonPath("$.title").value("Not Found"),
+                        jsonPath("$.status").value("404"),
+                        jsonPath("$.detail").value("Entity with id: " + USER_DATA.getId() + " is not found")
+                );
+    }
+
+    @Test
+    void get_shouldReturnBadRequest_whenUserIdIsInvalid() throws Exception {
+        mockMvc.perform(get("/api/v1/users/abc")).andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void get_shouldReturnNotFound_whenUserIdIsMissed() throws Exception {
+        mockMvc.perform(get("/api/v1/users/")).andDo(print())
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getRatedBooksByUser_shouldReturnBadRequest_whenUserIdIsNotValid() throws Exception {
+        mockMvc.perform(get("/api/v1/users/abc/rated-books")).andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getRatedBooksByUser_shouldReturnBadRequest_whenUserIdIsMissed() throws Exception {
+        mockMvc.perform(get("/api/v1/users//rated-books")).andDo(print())
+                .andExpect(status().isBadRequest());
     }
 }

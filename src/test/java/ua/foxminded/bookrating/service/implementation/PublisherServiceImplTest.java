@@ -33,11 +33,11 @@ class PublisherServiceImplTest {
 
     @Test
     void findAllPaginated_shouldReturnAllAuthors() {
-        when(publisherRepository.findAllPaginated(any(Pageable.class))).thenReturn(mock(Page.class));
+        when(publisherRepository.findAll(any(Pageable.class))).thenReturn(mock(Page.class));
 
-        publisherService.findAllPaginated(Pageable.unpaged());
+        publisherService.findAll(Pageable.unpaged());
 
-        verify(publisherRepository).findAllPaginated(any(Pageable.class));
+        verify(publisherRepository).findAll(any(Pageable.class));
         verifyNoMoreInteractions(publisherRepository);
     }
 
@@ -134,12 +134,12 @@ class PublisherServiceImplTest {
     @Test
     void getAllBooksById() {
         when(publisherRepository.findById(anyLong())).thenReturn(Optional.of(PUBLISHER_DATA.getPublisher()));
-        when(publisherRepository.getBooksByEntity(any(Publisher.class), anyInt(), any(Pageable.class))).thenReturn(mock(Page.class));
+        when(publisherRepository.getBooksByEntity(any(Publisher.class), any(Pageable.class))).thenReturn(mock(Page.class));
 
-        publisherService.getAllBooksById(PUBLISHER_DATA.getId(), 0, Pageable.unpaged());
+        publisherService.getAllBooksById(PUBLISHER_DATA.getId(), Pageable.unpaged());
 
         verify(publisherRepository).findById(anyLong());
-        verify(publisherRepository).getBooksByEntity(any(Publisher.class), anyInt(), any(Pageable.class));
+        verify(publisherRepository).getBooksByEntity(any(Publisher.class), any(Pageable.class));
         verifyNoMoreInteractions(publisherRepository);
     }
 

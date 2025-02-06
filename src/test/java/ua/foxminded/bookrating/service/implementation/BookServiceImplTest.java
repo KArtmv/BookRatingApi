@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import ua.foxminded.bookrating.persistance.entity.Author;
 import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.persistance.entity.Publisher;
@@ -15,6 +16,7 @@ import ua.foxminded.bookrating.persistance.repo.BookRepository;
 import ua.foxminded.bookrating.service.AuthorService;
 import ua.foxminded.bookrating.service.BookService;
 import ua.foxminded.bookrating.service.PublisherService;
+import ua.foxminded.bookrating.specification.BookSpecification;
 import ua.foxminded.bookrating.util.author.AuthorsData;
 import ua.foxminded.bookrating.util.book.BookData;
 import ua.foxminded.bookrating.util.publisher.PublisherData;
@@ -48,11 +50,11 @@ class BookServiceImplTest {
 
     @Test
     void findAllPaginated_shouldReturnPaginatedBooks_whenInvoked() {
-        when(bookRepository.findAllPaginated(anyInt(), any(Pageable.class))).thenReturn(mock(Page.class));
+        when(bookRepository.findAll(any(Pageable.class))).thenReturn(mock(Page.class));
 
-        bookService.findAllPaginated(0, Pageable.unpaged());
+        bookService.findAll(Pageable.unpaged());
 
-        verify(bookRepository).findAllPaginated(anyInt(), any(Pageable.class));
+        verify(bookRepository).findAll(any(Pageable.class));
         verifyNoMoreInteractions(bookRepository);
     }
 
@@ -143,62 +145,30 @@ class BookServiceImplTest {
     }
 
     @Test
-    void getByTitleContaining_shouldReturnPagedResult_whenInvoked() {
-        when(bookRepository.findByTitleContainingIgnoreCase(anyString(), any(Pageable.class))).thenReturn(mock(Page.class));
-
-        bookService.getByTitleContaining(BOOK_DATA.getTitle(), Pageable.unpaged());
-
-        verify(bookRepository).findByTitleContainingIgnoreCase(anyString(), any(Pageable.class));
-    }
-
-    @Test
-    void getBooksByAuthorAndPublisher_shouldReturnPagedResult_whenInvoked() {
-        when(bookRepository.findByAuthorsOrPublisherIn(anyList(), anyList(), anyInt(), anyString(), any(Pageable.class))).thenReturn(mock(Page.class));
+    void getBooksWithFilters_shouldFilterBooksBasedOnGivenCriteria_whenInvoked() {
         when(authorService.findById(anyLong())).thenReturn(AUTHOR_DATA.getAuthor());
         when(publisherService.findById(anyLong())).thenReturn(PUBLISHER_DATA.getPublisher());
+        when(bookRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(mock(Page.class));
 
-        bookService.getBooksByAuthorAndPublisher(Collections.singletonList(AUTHOR_DATA.getId()),
-                Collections.singletonList(PUBLISHER_DATA.getId()),
-                0, BOOK_DATA.getTitle(), Pageable.unpaged());
-
-        verify(bookRepository).findByAuthorsOrPublisherIn(anyList(), anyList(), anyInt(), anyString(), any(Pageable.class));
-        verify(authorService).findById(anyLong());
-        verify(publisherService).findById(anyLong());
-        verifyNoMoreInteractions(bookRepository);
-    }
-
-    @Test
-    void getBooksByAuthorAndPublisher_shouldThrowsException_whenAuthorIsNotFound() {
-        when(authorService.findById(anyLong())).thenThrow(EntityNotFoundException.class);
-
-        assertThrows(EntityNotFoundException.class, () -> bookService.getBooksByAuthorAndPublisher(Collections.singletonList(AUTHOR_DATA.getId()),
-                Collections.singletonList(PUBLISHER_DATA.getId()),
-                0, BOOK_DATA.getTitle(), Pageable.unpaged()));
+        bookService.getBooksWithFilters(BOOK_DATA.getTitle(), List.of(AUTHOR_DATA.getId()), List.of(PUBLISHER_DATA.getId()),
+                Integer.valueOf(BOOK_DATA.getPublicationYear()), 0, Pageable.unpaged());
 
         verify(authorService).findById(anyLong());
-        verifyNoMoreInteractions(bookRepository);
-    }
-
-    @Test
-    void getBooksByAuthorAndPublisher_shouldThrowsException_whenPublisherIsNotFound() {
-        when(publisherService.findById(anyLong())).thenThrow(EntityNotFoundException.class);
-
-        assertThrows(EntityNotFoundException.class, () -> bookService.getBooksByAuthorAndPublisher(Collections.singletonList(AUTHOR_DATA.getId()),
-                Collections.singletonList(PUBLISHER_DATA.getId()),
-                0, BOOK_DATA.getTitle(), Pageable.unpaged()));
-
         verify(publisherService).findById(anyLong());
+        verify(bookRepository).findAll(any(Specification.class), any(Pageable.class));
         verifyNoMoreInteractions(bookRepository);
     }
 
     @Test
-    void getBooksByAuthorAndPublisher_shouldReturnPagedResult_whenAuthorAndPublisherAreEmpty() {
-        when(bookRepository.findByAuthorsOrPublisherIn(anyList(), anyList(), anyInt(), anyString(), any(Pageable.class))).thenReturn(mock(Page.class));
+    void getBooksWithFilters_shouldFilterBooksBasedOnGivenCriteria_whenAuthorAndPublisherIdsAreEmpty() {
+        when(bookRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(mock(Page.class));
 
-        bookService.getBooksByAuthorAndPublisher(Collections.emptyList(), Collections.emptyList(),
-                0, BOOK_DATA.getTitle(), Pageable.unpaged());
+        bookService.getBooksWithFilters(BOOK_DATA.getTitle(), null, null,
+                Integer.valueOf(BOOK_DATA.getPublicationYear()), 0, Pageable.unpaged());
 
-        verify(bookRepository).findByAuthorsOrPublisherIn(anyList(), anyList(), anyInt(), anyString(), any(Pageable.class));
+        verify(authorService, never()).findById(anyLong());
+        verify(publisherService, never()).findById(anyLong());
+        verify(bookRepository).findAll(any(Specification.class), any(Pageable.class));
         verifyNoMoreInteractions(bookRepository);
     }
 
