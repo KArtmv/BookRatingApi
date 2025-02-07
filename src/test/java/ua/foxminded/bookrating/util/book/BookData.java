@@ -24,11 +24,11 @@ public class BookData {
     private final Long id = 110464L;
     private final String isbn = "0736688390";
     private final String title = "Reversible Errors";
-    private final String publicationYear = "2003";
+    private final Year publicationYear = Year.of(2003);
 
     private final String updatedIsbn = "0736688399";
     private final String updatedTitle = "Updated book title";
-    private final String updatedPublicationYear = "2000";
+    private final Year updatedPublicationYear = Year.of(2000);
     private final Image image = new Image("http://images.amazon.com/images/P/0736688390.01.THUMBZZZ.jpg",
             "http://images.amazon.com/images/P/0736688390.01.MZZZZZZZ.jpg",
             "http://images.amazon.com/images/P/0736688390.01.LZZZZZZZ.jpg");
@@ -42,7 +42,7 @@ public class BookData {
         BookDto bookDto = new BookDto();
         bookDto.setIsbn(isbn);
         bookDto.setTitle(title);
-        bookDto.setPublicationYear(Year.of(Integer.parseInt(publicationYear)));
+        bookDto.setPublicationYear(publicationYear);
         bookDto.setPublisher(PUBLISHER_DATA.getNewPublisher());
         bookDto.setAuthors(Collections.singletonList(AUTHORS_DATA.getNewAuthor()));
         bookDto.setImage(image);
@@ -54,7 +54,7 @@ public class BookData {
         bookDto.setId(id);
         bookDto.setIsbn(updatedIsbn);
         bookDto.setTitle(updatedTitle);
-        bookDto.setPublicationYear(Year.of(Integer.parseInt(updatedPublicationYear)));
+        bookDto.setPublicationYear(updatedPublicationYear);
         bookDto.setPublisher(PUBLISHER_DATA.getNewPublisher());
         bookDto.setAuthors(Collections.singletonList(AUTHORS_DATA.getNewAuthor()));
         bookDto.setImage(image);
