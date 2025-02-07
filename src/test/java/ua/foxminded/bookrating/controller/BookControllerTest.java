@@ -104,7 +104,7 @@ class BookControllerTest {
                         jsonPath("$._embedded.simpleBookModelList[0].title").value(BOOK_DATA.getTitle()),
                         jsonPath("$._embedded.simpleBookModelList[0].author[0]").value(AUTHORS_DATA.getName()),
                         jsonPath("$._embedded.simpleBookModelList[0].publisher").value(PUBLISHER_DATA.getName()),
-                        jsonPath("$._embedded.simpleBookModelList[0].publicationYear").value(BOOK_DATA.getPublicationYear()),
+                        jsonPath("$._embedded.simpleBookModelList[0].publicationYear").value(BOOK_DATA.getPublicationYear().toString()),
                         jsonPath("$._embedded.simpleBookModelList[0].averageRating").value("0.0"),
                         jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlSmall").value(BOOK_DATA.getImage().getImageUrlSmall()),
                         jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlMedium").value(BOOK_DATA.getImage().getImageUrlMedium()),
@@ -128,7 +128,7 @@ class BookControllerTest {
                         jsonPath("$._embedded.simpleBookModelList[0].title").value(BOOK_DATA.getTitle()),
                         jsonPath("$._embedded.simpleBookModelList[0].author[0]").value(AUTHORS_DATA.getName()),
                         jsonPath("$._embedded.simpleBookModelList[0].publisher").value(PUBLISHER_DATA.getName()),
-                        jsonPath("$._embedded.simpleBookModelList[0].publicationYear").value(BOOK_DATA.getPublicationYear()),
+                        jsonPath("$._embedded.simpleBookModelList[0].publicationYear").value(BOOK_DATA.getPublicationYear().toString()),
                         jsonPath("$._embedded.simpleBookModelList[0].averageRating").value("0.0"),
                         jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlSmall").value(BOOK_DATA.getImage().getImageUrlSmall()),
                         jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlMedium").value(BOOK_DATA.getImage().getImageUrlMedium()),
@@ -151,7 +151,7 @@ class BookControllerTest {
                         jsonPath("$.id").value(BOOK_DATA.getId()),
                         jsonPath("$.isbn").value(BOOK_DATA.getIsbn()),
                         jsonPath("$.title").value(BOOK_DATA.getTitle()),
-                        jsonPath("$.publicationYear").value(BOOK_DATA.getPublicationYear()),
+                        jsonPath("$.publicationYear").value(BOOK_DATA.getPublicationYear().toString()),
                         jsonPath("$.averageRating").value("0.0"),
                         jsonPath("$.authors[0].id").value(AUTHORS_DATA.getId()),
                         jsonPath("$.authors[0].name").value(AUTHORS_DATA.getName()),
@@ -178,7 +178,7 @@ class BookControllerTest {
                         jsonPath("$.id").value(BOOK_DATA.getId()),
                         jsonPath("$.isbn").value(BOOK_DATA.getIsbn()),
                         jsonPath("$.title").value(BOOK_DATA.getTitle()),
-                        jsonPath("$.publicationYear").value(BOOK_DATA.getPublicationYear()),
+                        jsonPath("$.publicationYear").value(BOOK_DATA.getPublicationYear().toString()),
                         jsonPath("$.averageRating").value("0.0"),
                         jsonPath("$.authors[0].id").value(AUTHORS_DATA.getId()),
                         jsonPath("$.authors[0].name").value(AUTHORS_DATA.getName()),
@@ -220,7 +220,7 @@ class BookControllerTest {
                         jsonPath("$.id").value(BOOK_DATA.getId()),
                         jsonPath("$.isbn").value(BOOK_DATA.getIsbn()),
                         jsonPath("$.title").value(BOOK_DATA.getTitle()),
-                        jsonPath("$.publicationYear").value(BOOK_DATA.getPublicationYear()),
+                        jsonPath("$.publicationYear").value(BOOK_DATA.getPublicationYear().toString()),
                         jsonPath("$.averageRating").value("0.0"),
                         jsonPath("$.authors[0].id").value(AUTHORS_DATA.getId()),
                         jsonPath("$.authors[0].name").value(AUTHORS_DATA.getName()),
@@ -247,7 +247,7 @@ class BookControllerTest {
                         jsonPath("$.id").value(BOOK_DATA.getId()),
                         jsonPath("$.isbn").value(BOOK_DATA.getIsbn()),
                         jsonPath("$.title").value(BOOK_DATA.getTitle()),
-                        jsonPath("$.publicationYear").value(BOOK_DATA.getPublicationYear()),
+                        jsonPath("$.publicationYear").value(BOOK_DATA.getPublicationYear().toString()),
                         jsonPath("$.averageRating").value("0.0"),
                         jsonPath("$.authors[0].id").value(AUTHORS_DATA.getId()),
                         jsonPath("$.authors[0].name").value(AUTHORS_DATA.getName()),
@@ -343,7 +343,7 @@ class BookControllerTest {
                         jsonPath("$.id").value(BOOK_DATA.getId()),
                         jsonPath("$.isbn").value(BOOK_DATA.getIsbn()),
                         jsonPath("$.title").value(BOOK_DATA.getTitle()),
-                        jsonPath("$.publicationYear").value(BOOK_DATA.getPublicationYear()),
+                        jsonPath("$.publicationYear").value(BOOK_DATA.getPublicationYear().toString()),
                         jsonPath("$.averageRating").value("0.0"),
                         jsonPath("$.authors[0].id").value(AUTHORS_DATA.getId()),
                         jsonPath("$.authors[0].name").value(AUTHORS_DATA.getName()),
@@ -479,7 +479,7 @@ class BookControllerTest {
                         jsonPath("$.id").value(BOOK_DATA.getId()),
                         jsonPath("$.isbn").value(BOOK_DATA.getIsbn()),
                         jsonPath("$.title").value(BOOK_DATA.getTitle()),
-                        jsonPath("$.publicationYear").value(BOOK_DATA.getPublicationYear()),
+                        jsonPath("$.publicationYear").value(BOOK_DATA.getPublicationYear().toString()),
                         jsonPath("$.averageRating").value("0.0"),
                         jsonPath("$.authors[0].id").value(AUTHORS_DATA.getId()),
                         jsonPath("$.authors[0].name").value(AUTHORS_DATA.getName()),
@@ -613,7 +613,7 @@ class BookControllerTest {
                         .param("title", BOOK_DATA.getTitle())
                         .param("authorIds", AUTHORS_DATA.getId().toString())
                         .param("publisherIds", PUBLISHER_DATA.getId().toString())
-                        .param("publicationYear", BOOK_DATA.getPublicationYear())
+                        .param("publicationYear", BOOK_DATA.getPublicationYear().toString())
                         .param("averageRating", "0")
                 )
                 .andDo(print()).andExpectAll(
@@ -622,7 +622,7 @@ class BookControllerTest {
                         jsonPath("$._embedded.simpleBookModelList[0].title").value(BOOK_DATA.getTitle()),
                         jsonPath("$._embedded.simpleBookModelList[0].author[0]").value(AUTHORS_DATA.getName()),
                         jsonPath("$._embedded.simpleBookModelList[0].publisher").value(PUBLISHER_DATA.getName()),
-                        jsonPath("$._embedded.simpleBookModelList[0].publicationYear").value(BOOK_DATA.getPublicationYear()),
+                        jsonPath("$._embedded.simpleBookModelList[0].publicationYear").value(BOOK_DATA.getPublicationYear().toString()),
                         jsonPath("$._embedded.simpleBookModelList[0].averageRating").value("0.0"),
                         jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlSmall").value(BOOK_DATA.getImage().getImageUrlSmall()),
                         jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlMedium").value(BOOK_DATA.getImage().getImageUrlMedium()),
@@ -643,7 +643,7 @@ class BookControllerTest {
                         .param("title", BOOK_DATA.getTitle())
                         .param("authorIds", AUTHORS_DATA.getId().toString())
                         .param("publisherIds", PUBLISHER_DATA.getId().toString())
-                        .param("publicationYear", BOOK_DATA.getPublicationYear())
+                        .param("publicationYear", BOOK_DATA.getPublicationYear().toString())
                         .param("averageRating", "0")
                         .with(jwt())
                 )
@@ -653,7 +653,7 @@ class BookControllerTest {
                         jsonPath("$._embedded.simpleBookModelList[0].title").value(BOOK_DATA.getTitle()),
                         jsonPath("$._embedded.simpleBookModelList[0].author[0]").value(AUTHORS_DATA.getName()),
                         jsonPath("$._embedded.simpleBookModelList[0].publisher").value(PUBLISHER_DATA.getName()),
-                        jsonPath("$._embedded.simpleBookModelList[0].publicationYear").value(BOOK_DATA.getPublicationYear()),
+                        jsonPath("$._embedded.simpleBookModelList[0].publicationYear").value(BOOK_DATA.getPublicationYear().toString()),
                         jsonPath("$._embedded.simpleBookModelList[0].averageRating").value("0.0"),
                         jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlSmall").value(BOOK_DATA.getImage().getImageUrlSmall()),
                         jsonPath("$._embedded.simpleBookModelList[0].image.imageUrlMedium").value(BOOK_DATA.getImage().getImageUrlMedium()),
