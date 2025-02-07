@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.bookrating.assembler.AuthorModelAssembler;
 import ua.foxminded.bookrating.assembler.SimpleBookModelAssembler;
+import ua.foxminded.bookrating.dto.AuthorDto;
 import ua.foxminded.bookrating.persistance.entity.Author;
 import ua.foxminded.bookrating.security.SecurityConfig;
 import ua.foxminded.bookrating.service.AuthorService;
@@ -127,7 +128,7 @@ class AuthorControllerTest {
 
     @Test
     void add_shouldReturnUnauthorized_whenUseIsUnauthorized() throws Exception {
-        when(authorService.save(any(Author.class))).thenReturn(AUTHORS_DATA.getAuthor());
+        when(authorService.save(any(AuthorDto.class))).thenReturn(AUTHORS_DATA.getAuthor());
 
         mockMvc.perform(post("/api/v1/authors").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\" : \"Scott Turow\"}")).andDo(print())
@@ -138,7 +139,7 @@ class AuthorControllerTest {
 
     @Test
     void update_shouldReturnUnauthorized_whenUseIsUnauthorized() throws Exception {
-        when(authorService.update(anyLong(), any(Author.class))).thenReturn(AUTHORS_DATA.getAuthor());
+        when(authorService.update(anyLong(), any(AuthorDto.class))).thenReturn(AUTHORS_DATA.getAuthor());
 
         mockMvc.perform(put("/api/v1/authors/{id}", AUTHORS_DATA.getId()).contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\" : \"Scott Turow\"}")).andDo(print())
@@ -236,7 +237,7 @@ class AuthorControllerTest {
 
     @Test
     void add_shouldReturnAuthor_whenUserIsAuthorized() throws Exception {
-        when(authorService.save(any(Author.class))).thenReturn(AUTHORS_DATA.getAuthor());
+        when(authorService.save(any(AuthorDto.class))).thenReturn(AUTHORS_DATA.getAuthor());
 
         mockMvc.perform(post("/api/v1/authors").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\" : \"Scott Turow\"}").with(jwt())).andDo(print())
@@ -251,7 +252,7 @@ class AuthorControllerTest {
 
     @Test
     void update_shouldReturnAuthor_whenUserIsAuthorized() throws Exception {
-        when(authorService.update(anyLong(), any(Author.class))).thenReturn(AUTHORS_DATA.getAuthor());
+        when(authorService.update(anyLong(), any(AuthorDto.class))).thenReturn(AUTHORS_DATA.getAuthor());
 
         mockMvc.perform(put("/api/v1/authors/{id}", AUTHORS_DATA.getId()).contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\" : \"Scott Turow\"}").with(jwt())).andDo(print())
