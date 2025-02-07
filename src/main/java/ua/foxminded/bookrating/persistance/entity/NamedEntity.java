@@ -13,7 +13,6 @@ import lombok.Setter;
 @MappedSuperclass
 public abstract class NamedEntity extends BaseEntity {
 
-    @NotBlank(message = "The name is required and cannot be empty.")
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
