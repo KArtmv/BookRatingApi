@@ -11,7 +11,7 @@ import java.util.List;
 public interface BookService extends PaginatedService<Book, BookDto> {
     Book getByIsbn(String isbn);
 
-    Page<Book> getBooksWithFilters(String title, List<Long> authorIds, List<Long> publisherIds, Integer publicationTear, Integer averageRating, Pageable pageable);
+    Page<Book> getBooksWithFilters(String title, List<Long> authorIds, List<Long> publisherIds, Integer publicationYear, Integer averageRating, Pageable pageable);
 
     Page<Rating> getRatingsByBookId(Long id, Pageable pageable);
 }
