@@ -69,7 +69,7 @@ public class BookServiceImpl extends PaginatedServiceImpl<Book> implements BookS
     private Book toEntity(BookDto bookDto, Book book) {
         book.setIsbn(bookDto.getIsbn());
         book.setTitle(bookDto.getTitle());
-        book.setPublicationYear(bookDto.getPublicationYear().toString());
+        book.setPublicationYear(bookDto.getPublicationYear());
         book.setPublisher(publisherService.findOrSave(bookDto.getPublisher()));
         book.setAuthors(bookDto.getAuthors().stream().map(authorService::findOrSave).collect(Collectors.toSet()));
         book.setImage(bookDto.getImage());
