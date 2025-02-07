@@ -151,7 +151,7 @@ class BookServiceImplTest {
         when(bookRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(mock(Page.class));
 
         bookService.getBooksWithFilters(BOOK_DATA.getTitle(), List.of(AUTHOR_DATA.getId()), List.of(PUBLISHER_DATA.getId()),
-                Integer.valueOf(BOOK_DATA.getPublicationYear()), 0, Pageable.unpaged());
+                BOOK_DATA.getPublicationYear().getValue(), 0, Pageable.unpaged());
 
         verify(authorService).findById(anyLong());
         verify(publisherService).findById(anyLong());
@@ -164,7 +164,7 @@ class BookServiceImplTest {
         when(bookRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(mock(Page.class));
 
         bookService.getBooksWithFilters(BOOK_DATA.getTitle(), null, null,
-                Integer.valueOf(BOOK_DATA.getPublicationYear()), 0, Pageable.unpaged());
+                BOOK_DATA.getPublicationYear().getValue(), 0, Pageable.unpaged());
 
         verify(authorService, never()).findById(anyLong());
         verify(publisherService, never()).findById(anyLong());

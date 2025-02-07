@@ -63,7 +63,7 @@ class BookRepositoryTest {
                 .where(BookSpecification.hasAuthors(List.of(AUTHORS_DATA.getAuthor())))
                 .and(BookSpecification.hasPublishers(List.of(PUBLISHER_DATA.getPublisher())))
                 .and(BookSpecification.hasTitle(BOOK_DATA.getTitle()))
-                .and(BookSpecification.hasPublicationYear(Integer.parseInt(BOOK_DATA.getPublicationYear())))
+                .and(BookSpecification.hasPublicationYear(BOOK_DATA.getPublicationYear().getValue()))
                 .and(BookSpecification.hasAverageRating(3));
 
         assertAll(() -> {
@@ -109,7 +109,7 @@ class BookRepositoryTest {
 
     @Test
     void findAll_shouldReturnListOfBooksWithPublishedYear_whenFilterByPublishedYear() {
-        Specification<Book> bookSpecification = Specification.where(BookSpecification.hasPublicationYear(Integer.parseInt(BOOK_DATA.getPublicationYear())));
+        Specification<Book> bookSpecification = Specification.where(BookSpecification.hasPublicationYear(BOOK_DATA.getPublicationYear().getValue()));
         assertAll(() -> {
             Page<Book> books = bookRepository.findAll(bookSpecification, Pageable.unpaged());
             assertTrue(books.hasContent());
