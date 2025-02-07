@@ -5,12 +5,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import ua.foxminded.bookrating.persistance.entity.BaseEntity;
 import ua.foxminded.bookrating.persistance.repo.BaseRepository;
+import ua.foxminded.bookrating.service.PaginatedService;
 
-public class PaginatedServiceImpl<T extends BaseEntity> extends RestoreServiceImpl<T> {
+public abstract class PaginatedServiceImpl<T extends BaseEntity, D> extends RestoreServiceImpl<T, D> implements PaginatedService<T, D> {
 
     protected PagingAndSortingRepository<T, Long> pagingAndSortingRepository;
 
-    public PaginatedServiceImpl(BaseRepository<T, Long> baseRepository) {
+    protected PaginatedServiceImpl(BaseRepository<T, Long> baseRepository) {
         super(baseRepository);
         this.pagingAndSortingRepository = baseRepository;
     }
