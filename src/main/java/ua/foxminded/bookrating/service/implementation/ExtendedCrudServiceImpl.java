@@ -8,32 +8,25 @@ import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.persistance.entity.NamedEntity;
 import ua.foxminded.bookrating.persistance.repo.ExtendedRepository;
 import ua.foxminded.bookrating.projection.BookRatingProjection;
+import ua.foxminded.bookrating.service.ExtendedCrudService;
+
+import java.util.Optional;
+import java.util.function.Supplier;
 
 @Transactional(readOnly = true)
-public class ExtendedCrudServiceImpl<T extends NamedEntity> extends PaginatedServiceImpl<T> {
+public abstract class ExtendedCrudServiceImpl<T extends NamedEntity, D> extends PaginatedServiceImpl<T, D> implements ExtendedCrudService<T, D> {
 
     private final ExtendedRepository<T, Long> extendedRepository;
+    private final Supplier<T> entitySupplier;
 
-    public ExtendedCrudServiceImpl(ExtendedRepository<T, Long> extendedRepository) {
+    protected ExtendedCrudServiceImpl(ExtendedRepository<T, Long> extendedRepository, Supplier<T> entitySupplier) {
         super(extendedRepository);
         this.extendedRepository = extendedRepository;
+        this.entitySupplier = entitySupplier;
     }
 
-    @Override
-    @Transactional
-    public T save(T entity) {
-        if (extendedRepository.findByName(entity.getName()).isPresent()) {
-            throw new EntityExistsException(entity.getName() + " already exists");
-        }
-        return extendedRepository.save(entity);
-    }
-
-    @Override
-    @Transactional
-    public T update(Long id, T entity) {
-        T t = findById(id);
-        t.setName(entity.getName());
-        return extendedRepository.save(t);
+    public Optional<T> findByName(String name) {
+        return extendedRepository.findByName(name);
     }
 
     public Page<T> getByNameContaining(String name, Pageable pageable) {
@@ -45,7 +38,11 @@ public class ExtendedCrudServiceImpl<T extends NamedEntity> extends PaginatedSer
     }
 
     @Transactional
-    public T findOrSave(T entity) {
-        return extendedRepository.findByName(entity.getName()).orElseGet(() -> extendedRepository.save(entity));
+    public T findByNameOrSave(String name) {
+        return extendedRepository.findByName(name).orElseGet(() -> {
+            T entity = entitySupplier.get();
+            entity.setName(name);
+            return extendedRepository.save(entity);
+        });
     }
 }
