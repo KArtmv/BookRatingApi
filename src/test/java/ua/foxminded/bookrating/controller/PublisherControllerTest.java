@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.bookrating.assembler.PublisherModelAssembler;
 import ua.foxminded.bookrating.assembler.SimpleBookModelAssembler;
+import ua.foxminded.bookrating.dto.PublisherDto;
 import ua.foxminded.bookrating.persistance.entity.Publisher;
 import ua.foxminded.bookrating.security.SecurityConfig;
 import ua.foxminded.bookrating.service.PublisherService;
@@ -128,7 +129,7 @@ class PublisherControllerTest {
 
     @Test
     void add_shouldReturnForbidden_whenUseIsUnauthorized() throws Exception {
-        when(publisherService.save(any(Publisher.class))).thenReturn(PUBLISHER_DATA.getPublisher());
+        when(publisherService.save(any(PublisherDto.class))).thenReturn(PUBLISHER_DATA.getPublisher());
 
         mockMvc.perform(post("/api/v1/publishers").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\" : \"Books on Tape\"}")).andDo(print())
@@ -139,7 +140,7 @@ class PublisherControllerTest {
 
     @Test
     void update_shouldReturnForbidden_whenUseIsUnauthorized() throws Exception {
-        when(publisherService.update(anyLong(), any(Publisher.class))).thenReturn(PUBLISHER_DATA.getPublisher());
+        when(publisherService.update(anyLong(), any(PublisherDto.class))).thenReturn(PUBLISHER_DATA.getPublisher());
 
         mockMvc.perform(put("/api/v1/publishers/{id}", PUBLISHER_DATA.getId()).contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\" : \"Books on Tape\"}")).andDo(print())
@@ -236,7 +237,7 @@ class PublisherControllerTest {
 
     @Test
     void add_shouldPerform_whenUserIsAuthorized() throws Exception {
-        when(publisherService.save(any(Publisher.class))).thenReturn(PUBLISHER_DATA.getPublisher());
+        when(publisherService.save(any(PublisherDto.class))).thenReturn(PUBLISHER_DATA.getPublisher());
 
         mockMvc.perform(post("/api/v1/publishers").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\" : \"Books on Tape\"}").with(jwt())).andDo(print())
@@ -251,7 +252,7 @@ class PublisherControllerTest {
 
     @Test
     void update_shouldPerform_whenUserIsAuthorized() throws Exception {
-        when(publisherService.update(anyLong(), any(Publisher.class))).thenReturn(PUBLISHER_DATA.getPublisher());
+        when(publisherService.update(anyLong(), any(PublisherDto.class))).thenReturn(PUBLISHER_DATA.getPublisher());
 
         mockMvc.perform(put("/api/v1/publishers/{id}", PUBLISHER_DATA.getId()).contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\" : \"Books on Tape\"}").with(jwt())).andDo(print())
