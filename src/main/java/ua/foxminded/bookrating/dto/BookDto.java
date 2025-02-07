@@ -39,11 +39,11 @@ public class BookDto {
 
     @NotEmpty(message = "At least one author is required for the book.")
     @Valid
-    private List<Author> authors;
+    private List<AuthorDto> authors;
 
     @NotNull(message = "The publisher is required and cannot be null.")
     @Valid
-    private Publisher publisher;
+    private PublisherDto publisher;
 
     @Valid
     private Image image;
