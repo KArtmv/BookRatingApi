@@ -4,11 +4,12 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.bookrating.persistance.entity.BaseEntity;
+import ua.foxminded.bookrating.service.CrudService;
 
 import java.util.List;
 
 @Transactional(readOnly = true)
-public class CrudServiceImpl<T extends BaseEntity> {
+public abstract class CrudServiceImpl<T extends BaseEntity, D> implements CrudService<T, D> {
 
     protected final JpaRepository<T, Long> repository;
 
@@ -26,11 +27,6 @@ public class CrudServiceImpl<T extends BaseEntity> {
 
     @Transactional
     public T save(T entity) {
-        return repository.save(entity);
-    }
-
-    @Transactional
-    public T update(Long id, T entity) {
         return repository.save(entity);
     }
 
