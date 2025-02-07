@@ -46,9 +46,9 @@ class PublisherServiceImplTest {
         when(publisherRepository.findByName(anyString())).thenReturn(Optional.of(PUBLISHER_DATA.getPublisher()));
 
         try {
-            publisherService.save(PUBLISHER_DATA.getPublisher());
+            publisherService.save(PUBLISHER_DATA.getPublisherDto());
         } catch (EntityExistsException e) {
-            assertThat(e.getMessage()).isEqualTo(PUBLISHER_DATA.getPublisher().getName() + " already exists");
+            assertThat(e.getMessage()).isEqualTo("Publisher with given name: " + PUBLISHER_DATA.getPublisher().getName() + ", already exists");
         }
         verify(publisherRepository).findByName(anyString());
         verifyNoMoreInteractions(publisherRepository);
@@ -58,7 +58,7 @@ class PublisherServiceImplTest {
     void save_shouldSavedAuthor_whenAuthorIsNotExist() {
         when(publisherRepository.findByName(anyString())).thenReturn(Optional.empty());
 
-        publisherService.save(PUBLISHER_DATA.getPublisher());
+        publisherService.save(PUBLISHER_DATA.getPublisherDto());
 
         verify(publisherRepository).findByName(anyString());
         verify(publisherRepository).save(any(Publisher.class));
@@ -70,7 +70,7 @@ class PublisherServiceImplTest {
         when(publisherRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         try {
-            publisherService.update(PUBLISHER_DATA.getId(), PUBLISHER_DATA.getNewPublisher());
+            publisherService.update(PUBLISHER_DATA.getId(), PUBLISHER_DATA.getUpdatedPublisherDto());
         } catch (EntityNotFoundException e) {
             assertThat(e.getMessage()).isEqualTo("Entity with id: " + PUBLISHER_DATA.getId() + " is not found");
         }
@@ -83,7 +83,7 @@ class PublisherServiceImplTest {
     void update_shouldReturnUpdatedAuthor_whenAuthorIsExist() {
         when(publisherRepository.findById(anyLong())).thenReturn(Optional.of(PUBLISHER_DATA.getPublisher()));
 
-        publisherService.update(PUBLISHER_DATA.getId(), PUBLISHER_DATA.getUpdatedPublisher());
+        publisherService.update(PUBLISHER_DATA.getId(), PUBLISHER_DATA.getUpdatedPublisherDto());
 
         var argumentCaptor = ArgumentCaptor.forClass(Publisher.class);
         verify(publisherRepository).findById(anyLong());
