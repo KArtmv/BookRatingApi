@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
-public class BookServiceImpl extends PaginatedServiceImpl<Book> implements BookService {
+public class BookServiceImpl extends PaginatedServiceImpl<Book, BookDto> implements BookService {
 
     private final BookRepository bookRepository;
     private final PublisherService publisherService;
@@ -35,7 +35,7 @@ public class BookServiceImpl extends PaginatedServiceImpl<Book> implements BookS
 
     @Transactional
     @Override
-    public Book save(BookDto bookDto) {
+    public Book create(BookDto bookDto) {
         return bookRepository.save(toEntity(bookDto, new Book()));
     }
 
@@ -70,8 +70,11 @@ public class BookServiceImpl extends PaginatedServiceImpl<Book> implements BookS
         book.setIsbn(bookDto.getIsbn());
         book.setTitle(bookDto.getTitle());
         book.setPublicationYear(bookDto.getPublicationYear());
-        book.setPublisher(publisherService.findOrSave(bookDto.getPublisher()));
-        book.setAuthors(bookDto.getAuthors().stream().map(authorService::findOrSave).collect(Collectors.toSet()));
+        book.setPublisher(publisherService.findByNameOrSave(bookDto.getPublisher().name()));
+        book.setAuthors(bookDto.getAuthors()
+                .stream()
+                .map(authorDto -> authorService.findByNameOrSave(authorDto.name()))
+                .collect(Collectors.toSet()));
         book.setImage(bookDto.getImage());
         return book;
     }
