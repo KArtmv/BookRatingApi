@@ -27,8 +27,8 @@ public class CrudController<T extends BaseEntity, D, M extends RepresentationMod
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public M add(@RequestBody @Valid D entity) {
-        return modelAssembler.toModel(crudService.save(entity));
+    public M add(@RequestBody @Valid D dto) {
+        return modelAssembler.toModel(crudService.create(dto));
     }
 
     @PutMapping("/{id}")
