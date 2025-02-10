@@ -5,6 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 import ua.foxminded.bookrating.assembler.AuthorModelAssembler;
 import ua.foxminded.bookrating.assembler.SimpleBookModelAssembler;
@@ -56,6 +58,7 @@ public class AuthorController extends RestoreController<Author, AuthorDto, Autho
         return authorPagedResourcesAssembler.toModel(authorService.getByNameContaining(name, pageable), authorModelAssembler);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/deleted")
     public AuthorModel getDeletedAuthor(@RequestParam("name") String name) {
         Author deletedAuthor = authorService.getDeletedByName(name);

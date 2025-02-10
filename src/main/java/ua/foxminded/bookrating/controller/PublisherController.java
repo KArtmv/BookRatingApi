@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import ua.foxminded.bookrating.assembler.PublisherModelAssembler;
 import ua.foxminded.bookrating.assembler.SimpleBookModelAssembler;
@@ -56,6 +57,7 @@ public class PublisherController extends RestoreController<Publisher, PublisherD
         return publisherPagedResourcesAssembler.toModel(publisherService.getByNameContaining(name, pageable), publisherModelAssembler);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/deleted")
     public PublisherModel getDeletedPublisher(@RequestParam("name") String name) {
         Publisher deletedPublisher = publisherService.getDeletedByName(name);

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ua.foxminded.bookrating.assembler.FullBookModelAssembler;
@@ -76,6 +77,7 @@ public class BookController extends RestoreController<Book, BookDto, BookModel> 
         );
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/deleted/{isbn}")
     public BookModel getDeletedBook(@PathVariable("isbn") String isbn) {
         Book deletedBook = bookService.getDeletedBooksByIsbn(isbn);
