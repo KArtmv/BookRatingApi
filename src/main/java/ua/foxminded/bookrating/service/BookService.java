@@ -14,4 +14,6 @@ public interface BookService extends PaginatedService<Book, BookDto> {
     Page<Book> getBooksWithFilters(String title, List<Long> authorIds, List<Long> publisherIds, Integer publicationYear, Integer averageRating, Pageable pageable);
 
     Page<Rating> getRatingsByBookId(Long id, Pageable pageable);
+
+    Book getDeletedBooksByIsbn(String isbn);
 }

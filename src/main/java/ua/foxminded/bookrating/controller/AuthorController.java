@@ -15,6 +15,9 @@ import ua.foxminded.bookrating.persistance.entity.Author;
 import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.service.AuthorService;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @RestController
 @RequestMapping(value = "/api/v1/authors")
 public class AuthorController extends RestoreController<Author, AuthorDto, AuthorModel> {
@@ -51,5 +54,12 @@ public class AuthorController extends RestoreController<Author, AuthorDto, Autho
     public PagedModel<AuthorModel> getAuthorsContainName(@NotBlank(message = "Name cannot be blank or empty") @RequestParam("name") String name,
                                                          @PageableDefault Pageable pageable) {
         return authorPagedResourcesAssembler.toModel(authorService.getByNameContaining(name, pageable), authorModelAssembler);
+    }
+
+    @GetMapping("/deleted")
+    public AuthorModel getDeletedAuthor(@RequestParam("name") String name) {
+        Author deletedAuthor = authorService.getDeletedByName(name);
+        return authorModelAssembler.toModel(deletedAuthor)
+                .add(linkTo(methodOn(AuthorController.class).restore(deletedAuthor.getId())).withRel("restore"));
     }
 }

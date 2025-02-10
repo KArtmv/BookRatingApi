@@ -1,6 +1,7 @@
 package ua.foxminded.bookrating.service.implementation;
 
 import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,5 +45,13 @@ public abstract class ExtendedCrudServiceImpl<T extends NamedEntity, D> extends 
             entity.setName(name);
             return extendedRepository.save(entity);
         });
+    }
+
+    @Override
+    public T getDeletedByName(String name) {
+        return extendedRepository.findDeletedByName(name)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Deleted " + entitySupplier.get().getClass().getSimpleName() + " not found with name: " + name
+                ));
     }
 }

@@ -15,6 +15,9 @@ import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.persistance.entity.Publisher;
 import ua.foxminded.bookrating.service.PublisherService;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @RestController
 @RequestMapping("/api/v1/publishers")
 public class PublisherController extends RestoreController<Publisher, PublisherDto, PublisherModel> {
@@ -51,5 +54,12 @@ public class PublisherController extends RestoreController<Publisher, PublisherD
     public PagedModel<PublisherModel> getPublishersContainName(@NotBlank(message = "Name cannot be blank or empty") @RequestParam("name") String name,
                                                                @PageableDefault Pageable pageable) {
         return publisherPagedResourcesAssembler.toModel(publisherService.getByNameContaining(name, pageable), publisherModelAssembler);
+    }
+
+    @GetMapping("/deleted")
+    public PublisherModel getDeletedPublisher(@RequestParam("name") String name) {
+        Publisher deletedPublisher = publisherService.getDeletedByName(name);
+        return publisherModelAssembler.toModel(deletedPublisher)
+                .add(linkTo(methodOn(PublisherController.class).restore(deletedPublisher.getId())).withRel("restore"));
     }
 }

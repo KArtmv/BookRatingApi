@@ -20,6 +20,9 @@ import ua.foxminded.bookrating.service.BookService;
 
 import java.util.List;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @RestController
 @RequestMapping("/api/v1/books")
 @Validated
@@ -71,5 +74,12 @@ public class BookController extends RestoreController<Book, BookDto, BookModel> 
                 bookService.getBooksWithFilters(title, authorIds, publisherIds, publicationYear, averageRating, pageable),
                 simpleBookModelAssembler
         );
+    }
+
+    @GetMapping("/deleted/{isbn}")
+    public BookModel getDeletedBook(@PathVariable("isbn") String isbn) {
+        Book deletedBook = bookService.getDeletedBooksByIsbn(isbn);
+        return fullBookModelAssembler.toModel(deletedBook)
+                .add(linkTo(methodOn(BookController.class).restore(deletedBook.getId())).withRel("restore"));
     }
 }

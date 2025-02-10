@@ -92,4 +92,11 @@ public class BookServiceImpl extends PaginatedServiceImpl<Book, BookDto> impleme
         }
         return specification;
     }
+    @Override
+    public Book getDeletedBooksByIsbn(String isbn) {
+        return bookRepository.findDeletedBookByIsbn(isbn)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Deleted book with ISBN '" + isbn + "' was not found"
+                ));
+    }
 }
