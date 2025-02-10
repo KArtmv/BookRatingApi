@@ -43,8 +43,8 @@ public class BookData {
         bookDto.setIsbn(isbn);
         bookDto.setTitle(title);
         bookDto.setPublicationYear(publicationYear);
-        bookDto.setPublisher(PUBLISHER_DATA.getNewPublisher());
-        bookDto.setAuthors(Collections.singletonList(AUTHORS_DATA.getNewAuthor()));
+        bookDto.setPublisher(PUBLISHER_DATA.getPublisherDto());
+        bookDto.setAuthors(Collections.singletonList(AUTHORS_DATA.getAuthorDto()));
         bookDto.setImage(image);
         return bookDto;
     }
@@ -55,8 +55,8 @@ public class BookData {
         bookDto.setIsbn(updatedIsbn);
         bookDto.setTitle(updatedTitle);
         bookDto.setPublicationYear(updatedPublicationYear);
-        bookDto.setPublisher(PUBLISHER_DATA.getNewPublisher());
-        bookDto.setAuthors(Collections.singletonList(AUTHORS_DATA.getNewAuthor()));
+        bookDto.setPublisher(PUBLISHER_DATA.getPublisherDto());
+        bookDto.setAuthors(Collections.singletonList(AUTHORS_DATA.getAuthorDto()));
         bookDto.setImage(image);
         return bookDto;
     }
