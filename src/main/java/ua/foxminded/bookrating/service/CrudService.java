@@ -13,5 +13,7 @@ public interface CrudService<T extends BaseEntity, D> {
 
     T update(Long id, D dto);
 
-    T save(D dto);
+    T save(T entity);
+
+    T create(D dto);
 }
