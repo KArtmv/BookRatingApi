@@ -8,6 +8,7 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.web.bind.annotation.*;
 import ua.foxminded.bookrating.assembler.AuthorModelAssembler;
 import ua.foxminded.bookrating.assembler.SimpleBookModelAssembler;
+import ua.foxminded.bookrating.dto.AuthorDto;
 import ua.foxminded.bookrating.model.AuthorModel;
 import ua.foxminded.bookrating.model.SimpleBookModel;
 import ua.foxminded.bookrating.persistance.entity.Author;
@@ -16,7 +17,7 @@ import ua.foxminded.bookrating.service.AuthorService;
 
 @RestController
 @RequestMapping(value = "/api/v1/authors")
-public class AuthorController extends RestoreController<Author, Author, AuthorModel> {
+public class AuthorController extends RestoreController<Author, AuthorDto, AuthorModel> {
 
     private final AuthorService authorService;
     private final AuthorModelAssembler authorModelAssembler;
