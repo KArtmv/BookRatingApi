@@ -128,7 +128,7 @@ class AuthorControllerTest {
 
     @Test
     void add_shouldReturnUnauthorized_whenUseIsUnauthorized() throws Exception {
-        when(authorService.save(any(AuthorDto.class))).thenReturn(AUTHORS_DATA.getAuthor());
+        when(authorService.create(any(AuthorDto.class))).thenReturn(AUTHORS_DATA.getAuthor());
 
         mockMvc.perform(post("/api/v1/authors").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\" : \"Scott Turow\"}")).andDo(print())
@@ -237,7 +237,7 @@ class AuthorControllerTest {
 
     @Test
     void add_shouldReturnAuthor_whenUserIsAuthorized() throws Exception {
-        when(authorService.save(any(AuthorDto.class))).thenReturn(AUTHORS_DATA.getAuthor());
+        when(authorService.create(any(AuthorDto.class))).thenReturn(AUTHORS_DATA.getAuthor());
 
         mockMvc.perform(post("/api/v1/authors").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\" : \"Scott Turow\"}").with(jwt())).andDo(print())
