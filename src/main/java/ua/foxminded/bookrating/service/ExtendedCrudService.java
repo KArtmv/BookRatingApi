@@ -11,5 +11,5 @@ public interface ExtendedCrudService<T extends BaseEntity, D> extends PaginatedS
 
     Page<T> getByNameContaining(String name, Pageable pageable);
 
-    T findOrSave(T entity);
+    T findByNameOrSave(String name);
 }
