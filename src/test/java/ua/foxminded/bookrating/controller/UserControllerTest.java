@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.bookrating.assembler.RatingOfBookModelAssembler;
 import ua.foxminded.bookrating.assembler.SimpleBookModelAssembler;
 import ua.foxminded.bookrating.assembler.UserModelAssembler;
+import ua.foxminded.bookrating.dto.UserDto;
 import ua.foxminded.bookrating.persistance.entity.User;
 import ua.foxminded.bookrating.security.SecurityConfig;
 import ua.foxminded.bookrating.service.UserService;
@@ -104,7 +105,7 @@ class UserControllerTest {
 
     @Test
     void update_shouldReturnUnauthorizedStatus_whenUserIsUnauthorized() throws Exception {
-        when(userService.update(anyLong(), any(User.class))).thenReturn(USER_DATA.getUser());
+        when(userService.update(anyLong(), any(UserDto.class))).thenReturn(USER_DATA.getUser());
 
         mockMvc.perform(put("/api/v1/users/{id}", USER_DATA.getId()).contentType(MediaType.APPLICATION_JSON).content("""
                         {"age": "21",
@@ -163,7 +164,7 @@ class UserControllerTest {
 
     @Test
     void add_shouldReturnUser_whenUserIsAuthorized() throws Exception {
-        when(userService.save(any(User.class))).thenReturn(USER_DATA.getUser());
+        when(userService.create(any(UserDto.class))).thenReturn(USER_DATA.getUser());
 
         mockMvc.perform(post("/api/v1/users").contentType(MediaType.APPLICATION_JSON).content("""
                         {"age": "21",
@@ -189,8 +190,20 @@ class UserControllerTest {
     }
 
     @Test
+    void add_shouldBedRequest_whenUserAgeIsNegative() throws Exception {
+        mockMvc.perform(post("/api/v1/users").contentType(MediaType.APPLICATION_JSON).content("""
+                        {"age": "-25",
+                        "location": "Fenton, Michigan, Usa"
+                        }""").with(jwt())).andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.age").value("Age can be only a positive value or zero")
+                );
+    }
+
+    @Test
     void update_shouldReturnUser_whenUserIsAuthorized() throws Exception {
-        when(userService.update(anyLong(), any(User.class))).thenReturn(USER_DATA.getUser());
+        when(userService.update(anyLong(), any(UserDto.class))).thenReturn(USER_DATA.getUser());
 
         mockMvc.perform(put("/api/v1/users/{id}", USER_DATA.getId()).contentType(MediaType.APPLICATION_JSON).content("""
                         {"age": "21",
@@ -205,8 +218,6 @@ class UserControllerTest {
 
     @Test
     void update_shouldBedRequest_whenUserDataIsMissed() throws Exception {
-        when(userService.update(anyLong(), any(User.class))).thenReturn(USER_DATA.getUser());
-
         mockMvc.perform(put("/api/v1/users/{id}", USER_DATA.getId()).contentType(MediaType.APPLICATION_JSON).content("""
                         {"age": "",
                         "location": ""
@@ -214,6 +225,18 @@ class UserControllerTest {
                 .andExpectAll(
                         status().isBadRequest(),
                         jsonPath("$.location").value("Location can't be blank")
+                );
+    }
+
+    @Test
+    void update_shouldBedRequest_whenUserAgeIsNegative() throws Exception {
+        mockMvc.perform(put("/api/v1/users/{id}", USER_DATA.getId()).contentType(MediaType.APPLICATION_JSON).content("""
+                        {"age": "-25",
+                        "location": "Fenton, Michigan, Usa"
+                        }""").with(jwt())).andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.age").value("Age can be only a positive value or zero")
                 );
     }
 
