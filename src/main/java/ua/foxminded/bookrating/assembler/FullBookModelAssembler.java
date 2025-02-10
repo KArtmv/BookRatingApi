@@ -6,6 +6,8 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 import ua.foxminded.bookrating.controller.BookController;
+import ua.foxminded.bookrating.controller.RatingController;
+import ua.foxminded.bookrating.dto.RatingDto;
 import ua.foxminded.bookrating.model.AuthorModel;
 import ua.foxminded.bookrating.model.BookModel;
 import ua.foxminded.bookrating.model.PublisherModel;
@@ -38,6 +40,7 @@ public class FullBookModelAssembler implements RepresentationModelAssembler<Book
         bookModel.setAuthors(getAuthorsModel(entity.getAuthors()));
         bookModel.setPublisher(getPublisherModel(entity.getPublisher()));
         bookModel.add(getRatingsLink(entity.getId()));
+        bookModel.add(getLinkToRateBook(entity.getId()));
         return bookModel;
     }
 
@@ -51,5 +54,11 @@ public class FullBookModelAssembler implements RepresentationModelAssembler<Book
 
     private Link getRatingsLink(Long bookId) {
         return linkTo(methodOn(BookController.class).getBookRatings(bookId, Pageable.unpaged())).withRel("bookRatings");
+    }
+
+    private Link getLinkToRateBook(Long bookId) {
+        return linkTo(methodOn(RatingController.class).add(new RatingDto(bookId, null, null)))
+                .withRel("rateBook")
+                .withType("POST");
     }
 }
