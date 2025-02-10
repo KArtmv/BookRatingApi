@@ -1,5 +1,6 @@
 package ua.foxminded.bookrating.service.implementation;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +67,7 @@ class UserServiceImplTest {
     void update_shouldUpdateUser_whenInvoke() {
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(USER_DATA.getUser()));
 
-        userService.update(USER_DATA.getId(), USER_DATA.getUpdatedUser());
+        userService.update(USER_DATA.getId(), USER_DATA.getUpdatedUserDto());
 
         verify(userRepository).findById(USER_DATA.getId());
         ArgumentCaptor<User> argumentCaptor = ArgumentCaptor.forClass(User.class);
@@ -78,4 +79,65 @@ class UserServiceImplTest {
             assertThat(captorValue.getAge()).isEqualTo(USER_DATA.getUpdatedAge());
         });
     }
+
+    @Test
+    void create_shouldCreateUser_whenInvoke() {
+        when(userRepository.save(any(User.class))).thenReturn(USER_DATA.getUser());
+
+        userService.create(USER_DATA.getUserDto());
+
+        ArgumentCaptor<User> argumentCaptor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(argumentCaptor.capture());
+        assertAll(() -> {
+            User captorValue = argumentCaptor.getValue();
+            assertThat(captorValue.getLocation()).isEqualTo(USER_DATA.getLocation());
+            assertThat(captorValue.getAge()).isEqualTo(USER_DATA.getAge());
+        });
+        verifyNoMoreInteractions(userRepository);
+    }
+
+    @Test
+    void delete_shouldDeleteUser_whenUserIsFound() {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(USER_DATA.getUser()));
+
+        userService.delete(USER_DATA.getId());
+
+        verify(userRepository).findById(USER_DATA.getId());
+        verify(userRepository).delete(USER_DATA.getUser());
+        verifyNoMoreInteractions(userRepository);
+    }
+
+    @Test
+    void delete_shouldThrowsException_whenUserIsNotFound() {
+        when(userRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        try {
+            userService.delete(USER_DATA.getId());
+        } catch (EntityNotFoundException e) {
+            assertThat(e.getMessage()).isEqualTo("Entity with id: " + USER_DATA.getId() + " is not found");
+        }
+
+        verify(userRepository).findById(USER_DATA.getId());
+        verifyNoMoreInteractions(userRepository);
+    }
+
+    @Test
+    void restore_shouldReturnRestoredUser_whenIsFound() {
+
+        userService.restoreById(USER_DATA.getId());
+
+        verify(userRepository).restore(USER_DATA.getId());
+        verifyNoMoreInteractions(userRepository);
+    }
+
+    @Test
+    void save_shouldSaveUser_whenInvoke() {
+        when(userRepository.save(any(User.class))).thenReturn(USER_DATA.getUser());
+
+        userService.save(USER_DATA.getUser());
+
+        verify(userRepository).save(USER_DATA.getUser());
+        verifyNoMoreInteractions(userRepository);
+    }
+
 }
