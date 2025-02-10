@@ -43,11 +43,11 @@ class AuthorServiceImplTest {
     }
 
     @Test
-    void save_shouldThrowsException_whenAuthorIsExist() {
+    void create_shouldThrowsException_whenAuthorIsExist() {
         when(authorRepository.findByName(anyString())).thenReturn(Optional.of(AUTHORS_DATA.getAuthor()));
 
         try {
-            authorService.save(AUTHORS_DATA.getAuthorDto());
+            authorService.create(AUTHORS_DATA.getAuthorDto());
         } catch (EntityExistsException e) {
             assertThat(e.getMessage()).isEqualTo("Author with given name: " + AUTHORS_DATA.getAuthor().getName() + ", already exists");
         }
@@ -57,12 +57,20 @@ class AuthorServiceImplTest {
     }
 
     @Test
-    void save_shouldSavedAuthor_whenAuthorIsNotExist() {
+    void create_shouldSavedAuthor_whenAuthorIsNotExist() {
         when(authorRepository.findByName(anyString())).thenReturn(Optional.empty());
 
-        authorService.save(AUTHORS_DATA.getAuthorDto());
+        authorService.create(AUTHORS_DATA.getAuthorDto());
 
         verify(authorRepository).findByName(anyString());
+        verify(authorRepository).save(any(Author.class));
+        verifyNoMoreInteractions(authorRepository);
+    }
+
+    @Test
+    void save_shouldReturnSavedAuthor_whenInvoke() {
+        authorService.save(AUTHORS_DATA.getAuthor());
+
         verify(authorRepository).save(any(Author.class));
         verifyNoMoreInteractions(authorRepository);
     }
@@ -159,7 +167,7 @@ class AuthorServiceImplTest {
     void findOrSave_shouldSaveAuthor_whenAuthorIsNotExist() {
         when(authorRepository.findByName(anyString())).thenReturn(Optional.empty());
 
-        authorService.findOrSave(AUTHORS_DATA.getNewAuthor());
+        authorService.findByNameOrSave(AUTHORS_DATA.getName());
 
         verify(authorRepository).findByName(AUTHORS_DATA.getName());
         verify(authorRepository).save(any(Author.class));
@@ -170,7 +178,7 @@ class AuthorServiceImplTest {
     void findOrSave_shouldReturnAuthor_whenAuthorIsExist() {
         when(authorRepository.findByName(anyString())).thenReturn(Optional.of(AUTHORS_DATA.getAuthor()));
 
-        authorService.findOrSave(AUTHORS_DATA.getNewAuthor());
+        authorService.findByNameOrSave(AUTHORS_DATA.getName());
 
         verify(authorRepository).findByName(AUTHORS_DATA.getName());
         verifyNoMoreInteractions(authorRepository);
