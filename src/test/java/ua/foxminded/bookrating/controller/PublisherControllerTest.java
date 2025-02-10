@@ -334,4 +334,48 @@ class PublisherControllerTest {
                         content().string(containsString("Name cannot be blank or empty"))
                 );
     }
+
+    @Test
+    void getDeletedPublisher_shouldReturnSoftDeletedAuthor_whenIsFounded() throws Exception {
+        when(publisherService.getDeletedByName(PUBLISHER_DATA.getName())).thenReturn(PUBLISHER_DATA.getPublisher());
+
+        mockMvc.perform(get("/api/v1/publishers/deleted")
+                        .param("name", PUBLISHER_DATA.getName())
+                        .with(jwt())).andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.id").value(PUBLISHER_DATA.getId()),
+                        jsonPath("$.name").value(PUBLISHER_DATA.getName()),
+                        jsonPath("$._links.self.href").value(PUBLISHER_DATA.getSelfHref()),
+                        jsonPath("$._links.publisherBooks.href").value(PUBLISHER_DATA.getPublisherBooksHref()),
+                        jsonPath("$._links.restore.href").value(PUBLISHER_DATA.getSelfHref() + "/restore")
+                );
+    }
+
+    @Test
+    void getDeletedPublisher_shouldReturnSoftDeletedAuthor_whenIsNotFounded() throws Exception {
+        when(publisherService.getDeletedByName(PUBLISHER_DATA.getName()))
+                .thenThrow(new EntityNotFoundException("Deleted publisher not found with name: " + PUBLISHER_DATA.getName()));
+
+        mockMvc.perform(get("/api/v1/publishers/deleted")
+                        .param("name", PUBLISHER_DATA.getName())
+                        .with(jwt())).andDo(print())
+                .andExpectAll(
+                        status().isNotFound(),
+                        jsonPath("$.type").value("about:blank"),
+                        jsonPath("$.title").value("Not Found"),
+                        jsonPath("$.status").value(404),
+                        jsonPath("$.detail").value("Deleted publisher not found with name: " + PUBLISHER_DATA.getName()),
+                        jsonPath("$.instance").value("/api/v1/publishers/deleted")
+                );
+    }
+
+    @Test
+    void getDeletedPublisher_shouldReturnForbidden_whenUserIsUnauthorized() throws Exception {
+        mockMvc.perform(get("/api/v1/publishers/deleted")
+                        .param("name", PUBLISHER_DATA.getName())).andDo(print())
+                .andExpectAll(
+                        status().isUnauthorized()
+                );
+    }
 }

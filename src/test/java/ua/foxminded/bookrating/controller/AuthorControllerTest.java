@@ -309,7 +309,7 @@ class AuthorControllerTest {
 
     @Test
     void get_shouldReturnAuthor_whenAuthorIdIsMissed() throws Exception {
-        mockMvc.perform(get("/api/v1/authors/")).andDo(print())
+        mockMvc.perform(get("/api/v1/authors//")).andDo(print())
                 .andExpect(status().isNotFound());
     }
 
@@ -333,6 +333,50 @@ class AuthorControllerTest {
                         status().isBadRequest(),
                         content().string(containsString("name")),
                         content().string(containsString("Name cannot be blank or empty"))
+                );
+    }
+
+    @Test
+    void getDeletedAuthor_shouldReturnSoftDeletedAuthor_whenIsFounded() throws Exception {
+        when(authorService.getDeletedByName(AUTHORS_DATA.getName())).thenReturn(AUTHORS_DATA.getAuthor());
+
+        mockMvc.perform(get("/api/v1/authors/deleted")
+                        .param("name", AUTHORS_DATA.getName())
+                        .with(jwt())).andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.id").value(AUTHORS_DATA.getId()),
+                        jsonPath("$.name").value(AUTHORS_DATA.getName()),
+                        jsonPath("$._links.self.href").value(AUTHORS_DATA.getSelfHref()),
+                        jsonPath("$._links.authorBooks.href").value(AUTHORS_DATA.getAuthorBooksHref()),
+                        jsonPath("$._links.restore.href").value(AUTHORS_DATA.getSelfHref() + "/restore")
+                );
+    }
+
+    @Test
+    void getDeletedAuthor_shouldReturnSoftDeletedAuthor_whenIsNotFounded() throws Exception {
+        when(authorService.getDeletedByName(AUTHORS_DATA.getName()))
+                .thenThrow(new EntityNotFoundException("Deleted author not found with name: " + AUTHORS_DATA.getName()));
+
+        mockMvc.perform(get("/api/v1/authors/deleted")
+                        .param("name", AUTHORS_DATA.getName())
+                        .with(jwt())).andDo(print())
+                .andExpectAll(
+                        status().isNotFound(),
+                        jsonPath("$.type").value("about:blank"),
+                        jsonPath("$.title").value("Not Found"),
+                        jsonPath("$.status").value(404),
+                        jsonPath("$.detail").value("Deleted author not found with name: Scott Turow"),
+                        jsonPath("$.instance").value("/api/v1/authors/deleted")
+                );
+    }
+
+    @Test
+    void getDeletedAuthor_shouldReturnForbidden_whenUserIsUnauthorized() throws Exception {
+        mockMvc.perform(get("/api/v1/authors/deleted")
+                        .param("name", AUTHORS_DATA.getName())).andDo(print())
+                .andExpectAll(
+                        status().isUnauthorized()
                 );
     }
 }

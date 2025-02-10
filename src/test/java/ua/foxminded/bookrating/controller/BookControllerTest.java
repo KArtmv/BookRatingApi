@@ -680,4 +680,58 @@ class BookControllerTest {
                         .with(jwt()))
                 .andExpect(status().isNoContent());
     }
+
+    @Test
+    void getDeletedBook_shouldReturnSoftDeletedAuthor_whenIsFounded() throws Exception {
+        when(bookService.getDeletedBooksByIsbn(BOOK_DATA.getIsbn())).thenReturn(BOOK_DATA.getBook());
+
+        mockMvc.perform(get("/api/v1/books/deleted/{isbn}", BOOK_DATA.getIsbn())
+                        .with(jwt())).andDo(print())
+                .andExpectAll(
+                        status().isOk(),
+                        jsonPath("$.id").value(BOOK_DATA.getId()),
+                        jsonPath("$.isbn").value(BOOK_DATA.getIsbn()),
+                        jsonPath("$.title").value(BOOK_DATA.getTitle()),
+                        jsonPath("$.publicationYear").value(BOOK_DATA.getPublicationYear().toString()),
+                        jsonPath("$.averageRating").value("0.0"),
+                        jsonPath("$.authors[0].id").value(AUTHORS_DATA.getId()),
+                        jsonPath("$.authors[0].name").value(AUTHORS_DATA.getName()),
+                        jsonPath("$.authors[0]._links.self.href").value(AUTHORS_DATA.getSelfHref()),
+                        jsonPath("$.authors[0]._links.authorBooks.href").value(AUTHORS_DATA.getAuthorBooksHref()),
+                        jsonPath("$.publisher.id").value(PUBLISHER_DATA.getId()),
+                        jsonPath("$.publisher.name").value(PUBLISHER_DATA.getName()),
+                        jsonPath("$.publisher._links.self.href").value(PUBLISHER_DATA.getSelfHref()),
+                        jsonPath("$.publisher._links.publisherBooks.href").value(PUBLISHER_DATA.getPublisherBooksHref()),
+                        jsonPath("$.image.imageUrlSmall").value(BOOK_DATA.getImage().getImageUrlSmall()),
+                        jsonPath("$.image.imageUrlMedium").value(BOOK_DATA.getImage().getImageUrlMedium()),
+                        jsonPath("$.image.imageUrlLarge").value(BOOK_DATA.getImage().getImageUrlLarge()),
+                        jsonPath("$._links.bookRatings.href").value(BOOK_DATA.getBookRatingHref()),
+                        jsonPath("$._links.restore.href").value(BOOK_DATA.getSelfHref() + "/restore")
+                );
+    }
+
+    @Test
+    void getDeletedBook_shouldReturnSoftDeletedAuthor_whenIsNotFounded() throws Exception {
+        when(bookService.getDeletedBooksByIsbn(BOOK_DATA.getIsbn()))
+                .thenThrow(new EntityNotFoundException("Deleted book with ISBN '" + BOOK_DATA.getIsbn() + "' was not found"));
+
+        mockMvc.perform(get("/api/v1/books/deleted/{isbn}", BOOK_DATA.getIsbn())
+                        .with(jwt())).andDo(print())
+                .andExpectAll(
+                        status().isNotFound(),
+                        jsonPath("$.type").value("about:blank"),
+                        jsonPath("$.title").value("Not Found"),
+                        jsonPath("$.status").value(404),
+                        jsonPath("$.detail").value("Deleted book with ISBN '0736688390' was not found"),
+                        jsonPath("$.instance").value("/api/v1/books/deleted/0736688390")
+                );
+    }
+
+    @Test
+    void getDeletedBook_shouldReturnForbidden_whenUserIsUnauthorized() throws Exception {
+        mockMvc.perform(get("/api/v1/books/deleted/{isbn}", BOOK_DATA.getIsbn()))
+                .andExpectAll(
+                        status().isUnauthorized()
+                );
+    }
 }
