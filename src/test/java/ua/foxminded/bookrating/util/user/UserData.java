@@ -1,6 +1,7 @@
 package ua.foxminded.bookrating.util.user;
 
 import lombok.Getter;
+import ua.foxminded.bookrating.dto.UserDto;
 import ua.foxminded.bookrating.persistance.entity.User;
 
 @Getter
@@ -14,6 +15,8 @@ public class UserData {
     private final String updatedLocation = "Mariupol, Donecka, Ukraine";
     private final Integer updatedAge = 32;
     private final User updatedUser = new User(updatedLocation, updatedAge);
+    private final UserDto userDto = new UserDto(location, age);
+    private final UserDto updatedUserDto = new UserDto(updatedLocation, updatedAge);
 
     private final String userRatedBooksHref = "http://localhost/api/v1/users/58792/rated-books";
     private final String selfHref = "http://localhost/api/v1/users/58792";
