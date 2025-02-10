@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ua.foxminded.bookrating.assembler.RatingOfBookModelAssembler;
 import ua.foxminded.bookrating.assembler.UserModelAssembler;
+import ua.foxminded.bookrating.dto.UserDto;
 import ua.foxminded.bookrating.model.RatingModel;
 import ua.foxminded.bookrating.model.UserModel;
 import ua.foxminded.bookrating.persistance.entity.Rating;
@@ -20,7 +21,7 @@ import ua.foxminded.bookrating.service.UserService;
 @RestController
 @RequestMapping("/api/v1/users")
 @Validated
-public class UserController extends RestoreController<User, User, UserModel> {
+public class UserController extends RestoreController<User, UserDto, UserModel> {
 
     private final UserService userService;
     private final RatingOfBookModelAssembler ratingModelAssembler;
