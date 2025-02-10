@@ -316,7 +316,7 @@ class BookControllerTest {
 
     @Test
     void add_shouldReturnCreatedBook_whenUserIsAuthorized() throws Exception {
-        when(bookService.save(any(BookDto.class))).thenReturn(BOOK_DATA.getBook());
+        when(bookService.create(any(BookDto.class))).thenReturn(BOOK_DATA.getBook());
         when(bookRepository.findByIsbn(anyString())).thenReturn(Optional.empty());
 
         mockMvc.perform(post("/api/v1/books").contentType(MediaType.APPLICATION_JSON)
@@ -392,7 +392,7 @@ class BookControllerTest {
 
     @Test
     void add_shouldReturnBadRequestWithErrorMessage_whenIsbnAlreadyExists() throws Exception {
-        when(bookService.save(any(BookDto.class))).thenReturn(BOOK_DATA.getBook());
+        when(bookService.create(any(BookDto.class))).thenReturn(BOOK_DATA.getBook());
         when(bookRepository.findByIsbn(anyString())).thenReturn(Optional.of(BOOK_DATA.getBook()));
 
         mockMvc.perform(post("/api/v1/books").contentType(MediaType.APPLICATION_JSON)
@@ -524,8 +524,8 @@ class BookControllerTest {
                         status().isBadRequest(),
                         jsonPath("$.title").value("The title of the book is required and cannot be empty."),
                         jsonPath("$.publicationYear").value("The publication year is required and cannot be null."),
-                        jsonPath("$.['authors[0].name']").value("The name is required and cannot be empty."),
-                        jsonPath("$.['publisher.name']").value("The name is required and cannot be empty."),
+                        jsonPath("$.['authors[0].name']").value("Author name is required and cannot be empty."),
+                        jsonPath("$.['publisher.name']").value("Publisher name is required and cannot be empty."),
                         jsonPath("$.['image.imageUrlSmall']").value("Image URL Small is required"),
                         jsonPath("$.['image.imageUrlMedium']").value("Image URL Medium is required"),
                         jsonPath("$.['image.imageUrlLarge']").value("Image URL Large must be a valid HTTP URL.")

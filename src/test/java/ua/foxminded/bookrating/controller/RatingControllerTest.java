@@ -74,7 +74,7 @@ class RatingControllerTest {
 
     @Test
     void add_shouldReturnUnauthorized_whenUserIsUnauthorized() throws Exception {
-        when(ratingService.save(any(RatingDto.class))).thenReturn(RATING_DATA.getRating());
+        when(ratingService.create(any(RatingDto.class))).thenReturn(RATING_DATA.getRating());
 
         mockMvc.perform(post("/api/v1/ratings").contentType(MediaType.APPLICATION_JSON)
                 .content("""
@@ -139,7 +139,7 @@ class RatingControllerTest {
 
     @Test
     void add_shouldReturnRating_whenUserIsAuthorized() throws Exception {
-        when(ratingService.save(any(RatingDto.class))).thenReturn(RATING_DATA.getRating());
+        when(ratingService.create(any(RatingDto.class))).thenReturn(RATING_DATA.getRating());
 
         mockMvc.perform(post("/api/v1/ratings").contentType(MediaType.APPLICATION_JSON)
                 .content("""

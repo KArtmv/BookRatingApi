@@ -42,11 +42,11 @@ class PublisherServiceImplTest {
     }
 
     @Test
-    void save_shouldThrowsException_whenAuthorIsExist() {
+    void create_shouldThrowsException_whenAuthorIsExist() {
         when(publisherRepository.findByName(anyString())).thenReturn(Optional.of(PUBLISHER_DATA.getPublisher()));
 
         try {
-            publisherService.save(PUBLISHER_DATA.getPublisherDto());
+            publisherService.create(PUBLISHER_DATA.getPublisherDto());
         } catch (EntityExistsException e) {
             assertThat(e.getMessage()).isEqualTo("Publisher with given name: " + PUBLISHER_DATA.getPublisher().getName() + ", already exists");
         }
@@ -55,10 +55,10 @@ class PublisherServiceImplTest {
     }
 
     @Test
-    void save_shouldSavedAuthor_whenAuthorIsNotExist() {
+    void create_shouldSavedAuthor_whenAuthorIsNotExist() {
         when(publisherRepository.findByName(anyString())).thenReturn(Optional.empty());
 
-        publisherService.save(PUBLISHER_DATA.getPublisherDto());
+        publisherService.create(PUBLISHER_DATA.getPublisherDto());
 
         verify(publisherRepository).findByName(anyString());
         verify(publisherRepository).save(any(Publisher.class));
@@ -157,7 +157,7 @@ class PublisherServiceImplTest {
     void findOrSave_shouldSaveAuthor_whenAuthorIsNotExist() {
         when(publisherRepository.findByName(anyString())).thenReturn(Optional.empty());
 
-        publisherService.findOrSave(PUBLISHER_DATA.getNewPublisher());
+        publisherService.findByNameOrSave(PUBLISHER_DATA.getName());
 
         verify(publisherRepository).findByName(PUBLISHER_DATA.getName());
         verify(publisherRepository).save(any(Publisher.class));
@@ -168,7 +168,7 @@ class PublisherServiceImplTest {
     void findOrSave_shouldReturnAuthor_whenAuthorIsExist() {
         when(publisherRepository.findByName(anyString())).thenReturn(Optional.of(PUBLISHER_DATA.getPublisher()));
 
-        publisherService.findOrSave(PUBLISHER_DATA.getNewPublisher());
+        publisherService.findByNameOrSave(PUBLISHER_DATA.getName());
 
         verify(publisherRepository).findByName(PUBLISHER_DATA.getName());
         verifyNoMoreInteractions(publisherRepository);
@@ -182,5 +182,14 @@ class PublisherServiceImplTest {
 
         verify(publisherRepository).restore(anyLong());
         verifyNoMoreInteractions(publisherRepository);
+    }
+
+    @Test
+    void save_shouldReturnSavedPublisher_whenInvoke() {
+        when(publisherRepository.save(any(Publisher.class))).thenReturn(PUBLISHER_DATA.getPublisher());
+
+        publisherService.save(PUBLISHER_DATA.getNewPublisher());
+
+        verify(publisherRepository).save(PUBLISHER_DATA.getNewPublisher());
     }
 }

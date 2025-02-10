@@ -49,11 +49,11 @@ class RatingServiceImplTest {
     }
 
     @Test
-    void save_shouldSaveRating_whenIsInvoke() {
+    void create_shouldSaveRating_whenIsInvoke() {
         when(userService.findById(anyLong())).thenReturn(USER_DATA.getUser());
         when(bookService.findById(anyLong())).thenReturn(BOOK_DATA.getBook());
 
-        ratingService.save(RATING_DATA.getRatingDto());
+        ratingService.create(RATING_DATA.getRatingDto());
 
         verify(userService).findById(anyLong());
         verify(bookService).findById(anyLong());
@@ -103,5 +103,14 @@ class RatingServiceImplTest {
         verify(ratingRepository).findById(anyLong());
         verify(ratingRepository).delete(any(Rating.class));
         verifyNoMoreInteractions(ratingRepository);
+    }
+
+    @Test
+    void save_shouldReturnSavedRating_whenInvoke() {
+        when(ratingRepository.save(any(Rating.class))).thenReturn(RATING_DATA.getRating());
+
+        ratingService.save(RATING_DATA.getNewRating());
+
+        verify(ratingRepository).save(RATING_DATA.getNewRating());
     }
 }

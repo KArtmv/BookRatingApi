@@ -129,7 +129,7 @@ class PublisherControllerTest {
 
     @Test
     void add_shouldReturnForbidden_whenUseIsUnauthorized() throws Exception {
-        when(publisherService.save(any(PublisherDto.class))).thenReturn(PUBLISHER_DATA.getPublisher());
+        when(publisherService.create(any(PublisherDto.class))).thenReturn(PUBLISHER_DATA.getPublisher());
 
         mockMvc.perform(post("/api/v1/publishers").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\" : \"Books on Tape\"}")).andDo(print())
@@ -237,7 +237,7 @@ class PublisherControllerTest {
 
     @Test
     void add_shouldPerform_whenUserIsAuthorized() throws Exception {
-        when(publisherService.save(any(PublisherDto.class))).thenReturn(PUBLISHER_DATA.getPublisher());
+        when(publisherService.create(any(PublisherDto.class))).thenReturn(PUBLISHER_DATA.getPublisher());
 
         mockMvc.perform(post("/api/v1/publishers").contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\" : \"Books on Tape\"}").with(jwt())).andDo(print())

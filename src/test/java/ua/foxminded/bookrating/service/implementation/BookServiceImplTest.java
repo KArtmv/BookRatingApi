@@ -59,14 +59,14 @@ class BookServiceImplTest {
     }
 
     @Test
-    void save_shouldReturnSavedBook_whenBookIsbnIsNotExist() {
-        when(publisherService.findOrSave(any(Publisher.class))).thenReturn(PUBLISHER_DATA.getPublisher());
-        when(authorService.findOrSave(any(Author.class))).thenReturn(AUTHOR_DATA.getAuthor());
+    void crate_shouldReturnSavedBook_whenBookIsbnIsNotExist() {
+        when(publisherService.findByNameOrSave(anyString())).thenReturn(PUBLISHER_DATA.getPublisher());
+        when(authorService.findByNameOrSave(anyString())).thenReturn(AUTHOR_DATA.getAuthor());
 
-        bookService.save(BOOK_DATA.bookDto());
+        bookService.create(BOOK_DATA.bookDto());
 
-        verify(publisherService).findOrSave(any(Publisher.class));
-        verify(authorService).findOrSave(any(Author.class));
+        verify(publisherService).findByNameOrSave(PUBLISHER_DATA.getName());
+        verify(authorService).findByNameOrSave(AUTHOR_DATA.getName());
         var argumentCaptor = ArgumentCaptor.forClass(Book.class);
         verify(bookRepository).save(argumentCaptor.capture());
         Book value = argumentCaptor.getValue();
@@ -98,14 +98,14 @@ class BookServiceImplTest {
     @Test
     void update_shouldReturnUpdatedBook_whenBookIsFound() {
         when(bookRepository.findById(anyLong())).thenReturn(Optional.of(BOOK_DATA.getBook()));
-        when(publisherService.findOrSave(any(Publisher.class))).thenReturn(PUBLISHER_DATA.getPublisher());
-        when(authorService.findOrSave(any(Author.class))).thenReturn(AUTHOR_DATA.getAuthor());
+        when(publisherService.findByNameOrSave(anyString())).thenReturn(PUBLISHER_DATA.getPublisher());
+        when(authorService.findByNameOrSave(anyString())).thenReturn(AUTHOR_DATA.getAuthor());
 
         bookService.update(BOOK_DATA.getId(), BOOK_DATA.bookDtoUpdate());
 
         verify(bookRepository).findById(BOOK_DATA.getId());
-        verify(publisherService).findOrSave(any(Publisher.class));
-        verify(authorService).findOrSave(any(Author.class));
+        verify(publisherService).findByNameOrSave(PUBLISHER_DATA.getName());
+        verify(authorService).findByNameOrSave(AUTHOR_DATA.getName());
         var argumentCaptor = ArgumentCaptor.forClass(Book.class);
         verify(bookRepository).save(argumentCaptor.capture());
         Book value = argumentCaptor.getValue();
@@ -203,5 +203,14 @@ class BookServiceImplTest {
         verify(bookRepository).findById(anyLong());
         verify(bookRepository).findBookRatings(any(Book.class), any(Pageable.class));
         verifyNoMoreInteractions(bookRepository);
+    }
+
+    @Test
+    void save_shouldReturnSavedBook_whenInvoke() {
+        when(bookRepository.save(any(Book.class))).thenReturn(BOOK_DATA.getBook());
+
+        bookService.save(BOOK_DATA.getNewBook());
+
+        verify(bookRepository).save(BOOK_DATA.getNewBook());
     }
 }
