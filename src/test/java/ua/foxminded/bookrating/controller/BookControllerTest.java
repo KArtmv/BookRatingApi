@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ua.foxminded.bookrating.ValidatorConfig;
+import ua.foxminded.bookrating.config.ValidatorConfig;
 import ua.foxminded.bookrating.annotation.IsbnValidator;
 import ua.foxminded.bookrating.assembler.*;
 import ua.foxminded.bookrating.dto.BookDto;
