@@ -213,4 +213,25 @@ class BookServiceImplTest {
 
         verify(bookRepository).save(BOOK_DATA.getNewBook());
     }
+
+    @Test
+    void getDeletedByBookByIsbn_shouldReturnDeletedAuthor_whenIsFound() {
+        when(bookRepository.findDeletedBookByIsbn(anyString())).thenReturn(Optional.of(BOOK_DATA.getBook()));
+
+        bookService.getDeletedBooksByIsbn(BOOK_DATA.getIsbn());
+
+        verify(bookRepository).findDeletedBookByIsbn(BOOK_DATA.getIsbn());
+        verifyNoMoreInteractions(bookRepository);
+    }
+
+    @Test
+    void getDeletedByBookByIsbn_shouldThrowException_whenIsNotFound() {
+        when(bookRepository.findDeletedBookByIsbn(anyString())).thenReturn(Optional.empty());
+
+        try {
+            bookService.getDeletedBooksByIsbn(BOOK_DATA.getIsbn());
+        } catch (EntityNotFoundException e) {
+            assertThat(e.getMessage()).isEqualTo("Deleted book with ISBN '" + BOOK_DATA.getIsbn() + "' was not found");
+        }
+    }
 }

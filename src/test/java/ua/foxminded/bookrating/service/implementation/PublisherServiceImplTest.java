@@ -192,4 +192,25 @@ class PublisherServiceImplTest {
 
         verify(publisherRepository).save(PUBLISHER_DATA.getNewPublisher());
     }
+
+    @Test
+    void getDeletedByName_shouldReturnDeletedAuthor_whenIsFound() {
+        when(publisherRepository.findDeletedByName(anyString())).thenReturn(Optional.of(PUBLISHER_DATA.getPublisher()));
+
+        publisherService.getDeletedByName(PUBLISHER_DATA.getName());
+
+        verify(publisherRepository).findDeletedByName(PUBLISHER_DATA.getName());
+        verifyNoMoreInteractions(publisherRepository);
+    }
+
+    @Test
+    void getDeletedByName_shouldThrowException_whenIsNotFound() {
+        when(publisherRepository.findDeletedByName(anyString())).thenReturn(Optional.empty());
+
+        try {
+            publisherService.getDeletedByName(PUBLISHER_DATA.getName());
+        } catch (EntityNotFoundException e) {
+            assertThat(e.getMessage()).isEqualTo("Deleted publisher not found with name: " + PUBLISHER_DATA.getName());
+        }
+    }
 }

@@ -193,4 +193,25 @@ class AuthorServiceImplTest {
         verify(authorRepository).restore(anyLong());
         verifyNoMoreInteractions(authorRepository);
     }
+
+    @Test
+    void getDeletedByName_shouldReturnDeletedAuthor_whenIsFound() {
+        when(authorRepository.findDeletedByName(anyString())).thenReturn(Optional.of(AUTHORS_DATA.getAuthor()));
+
+        authorService.getDeletedByName(AUTHORS_DATA.getName());
+
+        verify(authorRepository).findDeletedByName(AUTHORS_DATA.getName());
+        verifyNoMoreInteractions(authorRepository);
+    }
+
+    @Test
+    void getDeletedByName_shouldThrowException_whenIsNotFound() {
+        when(authorRepository.findDeletedByName(anyString())).thenReturn(Optional.empty());
+
+        try {
+            authorService.getDeletedByName(AUTHORS_DATA.getName());
+        } catch (EntityNotFoundException e) {
+            assertThat(e.getMessage()).isEqualTo("Deleted author not found with name: " + AUTHORS_DATA.getName());
+        }
+    }
 }
