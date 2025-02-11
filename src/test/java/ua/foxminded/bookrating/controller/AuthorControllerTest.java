@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.bookrating.assembler.AuthorModelAssembler;
 import ua.foxminded.bookrating.assembler.SimpleBookModelAssembler;
 import ua.foxminded.bookrating.dto.AuthorDto;
-import ua.foxminded.bookrating.persistance.entity.Author;
 import ua.foxminded.bookrating.security.SecurityConfig;
 import ua.foxminded.bookrating.service.AuthorService;
 import ua.foxminded.bookrating.util.author.AuthorsData;

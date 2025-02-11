@@ -11,7 +11,6 @@ import org.springframework.test.context.jdbc.Sql;
 import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.persistance.entity.Publisher;
 import ua.foxminded.bookrating.persistance.entity.Rating;
-import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.util.publisher.PublisherData;
 
 import java.util.List;

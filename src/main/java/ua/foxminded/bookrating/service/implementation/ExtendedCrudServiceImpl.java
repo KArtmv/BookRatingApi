@@ -1,6 +1,5 @@
 package ua.foxminded.bookrating.service.implementation;
 
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.persistance.entity.NamedEntity;
 import ua.foxminded.bookrating.persistance.repo.ExtendedRepository;
-import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.service.ExtendedCrudService;
 
 import java.util.Optional;

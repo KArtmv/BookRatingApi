@@ -19,13 +19,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ua.foxminded.bookrating.assembler.RatingOfBookModelAssembler;
 import ua.foxminded.bookrating.assembler.UserModelAssembler;
-import ua.foxminded.bookrating.dto.AuthorDto;
 import ua.foxminded.bookrating.dto.UserDto;
-import ua.foxminded.bookrating.model.AuthorModel;
 import ua.foxminded.bookrating.model.RatingModel;
 import ua.foxminded.bookrating.model.UserModel;
 import ua.foxminded.bookrating.persistance.entity.Rating;
-import ua.foxminded.bookrating.persistance.entity.User;
 import ua.foxminded.bookrating.service.UserService;
 
 @RestController
@@ -50,7 +47,7 @@ public class UserController {
     public UserModel get(@Parameter(name = "id",
             description = "User id",
             example = "1")
-                           @PathVariable("id") Long id) {
+                         @PathVariable("id") Long id) {
         return userModelAssembler.toModel(userService.findById(id));
     }
 
@@ -77,10 +74,10 @@ public class UserController {
     })
     @PutMapping("/{id}")
     public UserModel update(@Parameter(name = "id",
-                                      description = "User id",
-                                      example = "1")
-                              @PathVariable Long id,
-                              @Valid @RequestBody UserDto userDto) {
+                                    description = "User id",
+                                    example = "1")
+                            @PathVariable Long id,
+                            @Valid @RequestBody UserDto userDto) {
         return userModelAssembler.toModel(userService.update(id, userDto));
     }
 
@@ -118,7 +115,7 @@ public class UserController {
     }
 
     @Operation(summary = "Get rated books by user id",
-        description = "Retrieve a paginated list of ratings by specific user")
+            description = "Retrieve a paginated list of ratings by specific user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
             @ApiResponse(responseCode = "400", description = "Invalid request parameter"),
@@ -126,9 +123,9 @@ public class UserController {
     })
     @GetMapping("/{id}/rated-books")
     public PagedModel<RatingModel> getRatedBooksByUser(@Parameter(name = "id",
-                                                           description = "User id",
-                                                           example = "1")
-                                                           @PathVariable("id") Long userId,
+                                                               description = "User id",
+                                                               example = "1")
+                                                       @PathVariable("id") Long userId,
                                                        @ParameterObject @PageableDefault Pageable pageable) {
         return pagedResourcesAssembler.toModel(userService.findRatedBooksByUser(userId, pageable), ratingModelAssembler);
     }

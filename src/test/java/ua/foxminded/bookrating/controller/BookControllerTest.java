@@ -2,8 +2,6 @@ package ua.foxminded.bookrating.controller;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -384,9 +382,9 @@ class BookControllerTest {
                         jsonPath("$.publicationYear").value("The publication year is required and cannot be null."),
                         jsonPath("$.authors").value("At least one author is required for the book."),
                         jsonPath("$.publisher").value("The publisher is required and cannot be null."),
-                        jsonPath("$.['image.imageUrlSmall']").value("Image URL Small is required"),
-                        jsonPath("$.['image.imageUrlMedium']").value("Image URL Medium is required"),
-                        jsonPath("$.['image.imageUrlLarge']").value("Image URL Large must be a valid HTTP URL.")
+                        jsonPath("$.['image.imageUrlSmall']").value("Small image URL is required"),
+                        jsonPath("$.['image.imageUrlMedium']").value("Medium image URL is required"),
+                        jsonPath("$.['image.imageUrlLarge']").value("Large image URL must be a valid HTTP URL")
                 );
     }
 
@@ -526,9 +524,9 @@ class BookControllerTest {
                         jsonPath("$.publicationYear").value("The publication year is required and cannot be null."),
                         jsonPath("$.['authors[0].name']").value("Author name is required and cannot be empty."),
                         jsonPath("$.['publisher.name']").value("Publisher name is required and cannot be empty."),
-                        jsonPath("$.['image.imageUrlSmall']").value("Image URL Small is required"),
-                        jsonPath("$.['image.imageUrlMedium']").value("Image URL Medium is required"),
-                        jsonPath("$.['image.imageUrlLarge']").value("Image URL Large must be a valid HTTP URL.")
+                        jsonPath("$.['image.imageUrlSmall']").value("Small image URL is required"),
+                        jsonPath("$.['image.imageUrlMedium']").value("Medium image URL is required"),
+                        jsonPath("$.['image.imageUrlLarge']").value("Large image URL must be a valid HTTP URL")
                 );
     }
 
@@ -557,9 +555,9 @@ class BookControllerTest {
                         jsonPath("$.publicationYear").value("The publication year is required and cannot be null."),
                         jsonPath("$.authors").value("At least one author is required for the book."),
                         jsonPath("$.publisher").value("The publisher is required and cannot be null."),
-                        jsonPath("$.['image.imageUrlSmall']").value("Image URL Small is required"),
-                        jsonPath("$.['image.imageUrlMedium']").value("Image URL Medium is required"),
-                        jsonPath("$.['image.imageUrlLarge']").value("Image URL Large must be a valid HTTP URL.")
+                        jsonPath("$.['image.imageUrlSmall']").value("Small image URL is required"),
+                        jsonPath("$.['image.imageUrlMedium']").value("Medium image URL is required"),
+                        jsonPath("$.['image.imageUrlLarge']").value("Large image URL must be a valid HTTP URL")
                 );
     }
 

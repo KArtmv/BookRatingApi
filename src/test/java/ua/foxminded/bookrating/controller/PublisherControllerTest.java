@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import ua.foxminded.bookrating.assembler.PublisherModelAssembler;
 import ua.foxminded.bookrating.assembler.SimpleBookModelAssembler;
 import ua.foxminded.bookrating.dto.PublisherDto;
-import ua.foxminded.bookrating.persistance.entity.Publisher;
 import ua.foxminded.bookrating.security.SecurityConfig;
 import ua.foxminded.bookrating.service.PublisherService;
 import ua.foxminded.bookrating.util.author.AuthorsData;
@@ -32,7 +31,6 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 @Import({PublisherModelAssembler.class, SimpleBookModelAssembler.class, SecurityConfig.class})
 @WebMvcTest(PublisherController.class)

@@ -7,7 +7,6 @@ import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.query.Param;
 import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.persistance.entity.NamedEntity;
-import ua.foxminded.bookrating.projection.BookRatingProjection;
 
 import java.io.Serializable;
 import java.util.Optional;

@@ -21,9 +21,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ua.foxminded.bookrating.assembler.PublisherModelAssembler;
 import ua.foxminded.bookrating.assembler.SimpleBookModelAssembler;
-import ua.foxminded.bookrating.dto.AuthorDto;
 import ua.foxminded.bookrating.dto.PublisherDto;
-import ua.foxminded.bookrating.model.AuthorModel;
 import ua.foxminded.bookrating.model.PublisherModel;
 import ua.foxminded.bookrating.model.SimpleBookModel;
 import ua.foxminded.bookrating.persistance.entity.Book;
@@ -56,7 +54,7 @@ public class PublisherController {
     public PublisherModel get(@Parameter(name = "id",
             description = "Publisher id",
             example = "1")
-                           @PathVariable("id") Long id) {
+                              @PathVariable("id") Long id) {
         return publisherModelAssembler.toModel(publisherService.findById(id));
     }
 
@@ -83,10 +81,10 @@ public class PublisherController {
     })
     @PutMapping("/{id}")
     public PublisherModel update(@Parameter(name = "id",
-                                      description = "Publisher id",
-                                      example = "1")
-                              @PathVariable Long id,
-                              @Valid @RequestBody PublisherDto publisherDto) {
+                                         description = "Publisher id",
+                                         example = "1")
+                                 @PathVariable Long id,
+                                 @Valid @RequestBody PublisherDto publisherDto) {
         return publisherModelAssembler.toModel(publisherService.update(id, publisherDto));
     }
 
@@ -126,9 +124,9 @@ public class PublisherController {
     })
     @GetMapping(value = "/{id}/books")
     public PagedModel<SimpleBookModel> getPublisherBooks(@Parameter(name = "id",
-                                                             description = "Publisher id",
-                                                             example = "1")
-                                                             @PathVariable Long id,
+                                                                 description = "Publisher id",
+                                                                 example = "1")
+                                                         @PathVariable Long id,
                                                          @ParameterObject @PageableDefault(sort = "book.title") Pageable pageable) {
         return bookPagedResourcesAssembler.toModel(publisherService.getAllBooksById(id, pageable), bookModelAssembler);
     }
@@ -141,10 +139,10 @@ public class PublisherController {
     })
     @GetMapping("/find-by-name")
     public PagedModel<PublisherModel> getPublishersContainName(@Parameter(name = "name",
-                                                                   description = "A keyword to search within publisher name",
-                                                                   example = "HarperCollins")
-                                                                   @NotBlank(message = "Name cannot be blank or empty")
-                                                                   @RequestParam("name") String name,
+                                                                       description = "A keyword to search within publisher name",
+                                                                       example = "HarperCollins")
+                                                               @NotBlank(message = "Name cannot be blank or empty")
+                                                               @RequestParam("name") String name,
                                                                @ParameterObject @PageableDefault Pageable pageable) {
         return publisherPagedResourcesAssembler.toModel(publisherService.getByNameContaining(name, pageable), publisherModelAssembler);
     }
@@ -167,8 +165,8 @@ public class PublisherController {
     }
 
     @Operation(summary = "Get a deleted publisher",
-        description = "Retrieve soft deleted publisher by name",
-        security = @SecurityRequirement(name = "bearerAuth"))
+            description = "Retrieve soft deleted publisher by name",
+            security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
             @ApiResponse(responseCode = "400", description = "Invalid request parameter"),

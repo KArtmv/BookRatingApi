@@ -59,7 +59,7 @@ public class BookController {
     public BookModel get(@Parameter(name = "id",
             description = "The unique id of the book",
             example = "1")
-                 @PathVariable("id") Long id) {
+                         @PathVariable("id") Long id) {
         return fullBookModelAssembler.toModel(bookService.findById(id));
     }
 
@@ -86,10 +86,10 @@ public class BookController {
     })
     @PutMapping("/{id}")
     public BookModel update(@Parameter(name = "id",
-                            description = "The unique id of the book",
-                            example = "1")
-                    @PathVariable Long id,
-                    @Valid @RequestBody BookDto bookDto) {
+                                    description = "The unique id of the book",
+                                    example = "1")
+                            @PathVariable Long id,
+                            @Valid @RequestBody BookDto bookDto) {
         return fullBookModelAssembler.toModel(bookService.update(id, bookDto));
     }
 
@@ -119,9 +119,9 @@ public class BookController {
     })
     @GetMapping("/{id}/ratings")
     public PagedModel<RatingModel> getBookRatings(@Parameter(name = "id",
-                                                      description = "Book id",
-                                                      example = "1")
-                                                      @PathVariable("id") Long id,
+                                                          description = "Book id",
+                                                          example = "1")
+                                                  @PathVariable("id") Long id,
                                                   @ParameterObject @PageableDefault Pageable pageable) {
         return ratingPagedResourcesAssembler.toModel(bookService.getRatingsByBookId(id, pageable), ratingModelAssembler);
     }
@@ -145,10 +145,10 @@ public class BookController {
     })
     @GetMapping("/isbn")
     public BookModel getBookByIsbn(@Parameter(name = "isbn",
-                                            description = "The ISBN of the book to retrieve",
-                                            example = "0736688390")
-                                       @RequestParam("isbn")
-                                       @ISBN(type = ISBN.Type.ANY, message = "The provided ISBN is not valid") String isbn) {
+            description = "The ISBN of the book to retrieve",
+            example = "0736688390")
+                                   @RequestParam("isbn")
+                                   @ISBN(type = ISBN.Type.ANY, message = "The provided ISBN is not valid") String isbn) {
         return fullBookModelAssembler.toModel(bookService.getByIsbn(isbn));
     }
 
@@ -160,25 +160,25 @@ public class BookController {
     })
     @GetMapping("/filter")
     public PagedModel<SimpleBookModel> getFilteredBooks(@Parameter(name = "title",
-                                                            description = "A keyword to search within book titles",
-                                                            example = "love")
-                                                            @RequestParam(value = "title", required = false) String title,
+                                                                description = "A keyword to search within book titles",
+                                                                example = "love")
+                                                        @RequestParam(value = "title", required = false) String title,
                                                         @Parameter(name = "authorIds",
-                                                            description = "List of author ids whose books should be retrieved",
-                                                            example = "1,2,3")
-                                                            @RequestParam(value = "authorIds", required = false) List<Long> authorIds,
+                                                                description = "List of author ids whose books should be retrieved",
+                                                                example = "1,2,3")
+                                                        @RequestParam(value = "authorIds", required = false) List<Long> authorIds,
                                                         @Parameter(name = "publisherIds",
-                                                            description = "List of publisgers ids whose books should be retrieved",
-                                                            example = "1,2,3")
-                                                            @RequestParam(value = "publisherIds", required = false) List<Long> publisherIds,
+                                                                description = "List of publisgers ids whose books should be retrieved",
+                                                                example = "1,2,3")
+                                                        @RequestParam(value = "publisherIds", required = false) List<Long> publisherIds,
                                                         @Parameter(name = "publicationYear",
-                                                            description = "Year of book publication",
-                                                            example = "1993")
-                                                            @RequestParam(value = "publicationYear", required = false) Integer publicationYear,
+                                                                description = "Year of book publication",
+                                                                example = "1993")
+                                                        @RequestParam(value = "publicationYear", required = false) Integer publicationYear,
                                                         @Parameter(name = "averageRating",
-                                                            description = "Minimum average rating of books to retrieve",
-                                                            example = "1")
-                                                            @RequestParam(value = "averageRating", required = false) Integer averageRating,
+                                                                description = "Minimum average rating of books to retrieve",
+                                                                example = "1")
+                                                        @RequestParam(value = "averageRating", required = false) Integer averageRating,
                                                         @ParameterObject @PageableDefault Pageable pageable) {
         return bookPagedResourcesAssembler.toModel(
                 bookService.getBooksWithFilters(title, authorIds, publisherIds, publicationYear, averageRating, pageable),
@@ -213,10 +213,10 @@ public class BookController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/deleted/{isbn}")
     public BookModel getDeletedBook(@Parameter(name = "isbn",
-                                        description = "The ISBN of deleted book",
-                                        example = "0736688390")
-                                        @ISBN(type = ISBN.Type.ANY, message = "The provided ISBN is not valid")
-                                        @PathVariable("isbn") String isbn) {
+            description = "The ISBN of deleted book",
+            example = "0736688390")
+                                    @ISBN(type = ISBN.Type.ANY, message = "The provided ISBN is not valid")
+                                    @PathVariable("isbn") String isbn) {
         Book deletedBook = bookService.getDeletedBooksByIsbn(isbn);
         return fullBookModelAssembler.toModel(deletedBook)
                 .add(linkTo(methodOn(BookController.class).restore(deletedBook.getId())).withRel("restore"));

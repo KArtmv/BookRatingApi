@@ -2,8 +2,6 @@ package ua.foxminded.bookrating.controller;
 
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -185,7 +183,7 @@ class UserControllerTest {
                         }""").with(jwt())).andDo(print())
                 .andExpectAll(
                         status().isBadRequest(),
-                        jsonPath("$.location").value("Location can't be blank")
+                        jsonPath("$.location").value("Location is required and cannot be blank")
                 );
     }
 
@@ -197,7 +195,7 @@ class UserControllerTest {
                         }""").with(jwt())).andDo(print())
                 .andExpectAll(
                         status().isBadRequest(),
-                        jsonPath("$.age").value("Age can be only a positive value or zero")
+                        jsonPath("$.age").value("Age must be a positive number or zero")
                 );
     }
 
@@ -224,7 +222,7 @@ class UserControllerTest {
                         }""").with(jwt())).andDo(print())
                 .andExpectAll(
                         status().isBadRequest(),
-                        jsonPath("$.location").value("Location can't be blank")
+                        jsonPath("$.location").value("Location is required and cannot be blank")
                 );
     }
 
@@ -236,7 +234,7 @@ class UserControllerTest {
                         }""").with(jwt())).andDo(print())
                 .andExpectAll(
                         status().isBadRequest(),
-                        jsonPath("$.age").value("Age can be only a positive value or zero")
+                        jsonPath("$.age").value("Age must be a positive number or zero")
                 );
     }
 

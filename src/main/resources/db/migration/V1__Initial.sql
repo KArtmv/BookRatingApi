@@ -19,11 +19,11 @@ CREATE TABLE author
 
 CREATE TABLE book
 (
-    id               BIGINT      NOT NULL,
-    isbn             VARCHAR(13) NOT NULL,
+    id               BIGINT       NOT NULL,
+    isbn             VARCHAR(13)  NOT NULL,
     title            VARCHAR(255) NOT NULL,
-    publication_year INTEGER     NOT NULL,
-    publisher_id     BIGINT      NOT NULL,
+    publication_year INTEGER      NOT NULL,
+    publisher_id     BIGINT       NOT NULL,
     image_id         BIGINT,
     CONSTRAINT pk_book PRIMARY KEY (id)
 );

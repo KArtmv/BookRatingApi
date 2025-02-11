@@ -1,6 +1,7 @@
 package ua.foxminded.bookrating.specification;
 
-import jakarta.persistence.criteria.*;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
 import ua.foxminded.bookrating.persistance.entity.Author;
 import ua.foxminded.bookrating.persistance.entity.Book;

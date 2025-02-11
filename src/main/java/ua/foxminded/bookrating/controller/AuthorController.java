@@ -17,7 +17,6 @@ import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ua.foxminded.bookrating.assembler.AuthorModelAssembler;
@@ -55,7 +54,7 @@ public class AuthorController {
     public AuthorModel get(@Parameter(name = "id",
             description = "Author id",
             example = "1")
-                 @PathVariable("id") Long id) {
+                           @PathVariable("id") Long id) {
         return authorModelAssembler.toModel(authorService.findById(id));
     }
 
@@ -82,10 +81,10 @@ public class AuthorController {
     })
     @PutMapping("/{id}")
     public AuthorModel update(@Parameter(name = "id",
-                            description = "Author id",
-                            example = "1")
-                    @PathVariable Long id,
-                    @Valid @RequestBody AuthorDto authorDto) {
+                                      description = "Author id",
+                                      example = "1")
+                              @PathVariable Long id,
+                              @Valid @RequestBody AuthorDto authorDto) {
         return authorModelAssembler.toModel(authorService.update(id, authorDto));
     }
 
@@ -176,8 +175,8 @@ public class AuthorController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/deleted")
     public AuthorModel getDeletedAuthor(@Parameter(name = "name",
-                                                description = "Author name",
-                                                example = "William")
+            description = "Author name",
+            example = "William")
                                         @NotBlank(message = "Name cannot be blank or empty")
                                         @RequestParam("name") String name) {
         Author deletedAuthor = authorService.getDeletedByName(name);

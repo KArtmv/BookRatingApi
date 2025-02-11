@@ -12,11 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ua.foxminded.bookrating.assembler.FullRatingModelAssembler;
-import ua.foxminded.bookrating.dto.AuthorDto;
 import ua.foxminded.bookrating.dto.RatingDto;
-import ua.foxminded.bookrating.model.AuthorModel;
 import ua.foxminded.bookrating.model.RatingModel;
-import ua.foxminded.bookrating.persistance.entity.Rating;
 import ua.foxminded.bookrating.service.RatingService;
 
 @RestController
