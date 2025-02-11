@@ -379,4 +379,26 @@ class AuthorControllerTest {
                         status().isUnauthorized()
                 );
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", " "})
+    void getDeletedAuthor_shouldBadRequest_whenNameIsBlank(String name) throws Exception {
+        mockMvc.perform(get("/api/v1/authors/deleted")
+                        .param("name", name)
+                        .with(jwt())).andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.name").value("Name cannot be blank or empty")
+                );
+    }
+
+    @Test
+    void getDeletedAuthor_shouldBadRequest_whenNameIsMissed() throws Exception {
+        mockMvc.perform(get("/api/v1/authors/deleted")
+                        .with(jwt())).andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.name").value("Required parameter is missing")
+                );
+    }
 }

@@ -303,25 +303,25 @@ class PublisherControllerTest {
 
     @Test
     void get_shouldReturnPublishers_whenPublishersIdIsInvalid() throws Exception {
-        mockMvc.perform(get("/api/v1/publishers/abc")).andDo(print())
+        mockMvc.perform(get("/api/v1/publishers/{id}", "abc")).andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void get_shouldReturnPublishers_whenPublishersIdIsMissed() throws Exception {
-        mockMvc.perform(get("/api/v1/publishers/")).andDo(print())
+        mockMvc.perform(get("/api/v1/publishers/{id}", "")).andDo(print())
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void getPublishersBooks_shouldReturnBadRequest_whenPublishersIdIsNotValid() throws Exception {
-        mockMvc.perform(get("/api/v1/publishers/abc/books")).andDo(print())
+        mockMvc.perform(get("/api/v1/publishers/{id}/books", "abc")).andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void getPublishersBooks_shouldReturnBadRequest_whenPublishersIdIsMissed() throws Exception {
-        mockMvc.perform(get("/api/v1/publishers//books")).andDo(print())
+        mockMvc.perform(get("/api/v1/publishers/{id}/books", "")).andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
@@ -376,6 +376,28 @@ class PublisherControllerTest {
                         .param("name", PUBLISHER_DATA.getName())).andDo(print())
                 .andExpectAll(
                         status().isUnauthorized()
+                );
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"", " "})
+    void getDeletedPublisher_shouldBadRequest_whenNameIsBlank(String name) throws Exception {
+        mockMvc.perform(get("/api/v1/publishers/deleted")
+                        .param("name", name)
+                        .with(jwt())).andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.name").value("Name cannot be blank or empty")
+                );
+    }
+
+    @Test
+    void getDeletedPublisher_shouldBadRequest_whenNameIsMissed() throws Exception {
+        mockMvc.perform(get("/api/v1/publishers/deleted")
+                        .with(jwt())).andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.name").value("Required parameter is missing")
                 );
     }
 }
