@@ -59,7 +59,7 @@ public class PublisherController extends RestoreController<Publisher, PublisherD
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/deleted")
-    public PublisherModel getDeletedPublisher(@RequestParam("name") String name) {
+    public PublisherModel getDeletedPublisher(@NotBlank(message = "Name cannot be blank or empty") @RequestParam("name") String name) {
         Publisher deletedPublisher = publisherService.getDeletedByName(name);
         return publisherModelAssembler.toModel(deletedPublisher)
                 .add(linkTo(methodOn(PublisherController.class).restore(deletedPublisher.getId())).withRel("restore"));

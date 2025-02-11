@@ -60,7 +60,7 @@ public class AuthorController extends RestoreController<Author, AuthorDto, Autho
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/deleted")
-    public AuthorModel getDeletedAuthor(@RequestParam("name") String name) {
+    public AuthorModel getDeletedAuthor(@NotBlank(message = "Name cannot be blank or empty") @RequestParam("name") String name) {
         Author deletedAuthor = authorService.getDeletedByName(name);
         return authorModelAssembler.toModel(deletedAuthor)
                 .add(linkTo(methodOn(AuthorController.class).restore(deletedAuthor.getId())).withRel("restore"));
