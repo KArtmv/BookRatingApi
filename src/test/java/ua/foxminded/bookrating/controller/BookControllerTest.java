@@ -734,4 +734,14 @@ class BookControllerTest {
                         status().isUnauthorized()
                 );
     }
+
+    @Test
+    void getDeletedBook_shouldBadRequest_whenIsbnIsInvalid() throws Exception {
+        mockMvc.perform(get("/api/v1/books/deleted/{isbn}", "abc")
+                        .with(jwt())).andDo(print())
+                .andExpectAll(
+                        status().isBadRequest(),
+                        jsonPath("$.isbn").value("The provided ISBN is not valid")
+                );
+    }
 }
