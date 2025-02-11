@@ -383,7 +383,7 @@ class BookControllerTest {
                         jsonPath("$.authors").value("At least one author is required for the book."),
                         jsonPath("$.publisher").value("The publisher is required and cannot be null."),
                         jsonPath("$.['image.imageUrlSmall']").value("Small image URL is required"),
-                        jsonPath("$.['image.imageUrlMedium']").value("Medium image URL is required"),
+                        jsonPath("$.['image.imageUrlMedium']").value("Medium image URL must be a valid HTTP URL"),
                         jsonPath("$.['image.imageUrlLarge']").value("Large image URL must be a valid HTTP URL")
                 );
     }
@@ -525,7 +525,7 @@ class BookControllerTest {
                         jsonPath("$.['authors[0].name']").value("Author name is required and cannot be empty."),
                         jsonPath("$.['publisher.name']").value("Publisher name is required and cannot be empty."),
                         jsonPath("$.['image.imageUrlSmall']").value("Small image URL is required"),
-                        jsonPath("$.['image.imageUrlMedium']").value("Medium image URL is required"),
+                        jsonPath("$.['image.imageUrlMedium']").value("Medium image URL must be a valid HTTP URL"),
                         jsonPath("$.['image.imageUrlLarge']").value("Large image URL must be a valid HTTP URL")
                 );
     }
@@ -556,7 +556,7 @@ class BookControllerTest {
                         jsonPath("$.authors").value("At least one author is required for the book."),
                         jsonPath("$.publisher").value("The publisher is required and cannot be null."),
                         jsonPath("$.['image.imageUrlSmall']").value("Small image URL is required"),
-                        jsonPath("$.['image.imageUrlMedium']").value("Medium image URL is required"),
+                        jsonPath("$.['image.imageUrlMedium']").value("Medium image URL must be a valid HTTP URL"),
                         jsonPath("$.['image.imageUrlLarge']").value("Large image URL must be a valid HTTP URL")
                 );
     }
