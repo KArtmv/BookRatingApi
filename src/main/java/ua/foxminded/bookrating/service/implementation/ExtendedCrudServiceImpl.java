@@ -51,7 +51,7 @@ public abstract class ExtendedCrudServiceImpl<T extends NamedEntity, D> extends 
     public T getDeletedByName(String name) {
         return extendedRepository.findDeletedByName(name)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        "Deleted " + entitySupplier.get().getClass().getSimpleName() + " not found with name: " + name
+                        "Deleted " + entitySupplier.get().getClass().getSimpleName().toLowerCase() + " not found with name: " + name
                 ));
     }
 }
