@@ -79,7 +79,7 @@ public class BookController extends RestoreController<Book, BookDto, BookModel> 
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/deleted/{isbn}")
-    public BookModel getDeletedBook(@PathVariable("isbn") String isbn) {
+    public BookModel getDeletedBook(@ISBN(type = ISBN.Type.ANY, message = "The provided ISBN is not valid") @PathVariable("isbn") String isbn) {
         Book deletedBook = bookService.getDeletedBooksByIsbn(isbn);
         return fullBookModelAssembler.toModel(deletedBook)
                 .add(linkTo(methodOn(BookController.class).restore(deletedBook.getId())).withRel("restore"));
