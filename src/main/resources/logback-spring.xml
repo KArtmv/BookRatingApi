@@ -7,8 +7,9 @@
     <appender name="SQL_STATEMENT_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${LOG_PATH}/sqlStatement-log-${LOG_FILE_NAME}.log</fileNamePattern>
-            <maxFileSize>2MB</maxFileSize>
+            <maxFileSize>5MB</maxFileSize>
             <maxHistory>3</maxHistory>
+            <totalSizeCap>20MB</totalSizeCap>
         </rollingPolicy>
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
@@ -20,6 +21,7 @@
             <fileNamePattern>${LOG_PATH}/APP-log-${LOG_FILE_NAME}.log</fileNamePattern>
             <maxFileSize>5MB</maxFileSize>
             <maxHistory>3</maxHistory>
+            <totalSizeCap>20MB</totalSizeCap>
         </rollingPolicy>
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
@@ -31,30 +33,31 @@
             <fileNamePattern>${LOG_PATH}/SPRING_DEBUG-log-${LOG_FILE_NAME}.log</fileNamePattern>
             <maxFileSize>5MB</maxFileSize>
             <maxHistory>3</maxHistory>
+            <totalSizeCap>20MB</totalSizeCap>
         </rollingPolicy>
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <logger name="org.springframework.transaction" level="TRACE" additivity="false">
+    <logger name="org.springframework.transaction" level="WARN" additivity="false">
         <appender-ref ref="SQL_STATEMENT_LOG_FILE"/>
     </logger>
 
-    <logger name="org.hibernate.SQL" level="TRACE" additivity="false">
+    <logger name="org.hibernate.SQL" level="INFO" additivity="false">
         <appender-ref ref="SQL_STATEMENT_LOG_FILE"/>
     </logger>
 
-    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE" additivity="false">
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="WARN" additivity="false">
         <appender-ref ref="SQL_STATEMENT_LOG_FILE"/>
     </logger>
 
-    <logger name="ua.foxminded.bookrating" level="DEBUG" additivity="false">
+    <logger name="ua.foxminded.bookrating" level="INFO" additivity="false">
         <appender-ref ref="APP_LOG_FILE"/>
     </logger>
 
-    <logger name="org.springframework" level="DEBUG" additivity="false">
-        <appender-ref ref="SPRING_DEBUG_LOG_FILE"/>
+    <logger name="org.springframework" level="WARN" additivity="false">
+        <appender-ref ref="SPRING_LOG_FILE"/>
     </logger>
 
     <logger name="org.hibernate" level="ERROR" additivity="false">
