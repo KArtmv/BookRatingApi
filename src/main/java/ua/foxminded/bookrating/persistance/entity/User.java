@@ -20,7 +20,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "users")
-@SequenceGenerator(name = "default_gen", sequenceName = "user_id_seq", allocationSize = 1)
+@SequenceGenerator(name = "default_gen", sequenceName = "user_id_seq", allocationSize = 10000)
 public class User extends BaseEntity {
 
     @NotNull(message = "Location is required")

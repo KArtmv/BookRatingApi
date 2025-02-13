@@ -14,7 +14,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "book")
-@SequenceGenerator(name = "default_gen", sequenceName = "book_id_seq", allocationSize = 1)
+@SequenceGenerator(name = "default_gen", sequenceName = "book_id_seq", allocationSize = 10000)
 public class Book extends BaseEntity {
 
     @Column(name = "isbn", nullable = false, unique = true, length = 13)
