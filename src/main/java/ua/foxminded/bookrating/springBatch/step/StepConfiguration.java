@@ -17,6 +17,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import ua.foxminded.bookrating.dto.*;
 import ua.foxminded.bookrating.persistance.entity.*;
 import ua.foxminded.bookrating.springBatch.process.*;
+import ua.foxminded.bookrating.springBatch.writer.*;
 
 @Configuration
 @RequiredArgsConstructor
@@ -28,28 +29,28 @@ public class StepConfiguration {
     @Bean
     public Step authorStep(FlatFileItemReader<AuthorCsvDto> reader,
                            AuthorItemProcess process,
-                           ItemWriterAdapter<Author> writer) {
+                           AuthorWriter writer) {
         return createStep(reader, process, writer, "authorStep");
     }
 
     @Bean
     public Step publisherStep(FlatFileItemReader<PublisherCsvDto> reader,
                               PublisherItemProcess process,
-                              ItemWriterAdapter<Publisher> writer) {
+                              PublisherWriter writer) {
         return createStep(reader, process, writer, "publisherStep");
     }
 
     @Bean
     public Step userStep(FlatFileItemReader<UserCsvDto> reader,
                          UserItemProcessor process,
-                         ItemWriterAdapter<User> writer) {
+                         UserWriter writer) {
         return createStep(reader, process, writer, "userStep");
     }
 
     @Bean
     public Step bookStep(FlatFileItemReader<BookCsvDto> reader,
                          BookItemProcess process,
-                         SynchronizedItemStreamWriter<Book> writer) {
+                         BookWriter writer) {
         return createStep(reader, process, writer, "bookStep");
 
     }
@@ -57,7 +58,7 @@ public class StepConfiguration {
     @Bean
     public Step ratingStep(FlatFileItemReader<RatingCsvDto> reader,
                            RatingItemProcess process,
-                           ItemWriterAdapter<Rating> writer) {
+                           RatingWriter writer) {
         return createStep(reader, process, writer, "ratingStep");
     }
 
@@ -73,7 +74,6 @@ public class StepConfiguration {
                 .faultTolerant()
                 .skip(FlatFileParseException.class)
                 .skipLimit(100)
-                .taskExecutor(new SimpleAsyncTaskExecutor())
                 .build();
     }
 }
