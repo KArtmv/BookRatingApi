@@ -15,6 +15,7 @@ import ua.foxminded.bookrating.service.AuthorService;
 import ua.foxminded.bookrating.service.PublisherService;
 
 import java.time.Year;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -26,24 +27,36 @@ public class BookItemProcess implements ItemProcessor<BookCsvDto, Book>, StepExe
 
     private Map<String, Author> authorCache;
     private Map<String, Publisher> publisherCache;
+    private Set<String> bookIsbnCache;
 
     private final AuthorService authorService;
     private final PublisherService publisherService;
 
     @Override
     public Book process(BookCsvDto item) {
-        Publisher publisher = publisherCache.getOrDefault(replaceAmpersand(item.publisher().trim()), null);
-        Author author = authorCache.getOrDefault(replaceAmpersand(item.author().trim()), null);
+        return bookIsbnCache.contains(item.isbn()) ? null : getBook(item, getAuthor(item.author()), getPublisher(item.publisher()));
+    }
 
+    private Book getBook(BookCsvDto item, Author author, Publisher publisher) {
         if (author != null && publisher != null && item.title().length() < 255) {
+            bookIsbnCache.add(item.isbn());
             return new Book(item.isbn(), item.title(), Year.parse(item.publicationYear()), publisher, Set.of(author), new Image(item.imageUrlS(), item.imageUrlM(), item.imageUrlL()));
         } else {
             return null;
         }
     }
 
+    private Author getAuthor(String authorName) {
+        return authorCache.getOrDefault(replaceAmpersand(authorName.trim()), null);
+    }
+
+    private Publisher getPublisher(String publisherName) {
+        return publisherCache.getOrDefault(replaceAmpersand(publisherName.trim()), null);
+    }
+
     @Override
     public void beforeStep(StepExecution stepExecution) {
+        bookIsbnCache = new HashSet<>();
         authorCache = authorService.findAll().stream().collect(Collectors.toMap(Author::getName, Function.identity()));
         publisherCache = publisherService.findAll().stream().collect(Collectors.toMap(Publisher::getName, Function.identity()));
     }
@@ -52,6 +65,7 @@ public class BookItemProcess implements ItemProcessor<BookCsvDto, Book>, StepExe
     public ExitStatus afterStep(StepExecution stepExecution) {
         authorCache.clear();
         publisherCache.clear();
+        bookIsbnCache.clear();
         return ExitStatus.COMPLETED;
     }
 
