@@ -13,7 +13,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @Entity
 @Table(name = "rating")
-@SequenceGenerator(name = "default_gen", sequenceName = "rating_id_seq", allocationSize = 1)
+@SequenceGenerator(name = "default_gen", sequenceName = "rating_id_seq", allocationSize = 10000)
 public class Rating extends BaseEntity {
 
     @ManyToOne

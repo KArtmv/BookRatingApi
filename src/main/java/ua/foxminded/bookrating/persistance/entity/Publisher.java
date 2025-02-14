@@ -18,7 +18,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Entity
 @Table(name = "publisher")
-@SequenceGenerator(name = "default_gen", sequenceName = "publisher_is_seq", allocationSize = 1)
+@SequenceGenerator(name = "default_gen", sequenceName = "publisher_is_seq", allocationSize = 10000)
 public class Publisher extends NamedEntity {
 
     @OneToMany(mappedBy = "publisher")
