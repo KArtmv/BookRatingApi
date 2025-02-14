@@ -3,24 +3,24 @@ package ua.foxminded.bookrating.service.implementation;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ua.foxminded.bookrating.dto.BookDto;
 import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.persistance.entity.Rating;
 import ua.foxminded.bookrating.persistance.repo.BookRepository;
-import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.service.AuthorService;
 import ua.foxminded.bookrating.service.BookService;
 import ua.foxminded.bookrating.service.PublisherService;
+import ua.foxminded.bookrating.specification.BookSpecification;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
-public class BookServiceImpl extends RestoreServiceImpl<Book> implements BookService {
+public class BookServiceImpl extends PaginatedServiceImpl<Book, BookDto> implements BookService {
 
     private final BookRepository bookRepository;
     private final PublisherService publisherService;
@@ -33,14 +33,9 @@ public class BookServiceImpl extends RestoreServiceImpl<Book> implements BookSer
         this.authorService = authorService;
     }
 
-    @Override
-    public Page<BookRatingProjection> findAllPaginated(Integer desiredAverageRating, Pageable pageable) {
-        return bookRepository.findAllPaginated(desiredAverageRating, pageable);
-    }
-
     @Transactional
     @Override
-    public Book save(BookDto bookDto) {
+    public Book create(BookDto bookDto) {
         return bookRepository.save(toEntity(bookDto, new Book()));
     }
 
@@ -56,22 +51,14 @@ public class BookServiceImpl extends RestoreServiceImpl<Book> implements BookSer
     }
 
     @Override
-    public Page<BookRatingProjection> getByTitleContaining(String title, Pageable pageable) {
-        return bookRepository.findByTitleContainingIgnoreCase(title, pageable);
-    }
-
-    @Override
-    public Page<BookRatingProjection> getBooksByAuthorAndPublisher(List<Long> authorsId,
-                                                                   List<Long> publisherId,
-                                                                   Integer desiredAverageRating,
-                                                                   String title,
-                                                                   Pageable pageable) {
-        return bookRepository.findByAuthorsOrPublisherIn(
-                authorsId == null ? Collections.emptyList() : authorsId.stream().map(authorService::findById).toList(),
-                publisherId == null ? Collections.emptyList() : publisherId.stream().map(publisherService::findById).toList(),
-                desiredAverageRating,
-                title.trim(),
-                pageable);
+    public Page<Book> getBooksWithFilters(String title, List<Long> authorIds, List<Long> publisherIds,
+                                          Integer publicationYear, Integer averageRating, Pageable pageable) {
+        Specification<Book> specification = Specification.where(BookSpecification.hasTitle(title))
+                .and(BookSpecification.hasPublicationYear(publicationYear))
+                .and(BookSpecification.hasAverageRating(averageRating));
+        specification = filterByAuthors(authorIds, specification);
+        specification = filterByPublishers(publisherIds, specification);
+        return bookRepository.findAll(specification, pageable);
     }
 
     @Override
@@ -82,10 +69,35 @@ public class BookServiceImpl extends RestoreServiceImpl<Book> implements BookSer
     private Book toEntity(BookDto bookDto, Book book) {
         book.setIsbn(bookDto.getIsbn());
         book.setTitle(bookDto.getTitle());
-        book.setPublicationYear(bookDto.getPublicationYear().toString());
-        book.setPublisher(publisherService.findOrSave(bookDto.getPublisher()));
-        book.setAuthors(bookDto.getAuthors().stream().map(authorService::findOrSave).collect(Collectors.toSet()));
+        book.setPublicationYear(bookDto.getPublicationYear());
+        book.setPublisher(publisherService.findByNameOrSave(bookDto.getPublisher().name()));
+        book.setAuthors(bookDto.getAuthors()
+                .stream()
+                .map(authorDto -> authorService.findByNameOrSave(authorDto.name()))
+                .collect(Collectors.toSet()));
         book.setImage(bookDto.getImage());
         return book;
+    }
+
+    private Specification<Book> filterByAuthors(List<Long> authorIds, Specification<Book> specification) {
+        if (authorIds != null) {
+            specification = specification.and(BookSpecification.hasAuthors(authorIds.stream().map(authorService::findById).toList()));
+        }
+        return specification;
+    }
+
+    private Specification<Book> filterByPublishers(List<Long> publisherIds, Specification<Book> specification) {
+        if (publisherIds != null) {
+            specification = specification.and(BookSpecification.hasPublishers(publisherIds.stream().map(publisherService::findById).toList()));
+        }
+        return specification;
+    }
+
+    @Override
+    public Book getDeletedBooksByIsbn(String isbn) {
+        return bookRepository.findDeletedBookByIsbn(isbn)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Deleted book with ISBN '" + isbn + "' was not found"
+                ));
     }
 }

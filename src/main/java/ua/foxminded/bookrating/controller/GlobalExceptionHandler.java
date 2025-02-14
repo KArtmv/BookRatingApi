@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -29,9 +30,9 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public Map<String, String> handleValidationException(MethodArgumentNotValidException e) {
-        return e.getBindingResult().getAllErrors().stream()
+        return e.getBindingResult().getFieldErrors().stream()
                 .collect(Collectors.toMap(
-                        error -> ((FieldError) error).getField(),
+                        FieldError::getField,
                         DefaultMessageSourceResolvable::getDefaultMessage,
                         (a, b) -> b)
                 );
@@ -42,8 +43,15 @@ public class GlobalExceptionHandler {
     public Map<String, String> handleConstraintViolationException(ConstraintViolationException ex) {
         return ex.getConstraintViolations().stream()
                 .collect(Collectors.toMap(
-                        violation -> violation.getPropertyPath().toString(),
+                        violation -> violation.getPropertyPath().toString().split("\\.")[1],
                         ConstraintViolation::getMessage,
                         (a, b) -> b));
+    }
+
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public Map<String, String> handleMissingServletRequestParameterExceptionT(MissingServletRequestParameterException ex) {
+        return Map.of(ex.getParameterName(), "Required parameter is missing");
     }
 }

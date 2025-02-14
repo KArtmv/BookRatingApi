@@ -34,22 +34,22 @@ class AuthorServiceImplTest {
 
     @Test
     void findAllPaginated_shouldReturnAllAuthors() {
-        when(authorRepository.findAllPaginated(any(Pageable.class))).thenReturn(mock(Page.class));
+        when(authorRepository.findAll(any(Pageable.class))).thenReturn(mock(Page.class));
 
-        authorService.findAllPaginated(Pageable.unpaged());
+        authorService.findAll(Pageable.unpaged());
 
-        verify(authorRepository).findAllPaginated(any(Pageable.class));
+        verify(authorRepository).findAll(any(Pageable.class));
         verifyNoMoreInteractions(authorRepository);
     }
 
     @Test
-    void save_shouldThrowsException_whenAuthorIsExist() {
+    void create_shouldThrowsException_whenAuthorIsExist() {
         when(authorRepository.findByName(anyString())).thenReturn(Optional.of(AUTHORS_DATA.getAuthor()));
 
         try {
-            authorService.save(AUTHORS_DATA.getAuthor());
+            authorService.create(AUTHORS_DATA.getAuthorDto());
         } catch (EntityExistsException e) {
-            assertThat(e.getMessage()).isEqualTo(AUTHORS_DATA.getAuthor().getName() + " already exists");
+            assertThat(e.getMessage()).isEqualTo("Author with given name: " + AUTHORS_DATA.getAuthor().getName() + ", already exists");
         }
 
         verify(authorRepository).findByName(anyString());
@@ -57,12 +57,20 @@ class AuthorServiceImplTest {
     }
 
     @Test
-    void save_shouldSavedAuthor_whenAuthorIsNotExist() {
+    void create_shouldSavedAuthor_whenAuthorIsNotExist() {
         when(authorRepository.findByName(anyString())).thenReturn(Optional.empty());
 
-        authorService.save(AUTHORS_DATA.getAuthor());
+        authorService.create(AUTHORS_DATA.getAuthorDto());
 
         verify(authorRepository).findByName(anyString());
+        verify(authorRepository).save(any(Author.class));
+        verifyNoMoreInteractions(authorRepository);
+    }
+
+    @Test
+    void save_shouldReturnSavedAuthor_whenInvoke() {
+        authorService.save(AUTHORS_DATA.getAuthor());
+
         verify(authorRepository).save(any(Author.class));
         verifyNoMoreInteractions(authorRepository);
     }
@@ -72,7 +80,7 @@ class AuthorServiceImplTest {
         when(authorRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         try {
-            authorService.update(AUTHORS_DATA.getId(), AUTHORS_DATA.getNewAuthor());
+            authorService.update(AUTHORS_DATA.getId(), AUTHORS_DATA.getUpdatedAuthorDto());
         } catch (EntityNotFoundException e) {
             assertThat(e.getMessage()).isEqualTo("Entity with id: " + AUTHORS_DATA.getId() + " is not found");
         }
@@ -85,7 +93,7 @@ class AuthorServiceImplTest {
     void update_shouldReturnUpdatedAuthor_whenAuthorIsExist() {
         when(authorRepository.findById(anyLong())).thenReturn(Optional.of(AUTHORS_DATA.getAuthor()));
 
-        authorService.update(AUTHORS_DATA.getId(), AUTHORS_DATA.getUpdatedAuthor());
+        authorService.update(AUTHORS_DATA.getId(), AUTHORS_DATA.getUpdatedAuthorDto());
 
         var argumentCaptor = ArgumentCaptor.forClass(Author.class);
         verify(authorRepository).findById(anyLong());
@@ -136,12 +144,12 @@ class AuthorServiceImplTest {
     @Test
     void getAllBooksById() {
         when(authorRepository.findById(anyLong())).thenReturn(Optional.of(AUTHORS_DATA.getAuthor()));
-        when(authorRepository.getBooksByEntity(any(Author.class), anyInt(), any(Pageable.class))).thenReturn(mock(Page.class));
+        when(authorRepository.getBooksByEntity(any(Author.class), any(Pageable.class))).thenReturn(mock(Page.class));
 
-        authorService.getAllBooksById(AUTHORS_DATA.getId(), 0, Pageable.unpaged());
+        authorService.getAllBooksById(AUTHORS_DATA.getId(), Pageable.unpaged());
 
         verify(authorRepository).findById(anyLong());
-        verify(authorRepository).getBooksByEntity(any(Author.class), anyInt(), any(Pageable.class));
+        verify(authorRepository).getBooksByEntity(any(Author.class), any(Pageable.class));
         verifyNoMoreInteractions(authorRepository);
     }
 
@@ -159,7 +167,7 @@ class AuthorServiceImplTest {
     void findOrSave_shouldSaveAuthor_whenAuthorIsNotExist() {
         when(authorRepository.findByName(anyString())).thenReturn(Optional.empty());
 
-        authorService.findOrSave(AUTHORS_DATA.getNewAuthor());
+        authorService.findByNameOrSave(AUTHORS_DATA.getName());
 
         verify(authorRepository).findByName(AUTHORS_DATA.getName());
         verify(authorRepository).save(any(Author.class));
@@ -170,7 +178,7 @@ class AuthorServiceImplTest {
     void findOrSave_shouldReturnAuthor_whenAuthorIsExist() {
         when(authorRepository.findByName(anyString())).thenReturn(Optional.of(AUTHORS_DATA.getAuthor()));
 
-        authorService.findOrSave(AUTHORS_DATA.getNewAuthor());
+        authorService.findByNameOrSave(AUTHORS_DATA.getName());
 
         verify(authorRepository).findByName(AUTHORS_DATA.getName());
         verifyNoMoreInteractions(authorRepository);
@@ -184,5 +192,26 @@ class AuthorServiceImplTest {
 
         verify(authorRepository).restore(anyLong());
         verifyNoMoreInteractions(authorRepository);
+    }
+
+    @Test
+    void getDeletedByName_shouldReturnDeletedAuthor_whenIsFound() {
+        when(authorRepository.findDeletedByName(anyString())).thenReturn(Optional.of(AUTHORS_DATA.getAuthor()));
+
+        authorService.getDeletedByName(AUTHORS_DATA.getName());
+
+        verify(authorRepository).findDeletedByName(AUTHORS_DATA.getName());
+        verifyNoMoreInteractions(authorRepository);
+    }
+
+    @Test
+    void getDeletedByName_shouldThrowException_whenIsNotFound() {
+        when(authorRepository.findDeletedByName(anyString())).thenReturn(Optional.empty());
+
+        try {
+            authorService.getDeletedByName(AUTHORS_DATA.getName());
+        } catch (EntityNotFoundException e) {
+            assertThat(e.getMessage()).isEqualTo("Deleted author not found with name: " + AUTHORS_DATA.getName());
+        }
     }
 }

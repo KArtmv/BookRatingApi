@@ -6,12 +6,17 @@ import org.springframework.hateoas.Link;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
 import ua.foxminded.bookrating.controller.BookController;
+import ua.foxminded.bookrating.controller.RatingController;
+import ua.foxminded.bookrating.dto.RatingDto;
 import ua.foxminded.bookrating.model.AuthorModel;
 import ua.foxminded.bookrating.model.BookModel;
 import ua.foxminded.bookrating.model.PublisherModel;
+import ua.foxminded.bookrating.persistance.entity.Author;
 import ua.foxminded.bookrating.persistance.entity.Book;
+import ua.foxminded.bookrating.persistance.entity.Publisher;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -32,21 +37,28 @@ public class FullBookModelAssembler implements RepresentationModelAssembler<Book
         bookModel.setPublicationYear(entity.getPublicationYear());
         bookModel.setAverageRating(entity.getAverageRating());
         bookModel.setImage(entity.getImage());
-        bookModel.setAuthors(getAuthorsModel(entity));
-        bookModel.setPublisher(getPublisherModel(entity));
-        bookModel.add(getRatingsLink(entity));
+        bookModel.setAuthors(getAuthorsModel(entity.getAuthors()));
+        bookModel.setPublisher(getPublisherModel(entity.getPublisher()));
+        bookModel.add(getRatingsLink(entity.getId()));
+        bookModel.add(getLinkToRateBook(entity.getId()));
         return bookModel;
     }
 
-    private List<AuthorModel> getAuthorsModel(Book entity) {
-        return entity.getAuthors().stream().map(authorModelAssembler::toModel).toList();
+    private List<AuthorModel> getAuthorsModel(Set<Author> authors) {
+        return authors.stream().map(authorModelAssembler::toModel).toList();
     }
 
-    private PublisherModel getPublisherModel(Book entity) {
-        return publisherModelAssembler.toModel(entity.getPublisher());
+    private PublisherModel getPublisherModel(Publisher publisher) {
+        return publisherModelAssembler.toModel(publisher);
     }
 
-    private static Link getRatingsLink(Book entity) {
-        return linkTo(methodOn(BookController.class).getBookRatings(entity.getId(), Pageable.unpaged())).withRel("bookRatings");
+    private Link getRatingsLink(Long bookId) {
+        return linkTo(methodOn(BookController.class).getBookRatings(bookId, Pageable.unpaged())).withRel("bookRatings");
+    }
+
+    private Link getLinkToRateBook(Long bookId) {
+        return linkTo(methodOn(RatingController.class).add(new RatingDto(bookId, null, null)))
+                .withRel("rateBook")
+                .withType("POST");
     }
 }

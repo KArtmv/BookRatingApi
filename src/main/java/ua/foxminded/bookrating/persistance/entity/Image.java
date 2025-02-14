@@ -1,8 +1,10 @@
 package ua.foxminded.bookrating.persistance.entity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,18 +16,24 @@ import org.hibernate.validator.constraints.URL;
 @Embeddable
 public class Image {
 
-    @NotBlank(message = "Image URL Small is required")
-    @URL(protocol = "http", message = "Image URL Small must be a valid HTTP URL.")
+    @Schema(description = "URL of the book's small-sized cover image",
+            example = "http://images.amazon.com/images/P/0736688390.01.SMALL.jpg")
+    @NotEmpty(message = "Small image URL is required")
+    @URL(protocol = "http", message = "Small image URL must be a valid HTTP URL")
     @Column(name = "image_url_small")
     private String imageUrlSmall;
 
-    @NotBlank(message = "Image URL Medium is required")
-    @URL(protocol = "http", message = "Image URL Medium must be a valid HTTP URL.")
+    @Schema(description = "URL of the book's medium-sized cover image",
+            example = "http://images.amazon.com/images/P/0736688390.01.MEDIUM.jpg")
+    @NotEmpty(message = "Medium image URL is required")
+    @URL(protocol = "http", message = "Medium image URL must be a valid HTTP URL")
     @Column(name = "image_url_medium")
     private String imageUrlMedium;
 
-    @NotBlank(message = "Image URL Large is required")
-    @URL(protocol = "http", message = "Image URL Large must be a valid HTTP URL.")
+    @Schema(description = "URL of the book's large-sized cover image",
+            example = "http://images.amazon.com/images/P/0736688390.01.LARGE.jpg")
+    @NotEmpty(message = "Large image URL is required")
+    @URL(protocol = "http", message = "Large image URL must be a valid HTTP URL")
     @Column(name = "image_url_large")
     private String imageUrlLarge;
 

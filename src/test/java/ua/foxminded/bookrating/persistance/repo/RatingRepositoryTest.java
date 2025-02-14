@@ -53,4 +53,9 @@ class RatingRepositoryTest {
             assertThat(result).contains(RATING_DATA.getRating());
         });
     }
+
+    @Test
+    void findAll() {
+        assertThat(ratingRepository.findAll()).hasSize(1006);
+    }
 }

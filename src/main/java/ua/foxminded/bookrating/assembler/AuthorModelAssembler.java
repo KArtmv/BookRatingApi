@@ -31,6 +31,6 @@ public class AuthorModelAssembler implements RepresentationModelAssembler<Author
 
     private Link getAuthorBooksLink(Author entity) {
         return linkTo(methodOn(AuthorController.class)
-                .getAuthorBooks(entity.getId(), Pageable.unpaged(), 0)).withRel("authorBooks");
+                .getAuthorBooks(entity.getId(), Pageable.unpaged())).withRel("authorBooks");
     }
 }

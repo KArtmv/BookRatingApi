@@ -11,7 +11,6 @@ import org.springframework.test.context.jdbc.Sql;
 import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.persistance.entity.Publisher;
 import ua.foxminded.bookrating.persistance.entity.Rating;
-import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.util.publisher.PublisherData;
 
 import java.util.List;
@@ -39,7 +38,7 @@ class PublisherRepositoryTest {
     @Test
     void getBooksByPublisher() {
         assertAll(() -> {
-            Page<BookRatingProjection> result = publisherRepository.getBooksByEntity(PUBLISHER_DATA.getPublisher(), 0, Pageable.unpaged());
+            Page<Book> result = publisherRepository.getBooksByEntity(PUBLISHER_DATA.getPublisher(), Pageable.unpaged());
             assertTrue(result.hasContent());
             assertThat(result.getTotalElements()).isEqualTo(10);
             assertThat(result.getTotalPages()).isEqualTo(1);
@@ -58,7 +57,7 @@ class PublisherRepositoryTest {
     @Test
     void findAllPaginated() {
         assertAll(() -> {
-            Page<Publisher> result = publisherRepository.findAllPaginated(Pageable.unpaged());
+            Page<Publisher> result = publisherRepository.findAll(Pageable.unpaged());
             assertTrue(result.hasContent());
             assertThat(result.getTotalElements()).isEqualTo(23);
             assertThat(result.getTotalPages()).isEqualTo(1);
@@ -102,11 +101,11 @@ class PublisherRepositoryTest {
     @Test
     void delete() {
         assertAll(() -> {
-            List<BookRatingProjection> publisherBooks = publisherRepository.getBooksByEntity(PUBLISHER_DATA.getPublisher(), 0, Pageable.unpaged()).getContent();
+            List<Book> publisherBooks = publisherRepository.getBooksByEntity(PUBLISHER_DATA.getPublisher(), Pageable.unpaged()).getContent();
             int publisherBooksCount = publisherBooks.size();
             int allBooksCount = bookRepository.findAll().size();
             int allRatingsCount = ratingRepository.findAll().size();
-            int publisherBooksRatingsCount = publisherBooks.stream().mapToInt(value -> value.getBook().getRatings().size()).sum();
+            int publisherBooksRatingsCount = publisherBooks.stream().mapToInt(book -> book.getRatings().size()).sum();
 
             assertThat(allBooksCount).isEqualTo(38);
             assertThat(allRatingsCount).isEqualTo(1006);
@@ -136,7 +135,7 @@ class PublisherRepositoryTest {
     @Test
     void delete_shouldDeletePublisherBooks_whenPublisherIsDeleted() {
         assertAll(() -> {
-            int authorBooksCount = publisherRepository.getBooksByEntity(PUBLISHER_DATA.getPublisher(), 0, Pageable.unpaged()).getContent().size();
+            int authorBooksCount = publisherRepository.getBooksByEntity(PUBLISHER_DATA.getPublisher(), Pageable.unpaged()).getContent().size();
             int allBooksCount = bookRepository.findAll().size();
 
             assertThat(authorBooksCount).isEqualTo(10);
@@ -154,8 +153,8 @@ class PublisherRepositoryTest {
     void delete_shouldDeleteRatingsOfPublisherBooks_whenPublisherIsDeleted() {
         assertAll(() -> {
             int allRatingsCount = ratingRepository.findAll().size();
-            int authorBooksRatingsCount = publisherRepository.getBooksByEntity(PUBLISHER_DATA.getPublisher(), 0, Pageable.unpaged()).getContent()
-                    .stream().mapToInt(value -> value.getBook().getRatings().size()).sum();
+            int authorBooksRatingsCount = publisherRepository.getBooksByEntity(PUBLISHER_DATA.getPublisher(), Pageable.unpaged()).getContent()
+                    .stream().mapToInt(book -> book.getRatings().size()).sum();
 
             assertThat(allRatingsCount).isEqualTo(1006);
             publisherRepository.delete(PUBLISHER_DATA.getPublisher());

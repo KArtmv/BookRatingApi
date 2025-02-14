@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import ua.foxminded.bookrating.dto.PublisherDto;
 import ua.foxminded.bookrating.persistance.entity.Publisher;
 
 import java.util.List;
@@ -22,6 +23,8 @@ public class PublisherData {
     private final Publisher updatedPublisher = new Publisher(updatedName);
     private final Long deletedPublisherId = 1182L;
     private final String deletedPublisherName = "Simon and Schuster";
+    private final PublisherDto publisherDto = new PublisherDto(name);
+    private final PublisherDto updatedPublisherDto = new PublisherDto(updatedName);
 
     private final Page<Publisher> publishers = new PageImpl<>(
             List.of(publisher, publisher2),
@@ -29,5 +32,5 @@ public class PublisherData {
     );
 
     private final String selfHref = "http://localhost/api/v1/publishers/1577";
-    private final String publisherBooksHref = "http://localhost/api/v1/publishers/1577/books?desiredAverageRating=0";
+    private final String publisherBooksHref = "http://localhost/api/v1/publishers/1577/books";
 }

@@ -11,7 +11,7 @@ import ua.foxminded.bookrating.service.UserService;
 
 @Service
 @Transactional(readOnly = true)
-public class RatingServiceImpl extends CrudServiceImpl<Rating> implements RatingService {
+public class RatingServiceImpl extends CrudServiceImpl<Rating, RatingDto> implements RatingService {
 
     private final RatingRepository ratingRepository;
     private final BookService bookService;
@@ -26,7 +26,7 @@ public class RatingServiceImpl extends CrudServiceImpl<Rating> implements Rating
 
     @Transactional
     @Override
-    public Rating save(RatingDto ratingDto) {
+    public Rating create(RatingDto ratingDto) {
         return ratingRepository.save(toEntity(ratingDto, new Rating()));
     }
 

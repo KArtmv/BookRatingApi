@@ -57,7 +57,7 @@ class RatingControllerTest {
                         jsonPath("$.book.title").value(BOOK_DATA.getTitle()),
                         jsonPath("$.book.author").value(BOOK_DATA.getBook().getAuthors().stream().findFirst().get().getName()),
                         jsonPath("$.book.publisher").value(BOOK_DATA.getBook().getPublisher().getName()),
-                        jsonPath("$.book.publicationYear").value(BOOK_DATA.getPublicationYear()),
+                        jsonPath("$.book.publicationYear").value(BOOK_DATA.getPublicationYear().toString()),
                         jsonPath("$.book.averageRating").value("0.0"),
                         jsonPath("$.book.image.imageUrlSmall").value(BOOK_DATA.getImage().getImageUrlSmall()),
                         jsonPath("$.book.image.imageUrlMedium").value(BOOK_DATA.getImage().getImageUrlMedium()),
@@ -70,7 +70,7 @@ class RatingControllerTest {
 
     @Test
     void add_shouldReturnUnauthorized_whenUserIsUnauthorized() throws Exception {
-        when(ratingService.save(any(RatingDto.class))).thenReturn(RATING_DATA.getRating());
+        when(ratingService.create(any(RatingDto.class))).thenReturn(RATING_DATA.getRating());
 
         mockMvc.perform(post("/api/v1/ratings").contentType(MediaType.APPLICATION_JSON)
                 .content("""
@@ -122,7 +122,7 @@ class RatingControllerTest {
                         jsonPath("$.book.title").value(BOOK_DATA.getTitle()),
                         jsonPath("$.book.author").value(BOOK_DATA.getBook().getAuthors().stream().findFirst().get().getName()),
                         jsonPath("$.book.publisher").value(BOOK_DATA.getBook().getPublisher().getName()),
-                        jsonPath("$.book.publicationYear").value(BOOK_DATA.getPublicationYear()),
+                        jsonPath("$.book.publicationYear").value(BOOK_DATA.getPublicationYear().toString()),
                         jsonPath("$.book.averageRating").value("0.0"),
                         jsonPath("$.book.image.imageUrlSmall").value(BOOK_DATA.getImage().getImageUrlSmall()),
                         jsonPath("$.book.image.imageUrlMedium").value(BOOK_DATA.getImage().getImageUrlMedium()),
@@ -135,7 +135,7 @@ class RatingControllerTest {
 
     @Test
     void add_shouldReturnRating_whenUserIsAuthorized() throws Exception {
-        when(ratingService.save(any(RatingDto.class))).thenReturn(RATING_DATA.getRating());
+        when(ratingService.create(any(RatingDto.class))).thenReturn(RATING_DATA.getRating());
 
         mockMvc.perform(post("/api/v1/ratings").contentType(MediaType.APPLICATION_JSON)
                 .content("""
@@ -156,7 +156,7 @@ class RatingControllerTest {
                 jsonPath("$.book.title").value(BOOK_DATA.getTitle()),
                 jsonPath("$.book.author").value(BOOK_DATA.getBook().getAuthors().stream().findFirst().get().getName()),
                 jsonPath("$.book.publisher").value(BOOK_DATA.getBook().getPublisher().getName()),
-                jsonPath("$.book.publicationYear").value(BOOK_DATA.getPublicationYear()),
+                jsonPath("$.book.publicationYear").value(BOOK_DATA.getPublicationYear().toString()),
                 jsonPath("$.book.averageRating").value("0.0"),
                 jsonPath("$.book.image.imageUrlSmall").value(BOOK_DATA.getImage().getImageUrlSmall()),
                 jsonPath("$.book.image.imageUrlMedium").value(BOOK_DATA.getImage().getImageUrlMedium()),
@@ -189,7 +189,7 @@ class RatingControllerTest {
                 jsonPath("$.book.title").value(BOOK_DATA.getTitle()),
                 jsonPath("$.book.author").value(BOOK_DATA.getBook().getAuthors().stream().findFirst().get().getName()),
                 jsonPath("$.book.publisher").value(BOOK_DATA.getBook().getPublisher().getName()),
-                jsonPath("$.book.publicationYear").value(BOOK_DATA.getPublicationYear()),
+                jsonPath("$.book.publicationYear").value(BOOK_DATA.getPublicationYear().toString()),
                 jsonPath("$.book.averageRating").value("0.0"),
                 jsonPath("$.book.image.imageUrlSmall").value(BOOK_DATA.getImage().getImageUrlSmall()),
                 jsonPath("$.book.image.imageUrlMedium").value(BOOK_DATA.getImage().getImageUrlMedium()),
@@ -204,5 +204,17 @@ class RatingControllerTest {
     void delete_shouldDoNothing_whenUserIsAuthorized() throws Exception {
         mockMvc.perform(delete("/api/v1/ratings/{id}", RATING_DATA.getId()).with(jwt())).andDo(print())
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void get_shouldReturnBadRequest_whenRatingIdIsInvalid() throws Exception {
+        mockMvc.perform(get("/api/v1/ratings/abc")).andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void get_shouldReturnNotFound_whenRatingIdIsMissed() throws Exception {
+        mockMvc.perform(get("/api/v1/ratings/")).andDo(print())
+                .andExpect(status().isNotFound());
     }
 }

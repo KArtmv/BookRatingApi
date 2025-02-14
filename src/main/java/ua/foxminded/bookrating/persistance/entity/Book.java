@@ -1,14 +1,11 @@
 package ua.foxminded.bookrating.persistance.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Year;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -20,24 +17,17 @@ import java.util.Set;
 @SequenceGenerator(name = "default_gen", sequenceName = "book_id_seq", allocationSize = 1)
 public class Book extends BaseEntity {
 
-    @NotBlank(message = "The ISBN of book is required")
-    @Size(min = 10, max = 13, message = "The ISBN must be between 10 and 13 characters long")
-    @Column(name = "isbn")
+    @Column(name = "isbn", nullable = false, unique = true, length = 13)
     private String isbn;
 
-    @NotBlank(message = "The title of the book is required and cannot be empty")
-    @Column(name = "title")
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @NotBlank(message = "The year of publication is required")
-    @Pattern(regexp = "^[0-9]+", message = "The year can contains just digits")
-    @Size(max = 4, message = "The length of year is 4 characters")
-    @Column(name = "publication_year")
-    private String publicationYear;
+    @Column(name = "publication_year", nullable = false)
+    private Year publicationYear;
 
     @ManyToOne
-    @JoinColumn(name = "publisher_id")
-    @NotNull(message = "A publisher is required.")
+    @JoinColumn(name = "publisher_id", nullable = false)
     private Publisher publisher;
 
     @ManyToMany
@@ -52,7 +42,7 @@ public class Book extends BaseEntity {
     @OneToMany(mappedBy = "book")
     private Set<Rating> ratings = new LinkedHashSet<>();
 
-    public Book(String isbn, String title, String publicationYear, Publisher publisher, Set<Author> authors, Image image) {
+    public Book(String isbn, String title, Year publicationYear, Publisher publisher, Set<Author> authors, Image image) {
         this.isbn = isbn;
         this.title = title;
         this.publicationYear = publicationYear;
@@ -61,7 +51,7 @@ public class Book extends BaseEntity {
         this.image = image;
     }
 
-    public Book(Long id, String isbn, String title, String publicationYear, Publisher publisher, Set<Author> authors, Image image) {
+    public Book(Long id, String isbn, String title, Year publicationYear, Publisher publisher, Set<Author> authors, Image image) {
         super(id);
         this.isbn = isbn;
         this.title = title;
@@ -69,11 +59,6 @@ public class Book extends BaseEntity {
         this.publisher = publisher;
         this.authors = authors;
         this.image = image;
-    }
-
-    public void addAuthor(Author author) {
-        this.authors.add(author);
-        author.getBooks().add(this);
     }
 
     public Double getAverageRating() {

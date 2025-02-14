@@ -1,4 +1,4 @@
-package ua.foxminded.bookrating;
+package ua.foxminded.bookrating.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -6,16 +6,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.persistance.entity.Rating;
-import ua.foxminded.bookrating.projection.BookRatingProjection;
+import ua.foxminded.bookrating.specification.BookSpecification;
 import ua.foxminded.bookrating.util.author.AuthorsData;
 import ua.foxminded.bookrating.util.book.BookData;
 import ua.foxminded.bookrating.util.publisher.PublisherData;
 
-import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,69 +48,84 @@ class BookRepositoryTest {
     }
 
     @Test
-    void findAllPaginated() {
+    void findAll_shouldReturnPageOfBooks_whenIsInvoke() {
         assertAll(() -> {
-            Page<BookRatingProjection> allPaginated = bookRepository.findAllPaginated(0, Pageable.unpaged());
-            assertTrue(allPaginated.hasContent());
-            assertThat(allPaginated.getTotalElements()).isEqualTo(33);
-            assertThat(allPaginated.getTotalPages()).isEqualTo(1);
+            Page<Book> books = bookRepository.findAll(Pageable.unpaged());
+            assertTrue(books.hasContent());
+            assertThat(books.getTotalElements()).isEqualTo(38);
+            assertThat(books.getTotalPages()).isEqualTo(1);
         });
     }
 
     @Test
-    void findByTitleContainingIgnoreCase() {
+    void findAll_shouldReturnListOfBooks_whenFilterAllParams() {
+        Specification<Book> bookSpecification = Specification
+                .where(BookSpecification.hasAuthors(List.of(AUTHORS_DATA.getAuthor())))
+                .and(BookSpecification.hasPublishers(List.of(PUBLISHER_DATA.getPublisher())))
+                .and(BookSpecification.hasTitle(BOOK_DATA.getTitle()))
+                .and(BookSpecification.hasPublicationYear(BOOK_DATA.getPublicationYear().getValue()))
+                .and(BookSpecification.hasAverageRating(3));
+
         assertAll(() -> {
-            Page<BookRatingProjection> byTitleContainingIgnoreCase = bookRepository.findByTitleContainingIgnoreCase(BOOK_DATA.getTitle(), Pageable.unpaged());
-            assertTrue(byTitleContainingIgnoreCase.hasContent());
-            assertThat(byTitleContainingIgnoreCase.getTotalElements()).isEqualTo(3);
-            assertThat(byTitleContainingIgnoreCase.getTotalPages()).isEqualTo(1);
+            Page<Book> books = bookRepository.findAll(bookSpecification, Pageable.unpaged());
+            assertTrue(books.hasContent());
+            assertThat(books.getTotalElements()).isEqualTo(1);
+            assertThat(books.getTotalPages()).isEqualTo(1);
         });
     }
 
     @Test
-    void findByAuthorsOrPublisherIn_whenAuthor() {
+    void findAll_shouldReturnListOfAuthorBooks_whenFilterByAuthor() {
+        Specification<Book> bookSpecification = Specification.where(BookSpecification.hasAuthors(List.of(AUTHORS_DATA.getAuthor())));
         assertAll(() -> {
-            Page<BookRatingProjection> byAuthorsOrPublisherIn = bookRepository.findByAuthorsOrPublisherIn(Collections.singletonList(AUTHORS_DATA.getAuthor()),
-                    Collections.emptyList(), 0, "", Pageable.unpaged());
-            assertTrue(byAuthorsOrPublisherIn.hasContent());
-            assertThat(byAuthorsOrPublisherIn.getTotalElements()).isEqualTo(24);
-            assertThat(byAuthorsOrPublisherIn.getTotalPages()).isEqualTo(1);
+            Page<Book> books = bookRepository.findAll(bookSpecification, Pageable.unpaged());
+            assertTrue(books.hasContent());
+            assertThat(books.getTotalElements()).isEqualTo(24);
+            assertThat(books.getTotalPages()).isEqualTo(1);
         });
     }
 
     @Test
-    void findByAuthorsOrPublisherIn_whenPublisher() {
+    void findAll_shouldReturnListOfPublisherBooks_whenFilterByPublisher() {
+        Specification<Book> bookSpecification = Specification.where(BookSpecification.hasPublishers(List.of(PUBLISHER_DATA.getPublisher())));
         assertAll(() -> {
-            Page<BookRatingProjection> byAuthorsOrPublisherIn = bookRepository.findByAuthorsOrPublisherIn(Collections.emptyList(),
-                    Collections.singletonList(PUBLISHER_DATA.getPublisher()), 0, "", Pageable.unpaged());
-            assertTrue(byAuthorsOrPublisherIn.hasContent());
-            assertThat(byAuthorsOrPublisherIn.getTotalElements()).isEqualTo(10);
-            assertThat(byAuthorsOrPublisherIn.getTotalPages()).isEqualTo(1);
+            Page<Book> books = bookRepository.findAll(bookSpecification, Pageable.unpaged());
+            assertTrue(books.hasContent());
+            assertThat(books.getTotalElements()).isEqualTo(10);
+            assertThat(books.getTotalPages()).isEqualTo(1);
         });
     }
 
     @Test
-    void findByAuthorsOrPublisherIn_whenAuthorAndPublisher() {
+    void findAll_shouldReturnListOfBooksContainsTitle_whenFilterByTitle() {
+        Specification<Book> bookSpecification = Specification.where(BookSpecification.hasTitle(BOOK_DATA.getTitle()));
         assertAll(() -> {
-            Page<BookRatingProjection> byAuthorsOrPublisherIn = bookRepository.findByAuthorsOrPublisherIn(
-                    Collections.singletonList(AUTHORS_DATA.getAuthor()),
-                    Collections.singletonList(PUBLISHER_DATA.getPublisher()), 0, "", Pageable.unpaged());
-            assertTrue(byAuthorsOrPublisherIn.hasContent());
-            assertThat(byAuthorsOrPublisherIn.getTotalElements()).isEqualTo(33);
-            assertThat(byAuthorsOrPublisherIn.getTotalPages()).isEqualTo(1);
+            Page<Book> books = bookRepository.findAll(bookSpecification, Pageable.unpaged());
+            assertTrue(books.hasContent());
+            assertThat(books.getTotalElements()).isEqualTo(3);
+            assertThat(books.getTotalPages()).isEqualTo(1);
         });
     }
 
     @Test
-    void findByAuthorsOrPublisherIn_whenAuthorAndPublisherAndTitle() {
+    void findAll_shouldReturnListOfBooksWithPublishedYear_whenFilterByPublishedYear() {
+        Specification<Book> bookSpecification = Specification.where(BookSpecification.hasPublicationYear(BOOK_DATA.getPublicationYear().getValue()));
         assertAll(() -> {
-            Page<BookRatingProjection> byAuthorsOrPublisherIn = bookRepository.findByAuthorsOrPublisherIn(
-                    Collections.singletonList(AUTHORS_DATA.getAuthor()),
-                    Collections.singletonList(PUBLISHER_DATA.getPublisher()),
-                    0, BOOK_DATA.getTitle(), Pageable.unpaged());
-            assertTrue(byAuthorsOrPublisherIn.hasContent());
-            assertThat(byAuthorsOrPublisherIn.getTotalElements()).isEqualTo(3);
-            assertThat(byAuthorsOrPublisherIn.getTotalPages()).isEqualTo(1);
+            Page<Book> books = bookRepository.findAll(bookSpecification, Pageable.unpaged());
+            assertTrue(books.hasContent());
+            assertThat(books.getTotalElements()).isEqualTo(3);
+            assertThat(books.getTotalPages()).isEqualTo(1);
+        });
+    }
+
+    @Test
+    void findAll_shouldReturnListOfBooksWithRatingGraterThan_whenFilterByRating() {
+        Specification<Book> bookSpecification = Specification.where(BookSpecification.hasAverageRating(3));
+        assertAll(() -> {
+            Page<Book> books = bookRepository.findAll(bookSpecification, Pageable.unpaged());
+            assertTrue(books.hasContent());
+            assertThat(books.getTotalElements()).isEqualTo(15);
+            assertThat(books.getTotalPages()).isEqualTo(1);
         });
     }
 

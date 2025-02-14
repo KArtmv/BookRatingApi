@@ -33,32 +33,32 @@ class PublisherServiceImplTest {
 
     @Test
     void findAllPaginated_shouldReturnAllAuthors() {
-        when(publisherRepository.findAllPaginated(any(Pageable.class))).thenReturn(mock(Page.class));
+        when(publisherRepository.findAll(any(Pageable.class))).thenReturn(mock(Page.class));
 
-        publisherService.findAllPaginated(Pageable.unpaged());
+        publisherService.findAll(Pageable.unpaged());
 
-        verify(publisherRepository).findAllPaginated(any(Pageable.class));
+        verify(publisherRepository).findAll(any(Pageable.class));
         verifyNoMoreInteractions(publisherRepository);
     }
 
     @Test
-    void save_shouldThrowsException_whenAuthorIsExist() {
+    void create_shouldThrowsException_whenAuthorIsExist() {
         when(publisherRepository.findByName(anyString())).thenReturn(Optional.of(PUBLISHER_DATA.getPublisher()));
 
         try {
-            publisherService.save(PUBLISHER_DATA.getPublisher());
+            publisherService.create(PUBLISHER_DATA.getPublisherDto());
         } catch (EntityExistsException e) {
-            assertThat(e.getMessage()).isEqualTo(PUBLISHER_DATA.getPublisher().getName() + " already exists");
+            assertThat(e.getMessage()).isEqualTo("Publisher with given name: " + PUBLISHER_DATA.getPublisher().getName() + ", already exists");
         }
         verify(publisherRepository).findByName(anyString());
         verifyNoMoreInteractions(publisherRepository);
     }
 
     @Test
-    void save_shouldSavedAuthor_whenAuthorIsNotExist() {
+    void create_shouldSavedAuthor_whenAuthorIsNotExist() {
         when(publisherRepository.findByName(anyString())).thenReturn(Optional.empty());
 
-        publisherService.save(PUBLISHER_DATA.getPublisher());
+        publisherService.create(PUBLISHER_DATA.getPublisherDto());
 
         verify(publisherRepository).findByName(anyString());
         verify(publisherRepository).save(any(Publisher.class));
@@ -70,7 +70,7 @@ class PublisherServiceImplTest {
         when(publisherRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         try {
-            publisherService.update(PUBLISHER_DATA.getId(), PUBLISHER_DATA.getNewPublisher());
+            publisherService.update(PUBLISHER_DATA.getId(), PUBLISHER_DATA.getUpdatedPublisherDto());
         } catch (EntityNotFoundException e) {
             assertThat(e.getMessage()).isEqualTo("Entity with id: " + PUBLISHER_DATA.getId() + " is not found");
         }
@@ -83,7 +83,7 @@ class PublisherServiceImplTest {
     void update_shouldReturnUpdatedAuthor_whenAuthorIsExist() {
         when(publisherRepository.findById(anyLong())).thenReturn(Optional.of(PUBLISHER_DATA.getPublisher()));
 
-        publisherService.update(PUBLISHER_DATA.getId(), PUBLISHER_DATA.getUpdatedPublisher());
+        publisherService.update(PUBLISHER_DATA.getId(), PUBLISHER_DATA.getUpdatedPublisherDto());
 
         var argumentCaptor = ArgumentCaptor.forClass(Publisher.class);
         verify(publisherRepository).findById(anyLong());
@@ -134,12 +134,12 @@ class PublisherServiceImplTest {
     @Test
     void getAllBooksById() {
         when(publisherRepository.findById(anyLong())).thenReturn(Optional.of(PUBLISHER_DATA.getPublisher()));
-        when(publisherRepository.getBooksByEntity(any(Publisher.class), anyInt(), any(Pageable.class))).thenReturn(mock(Page.class));
+        when(publisherRepository.getBooksByEntity(any(Publisher.class), any(Pageable.class))).thenReturn(mock(Page.class));
 
-        publisherService.getAllBooksById(PUBLISHER_DATA.getId(), 0, Pageable.unpaged());
+        publisherService.getAllBooksById(PUBLISHER_DATA.getId(), Pageable.unpaged());
 
         verify(publisherRepository).findById(anyLong());
-        verify(publisherRepository).getBooksByEntity(any(Publisher.class), anyInt(), any(Pageable.class));
+        verify(publisherRepository).getBooksByEntity(any(Publisher.class), any(Pageable.class));
         verifyNoMoreInteractions(publisherRepository);
     }
 
@@ -157,7 +157,7 @@ class PublisherServiceImplTest {
     void findOrSave_shouldSaveAuthor_whenAuthorIsNotExist() {
         when(publisherRepository.findByName(anyString())).thenReturn(Optional.empty());
 
-        publisherService.findOrSave(PUBLISHER_DATA.getNewPublisher());
+        publisherService.findByNameOrSave(PUBLISHER_DATA.getName());
 
         verify(publisherRepository).findByName(PUBLISHER_DATA.getName());
         verify(publisherRepository).save(any(Publisher.class));
@@ -168,7 +168,7 @@ class PublisherServiceImplTest {
     void findOrSave_shouldReturnAuthor_whenAuthorIsExist() {
         when(publisherRepository.findByName(anyString())).thenReturn(Optional.of(PUBLISHER_DATA.getPublisher()));
 
-        publisherService.findOrSave(PUBLISHER_DATA.getNewPublisher());
+        publisherService.findByNameOrSave(PUBLISHER_DATA.getName());
 
         verify(publisherRepository).findByName(PUBLISHER_DATA.getName());
         verifyNoMoreInteractions(publisherRepository);
@@ -182,5 +182,35 @@ class PublisherServiceImplTest {
 
         verify(publisherRepository).restore(anyLong());
         verifyNoMoreInteractions(publisherRepository);
+    }
+
+    @Test
+    void save_shouldReturnSavedPublisher_whenInvoke() {
+        when(publisherRepository.save(any(Publisher.class))).thenReturn(PUBLISHER_DATA.getPublisher());
+
+        publisherService.save(PUBLISHER_DATA.getNewPublisher());
+
+        verify(publisherRepository).save(PUBLISHER_DATA.getNewPublisher());
+    }
+
+    @Test
+    void getDeletedByName_shouldReturnDeletedAuthor_whenIsFound() {
+        when(publisherRepository.findDeletedByName(anyString())).thenReturn(Optional.of(PUBLISHER_DATA.getPublisher()));
+
+        publisherService.getDeletedByName(PUBLISHER_DATA.getName());
+
+        verify(publisherRepository).findDeletedByName(PUBLISHER_DATA.getName());
+        verifyNoMoreInteractions(publisherRepository);
+    }
+
+    @Test
+    void getDeletedByName_shouldThrowException_whenIsNotFound() {
+        when(publisherRepository.findDeletedByName(anyString())).thenReturn(Optional.empty());
+
+        try {
+            publisherService.getDeletedByName(PUBLISHER_DATA.getName());
+        } catch (EntityNotFoundException e) {
+            assertThat(e.getMessage()).isEqualTo("Deleted publisher not found with name: " + PUBLISHER_DATA.getName());
+        }
     }
 }

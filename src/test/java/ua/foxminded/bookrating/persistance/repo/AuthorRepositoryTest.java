@@ -11,7 +11,6 @@ import org.springframework.test.context.jdbc.Sql;
 import ua.foxminded.bookrating.persistance.entity.Author;
 import ua.foxminded.bookrating.persistance.entity.Book;
 import ua.foxminded.bookrating.persistance.entity.Rating;
-import ua.foxminded.bookrating.projection.BookRatingProjection;
 import ua.foxminded.bookrating.util.author.AuthorsData;
 
 import java.util.List;
@@ -39,7 +38,7 @@ class AuthorRepositoryTest {
     @Test
     void getBooksByAuthor() {
         assertAll(() -> {
-            Page<BookRatingProjection> result = authorRepository.getBooksByEntity(AUTHORS_DATA.getAuthor(), 0, Pageable.unpaged());
+            Page<Book> result = authorRepository.getBooksByEntity(AUTHORS_DATA.getAuthor(), Pageable.unpaged());
             assertTrue(result.hasContent());
             assertThat(result.getTotalElements()).isEqualTo(24);
             assertThat(result.getTotalPages()).isEqualTo(1);
@@ -58,7 +57,7 @@ class AuthorRepositoryTest {
     @Test
     void findAllPaginated() {
         assertAll(() -> {
-            Page<Author> result = authorRepository.findAllPaginated(Pageable.unpaged());
+            Page<Author> result = authorRepository.findAll(Pageable.unpaged());
             assertTrue(result.hasContent());
             assertThat(result.getTotalElements()).isEqualTo(24);
             assertThat(result.getTotalPages()).isEqualTo(1);
@@ -113,7 +112,7 @@ class AuthorRepositoryTest {
     @Test
     void delete_shouldDeleteAuthorBooks_whenAuthorIsDeleted() {
         assertAll(() -> {
-            int authorBooksCount = authorRepository.getBooksByEntity(AUTHORS_DATA.getAuthor(), 0, Pageable.unpaged()).getContent().size();
+            int authorBooksCount = authorRepository.getBooksByEntity(AUTHORS_DATA.getAuthor(), Pageable.unpaged()).getContent().size();
             int allBooksCount = bookRepository.findAll().size();
 
             assertThat(authorBooksCount).isEqualTo(24);
@@ -131,8 +130,8 @@ class AuthorRepositoryTest {
     void delete_shouldDeleteRatingsOfAuthorBooks_whenAuthorIsDeleted() {
         assertAll(() -> {
             int allRatingsCount = ratingRepository.findAll().size();
-            int authorBooksRatingsCount = authorRepository.getBooksByEntity(AUTHORS_DATA.getAuthor(), 0, Pageable.unpaged()).getContent()
-                    .stream().mapToInt(value -> value.getBook().getRatings().size()).sum();
+            int authorBooksRatingsCount = authorRepository.getBooksByEntity(AUTHORS_DATA.getAuthor(), Pageable.unpaged()).getContent()
+                    .stream().mapToInt(book -> book.getRatings().size()).sum();
 
             assertThat(allRatingsCount).isEqualTo(1006);
             authorRepository.delete(AUTHORS_DATA.getAuthor());

@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import ua.foxminded.bookrating.dto.AuthorDto;
 import ua.foxminded.bookrating.persistance.entity.Author;
 
 import java.util.List;
@@ -22,6 +23,8 @@ public class AuthorsData {
     private final Author updatedAuthor = new Author(updatedName);
     private final Long deletedAuthorId = 487L;
     private final String deletedAuthorName = "Judith Rossner";
+    private final AuthorDto authorDto = new AuthorDto(name);
+    private final AuthorDto updatedAuthorDto = new AuthorDto(updatedName);
 
     private final Page<Author> authors = new PageImpl<>(
             List.of(author, author2),
@@ -29,5 +32,5 @@ public class AuthorsData {
     );
 
     private final String selfHref = "http://localhost/api/v1/authors/4";
-    private final String authorBooksHref = "http://localhost/api/v1/authors/4/books?desiredAverageRating=0";
+    private final String authorBooksHref = "http://localhost/api/v1/authors/4/books";
 }
