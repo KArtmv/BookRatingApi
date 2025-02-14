@@ -67,7 +67,7 @@ public class StepConfiguration {
                                    ItemWriter<S> writer,
                                    String name) {
         return new StepBuilder(name, jobRepository)
-                .<T, S>chunk(1000, transactionManager)
+                .<T, S>chunk(10000, transactionManager)
                 .reader(reader)
                 .processor(process)
                 .writer(writer)
