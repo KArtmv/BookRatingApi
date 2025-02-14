@@ -1,7 +1,7 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
 
-    <property name="LOG_PATH" value="var/logs"/>
+    <property name="LOG_PATH" value="${LOG_PATH:-var/logs}"/>
     <property name="LOG_FILE_NAME" value="%d{yyyy-MM-dd}.%i"/>
 
     <appender name="SQL_STATEMENT_LOG_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
