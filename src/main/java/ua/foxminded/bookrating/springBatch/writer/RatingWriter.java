@@ -6,7 +6,6 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
 import ua.foxminded.bookrating.persistance.entity.Rating;
 import ua.foxminded.bookrating.persistance.repo.RatingRepository;
-import ua.foxminded.bookrating.service.RatingService;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
