@@ -1,0 +1,53 @@
+services:
+  app:
+    image: 'book-rating-docker:latest'
+    build:
+      context: .
+    container_name: app
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/${POSTGRES_DB}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - LOG_PATH=/var/logs
+    volumes:
+      - appdata:/var/logs
+    ports:
+      - "8080:8080"
+    networks:
+      - postgres-db-network
+
+  db:
+    image: 'postgres:15'
+    container_name: db
+    env_file:
+      - .env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - postgres-db-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    depends_on:
+      - db
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_MAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PW}
+    ports:
+      - "16543:80"
+    volumes:
+      - ./servers.json:/pgadmin4/servers.json
+    networks:
+      - postgres-db-network
+
+volumes:
+  pgdata:
+    driver: local
+  appdata:
+    driver: local
+
+networks:
+  postgres-db-network:
+    driver: bridge
